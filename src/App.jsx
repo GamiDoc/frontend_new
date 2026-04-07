@@ -1,7 +1,3 @@
-
-
-
-
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import FeatureCards from './components/FeatureCards';
@@ -12,24 +8,14 @@ import EvaluationSetup from './pages/EvaluationSetup';
 
 function App() {
   return (
-    
-    <div className="page">
+        <div className="page">
  
-      
-
-      <main>
-         <Navbar />
-        <Hero />
-        <FeatureCards />
-        <InfoSection />
-      </main>
-     
-       {/* <EvaluationSetup /> */}
-
-      <Footer />
+        {/*   <main>             <Navbar />             <Hero />             <FeatureCards />             <InfoSection />           </main>           <Footer />
+       */}
+        
+            <EvaluationSetup /> 
 
     </div>
   );
 }
-
 export default App;
