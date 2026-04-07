@@ -2,7 +2,7 @@ function Navbar() {
 
     return(
 
-        <header className="navbar">
+        <header className="custom-navbar">
         <div className="logo">GamiDoc</div>
 
         <div className="nav-actions">
