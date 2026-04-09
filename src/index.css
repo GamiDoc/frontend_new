@@ -361,11 +361,11 @@ button {
 
 
 
-
+/* ------------Stepper------------------------- */
 
 .stepper-simple {
   background: #f3f3f3;
-  padding: 20px 0;
+  padding: 14px 0 18px;
 }
 
 .stepper-box {
@@ -434,3 +434,378 @@ button {
   cursor: pointer;
   opacity: 0.85;
 }
+
+/* ----------/Steper--------------------------- */
+
+
+/* -------------Page header section-------------------- */
+.evaluation-header {
+  background: #f5f5f5;
+  padding: 24px 0 16px;
+}
+
+.evaluation-header-inner {
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.evaluation-header h1 {
+  font-size: 32px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.evaluation-header p {
+ font-size: 16px;
+  color: #444;
+  margin: 0;
+}
+
+/* -------------/Page header section-------------------- */
+
+
+/* ===== EVALUATION GOALS ===== */
+
+.evaluation-goals-section {
+  padding: 32px 0;
+  background: #ffffff;
+}
+
+.evaluation-goals-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
+.evaluation-goals-box h2 {
+  
+  margin-bottom: 6px;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.section-description {
+  color: #555;
+  margin-bottom: 24px;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+.goal-card {
+  border: 1px solid #9fb7d3;
+  border-radius: 10px;
+  padding: 16px;
+  background: #fff;
+}
+
+.goal-card h3 {
+ display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.goal-card-description {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 14px;
+}
+
+.goal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.goal-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ececec;
+  font-size: 15px;
+}
+
+.goal-option input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.goal-option input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #e7c74f;
+}
+
+.goal-option input:checked {
+  accent-color: #e7c74f;
+}
+
+.goal-option input:checked + span {
+  color: #111;
+}
+.goal-card {
+  transition: all 0.2s ease;
+  border: 1px solid #dfe5ec;
+}
+
+.goal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+
+
+
+/* ===== DEVELOPMENT STAGE ===== */
+
+.development-stage-section {
+  padding: 0 0 24px;
+  background: #ffffff;
+}
+
+.development-stage-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
+.development-stage-box h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.development-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+
+.development-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #111;
+}
+
+.development-option input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #e7c74f;
+}
+.development-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.development-stage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 40px;
+  margin-top: 16px;
+}
+
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* icon */
+.info-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e5e9ef;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/*------------- tooltip------------------- */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.info-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e5e9ef;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.tooltip-box {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 240px;
+  max-width: 280px;
+  background: #2f2f2f;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 20;
+}
+
+.tooltip-box::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #2f2f2f;
+}
+
+.info-wrapper:hover .tooltip-box,
+.info-wrapper:focus-within .tooltip-box {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.tooltip-link {
+  display: inline-block;
+  margin-left: 4px;
+  color: #f4d35e;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.tooltip-link:hover {
+  opacity: 0.9;
+}
+
+
+
+
+
+
+/* ========== CONSTRAINTS ===== */
+
+.constraints-section {
+  padding: 0 0 24px;
+  background: #ffffff;
+}
+
+.constraints-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
+.constraints-box h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+
+
+
+.constraint-group {
+  margin-top: 28px;
+}
+
+.constraint-group h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+
+
+.constraint-options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 30px;
+}
+
+.constraint-options-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+      border-top: 1px solid #eee;
+
+
+}
+
+
+.constraint-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #111;
+  padding-top: 8px;
+}
+
+.constraint-option input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #e7c74f;
+}
+
+
+
+
+
+
+
+
+
