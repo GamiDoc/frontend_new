@@ -334,10 +334,32 @@ button {
 
 
 
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font: inherit;
+  cursor: pointer;
+}
+
 .btn-primary {
   background-color: #FCDD70;
   border-color: #FCDD70;
   color: #111;
+
+  --bs-btn-bg: #FCDD70;
+  --bs-btn-border-color: #FCDD70;
+  --bs-btn-color: #111;
+
+  --bs-btn-hover-bg: #f0c94f;
+  --bs-btn-hover-border-color: #f0c94f;
+  --bs-btn-hover-color: #111;
+
+  --bs-btn-active-bg: #f0c94f;
+  --bs-btn-active-border-color: #f0c94f;
+  --bs-btn-active-color: #111;
+
+  --bs-btn-focus-shadow-rgb: 240, 201, 79;
 }
 
 .btn-primary:hover {
@@ -347,11 +369,39 @@ button {
 }
 
 .btn-primary:focus,
-.btn-primary:active {
+.btn-primary:active,
+.btn-primary:focus-visible {
   background-color: #f0c94f;
   border-color: #f0c94f;
   color: #111;
-  box-shadow: none;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-outline:focus,
+.btn-outline:active,
+.btn-outline:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-secondary {
+  background: #dce7f6;
+  border: 1px solid #8aa6c8;
+  color: #111;
 }
 
 
@@ -366,6 +416,12 @@ button {
 .stepper-simple {
   background: #f3f3f3;
   padding: 14px 0 18px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+
 }
 
 .stepper-box {
@@ -802,10 +858,192 @@ button {
 }
 
 
+/* ==================== RESEARCH SECTION ===== */
+
+.research-section {
+  padding: 0 0 40px;
+}
+
+.research-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
+.research-box h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.research-box h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.research-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+    margin-bottom: 24px;
+
+}
+
+.toggle-switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+}
+
+.toggle-switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background: #ccc;
+  border-radius: 999px;
+  width: 100%;
+  height: 100%;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 2px;
+  top: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-switch input:checked + .slider {
+  background: #e7c74f;
+}
+
+.toggle-switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.text-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid #d9dde3;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+.secondary-btn {
+ margin-top: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #9fb7d3;
+  background: #fff;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.secondary-btn:hover {
+  background: #f5f7fa;
+}
+
+.research-objective,
+.research-questions,
+.hypotheses {
+  margin-top: 28px;
+}
+
+.question-label {
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.optional {
+  color: #777;
+  font-size: 14px;
+}
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+}
+
+.dynamic-inputs {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
 
 
+/* ===== NAVIGATION BUTTONS ===== */
 
+.nav-buttons {
+  max-width: 1100px;
+  margin: 32px auto 48px;
+  padding: 0 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+}
 
+.nav-buttons .btn-secondary {
+  min-width: 72px;
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid #9aa4b2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
 
+.nav-buttons .btn-secondary:hover {
+  background: #f7f7f7;
+  border-color: #7f8a99;
+}
+
+.nav-buttons .btn-primary {
+  min-width: 220px;
+  height: 44px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 8px;
+  background: #f4d35e;
+  color: #111;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.nav-buttons .btn-primary:hover {
+  background: #e7c74f;
+}
+
+.nav-buttons .btn-primary::after {
+  content: "→";
+  font-size: 18px;
+  line-height: 1;
+}
 
