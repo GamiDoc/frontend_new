@@ -4,6 +4,8 @@ import FeatureCards from './components/FeatureCards';
 import InfoSection from './components/InfoSection';
 import Footer from './components/Footer';
 import EvaluationSetup from './pages/EvaluationSetup';
+import MethodSelection from './pages/MethodSelection';
+
 
 
 function App() {
@@ -11,9 +13,13 @@ function App() {
         <div className="page">
  
         {/*   <main>             <Navbar />             <Hero />             <FeatureCards />             <InfoSection />           </main>           <Footer />
+         <EvaluationSetup /> 
        */}
         
-            <EvaluationSetup /> 
+           
+                        <MethodSelection /> 
+
+
 
     </div>
   );
