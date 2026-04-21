@@ -15,12 +15,15 @@ function SelectionSummary({ goals, developmentStage, constraints }) {
             </div>
 
             <div className="selection-summary-value">
-              {goals.map((goal, index) => (
-                <span key={index} className="summary-tag">
-                  {goal}
-                </span>
-              ))}
+              {goals.map((goal, index) => {
+                return (
+                  <span key={index} className="summary-tag">
+                    {goal}
+                  </span>
+                );
+              })}
             </div>
+
           </div>
 
           <div className="selection-summary-row">
