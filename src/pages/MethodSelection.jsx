@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Stepper from "../components/Stepper";
@@ -5,36 +6,69 @@ import NavigationButtons from "../components/NavigationButtons";
 import SelectionSummary from "../components/SelectionSummary";
 import RecommendedMethods from "../components/RecommendedMethods";
 import AlternativeMethodsBox from "../components/AlternativeMethodsBox";
+import AllMethodsModal from "../components/AllMethodsModal";
+import ALL_METHODS from "../data/methods";
+import { useWizard } from "../context/WizardContext";
 
-function MethodSelection() {
-  const previousSelections = {
-    goals: ["Usability", "Engagement"],
-    developmentStage: "Low-fidelity prototype",
-    constraints: ["Limited time", "Limited participants"]
-  };
+function MethodSelection({ onOpenLogin, onOpenSignup }) {
+  const {
+    step1Data,
+    step2Data, setStep2Data,
+    recommendations,
+    submitStep2,
+    setPage,
+    loading, error,
+  } = useWizard();
 
-  const recommendedMethods = [
-    {
-      id: 1,
-      title: "Usability Testing",
-      description:
-        "Observe users as they interact with the system to identify usability issues and pain points.",
-      tags: ["Usability", "Engagement"],
-      icon: "🖥️"
-    },
-    {
-      id: 2,
-      title: "Surveys & Questionnaires",
-      description:
-        "Collect quantitative data by asking users structured questions to measure attitudes, engagement, and learning outcomes.",
-      tags: ["Learning Outcomes", "Engagement"],
-      icon: "📋"
+  const [showAllMethods, setShowAllMethods] = useState(false);
+
+  function handleToggleMethod(methodName) {
+    setStep2Data((prev) => {
+      const selected = prev.selectedMethods;
+      const next = selected.includes(methodName)
+        ? selected.filter((m) => m !== methodName)
+        : [...selected, methodName];
+      return { ...prev, selectedMethods: next };
+    });
+  }
+
+  function handleNext() {
+    if (step2Data.selectedMethods.length === 0) {
+      alert('Please select at least one method.');
+      return;
     }
-  ];
+    submitStep2();
+  }
+
+  // Names of methods already shown via recommendations
+  const recommendedNames = recommendations.map((r) => r.name || r.title);
+
+  // Methods selected from the popup that are NOT already in recommendations
+  const extraMethods = step2Data.selectedMethods
+    .filter((name) => !recommendedNames.includes(name))
+    .map((name) => {
+      const found = ALL_METHODS.find((m) => m.name === name);
+      return found
+        ? { ...found, priority: 'Added' }
+        : { id: name, name, description: '', priority: 'Added', icon: '📋' };
+    });
+
+  // Final list: API recommendations first, then manually added ones
+  const displayMethods = [...recommendations, ...extraMethods];
+
+  const summaryConstraints = [step1Data.participants].filter(Boolean);
 
   return (
     <div>
-      <Navbar />
+      <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
+
+      {showAllMethods && (
+        <AllMethodsModal
+          selectedMethods={step2Data.selectedMethods}
+          onToggleMethod={handleToggleMethod}
+          onClose={() => setShowAllMethods(false)}
+        />
+      )}
 
       <section className="evaluation-header">
         <div className="container evaluation-header-inner">
@@ -57,19 +91,35 @@ function MethodSelection() {
         </section>
 
         <SelectionSummary
-          goals={previousSelections.goals}
-          developmentStage={previousSelections.developmentStage}
-          constraints={previousSelections.constraints}
+          goals={step1Data.evaluationGoals}
+          developmentStage={step1Data.developmentStage}
+          constraints={summaryConstraints}
         />
 
-        <RecommendedMethods methods={recommendedMethods} />
+        {displayMethods.length > 0 ? (
+          <RecommendedMethods
+            methods={displayMethods}
+            selectedMethods={step2Data.selectedMethods}
+            onToggleMethod={handleToggleMethod}
+          />
+        ) : (
+          <section className="recommended-methods-section">
+            <div className="recommended-methods-container">
+              <p style={{ color: '#888' }}>
+                No recommendations available. Use "Browse all methods" below to add one.
+              </p>
+            </div>
+          </section>
+        )}
 
-        <AlternativeMethodsBox />
+        <AlternativeMethodsBox onOpen={() => setShowAllMethods(true)} />
+
+        {error && <div className="wizard-error">{error}</div>}
 
         <NavigationButtons
-          onBack={() => console.log("Back to evaluation setup")}
-          onNext={() => console.log("Go to instrument selection")}
-          nextLabel="Next: Instrument Selection"
+          onBack={() => setPage('setup')}
+          onNext={handleNext}
+          nextLabel={loading ? 'Saving…' : 'Next: Instrument Selection'}
         />
       </main>
 

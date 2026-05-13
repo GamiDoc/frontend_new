@@ -1,7 +1,6 @@
 import InfoTooltip from "./InfoTooltip";
 
-
-function GoalCard({ title, description, options }) {
+function GoalCard({ title, description, options, selectedOptions = [], onToggle }) {
   return (
     <div className="goal-card">
       <h3>
@@ -13,7 +12,11 @@ function GoalCard({ title, description, options }) {
       <div className="goal-options">
         {options.map((option, index) => (
           <label key={index} className="goal-option">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              checked={selectedOptions.includes(option)}
+              onChange={() => onToggle && onToggle(option)}
+            />
             <span>{option}</span>
           </label>
         ))}

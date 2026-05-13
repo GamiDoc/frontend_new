@@ -1,4 +1,4 @@
-function AlternativeMethodsBox() {
+function AlternativeMethodsBox({ onOpen }) {
   return (
     <section className="alternative-methods-section">
       <div className="alternative-methods-box">
@@ -7,9 +7,9 @@ function AlternativeMethodsBox() {
           <span>Looking for alternative methods?</span>
         </div>
 
-        <a href="#" className="alternative-methods-link">
+        <button className="alternative-methods-link" onClick={onOpen}>
           Browse all methods
-        </a>
+        </button>
       </div>
     </section>
   );

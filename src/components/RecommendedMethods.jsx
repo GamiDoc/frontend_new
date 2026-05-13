@@ -1,6 +1,6 @@
 import MethodCard from "./MethodCard";
 
-function RecommendedMethods({ methods }) {
+function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod }) {
   return (
     <section className="recommended-methods-section">
       <div className="recommended-methods-container">
@@ -14,10 +14,13 @@ function RecommendedMethods({ methods }) {
           {methods.map((method) => (
             <MethodCard
               key={method.id}
-              title={method.title}
+              title={method.name || method.title}
               description={method.description}
-              tags={method.tags}
-              icon={method.icon}
+              tags={method.tags || (method.priority ? [method.priority] : [])}
+              tagClass={method.priority === 'Added' ? 'method-tag--added' : ''}
+              icon={method.icon || '📋'}
+              selected={selectedMethods.includes(method.name || method.title)}
+              onToggle={onToggleMethod}
             />
           ))}
         </div>

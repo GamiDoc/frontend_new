@@ -1,15 +1,26 @@
-function Navbar() {
+import { useAuth } from '../context/AuthContext';
 
-    return(
+function Navbar({ onLogin, onSignup }) {
+  const { user, logout } = useAuth();
 
-        <header className="custom-navbar">
-        <div className="logo">GamiDoc</div>
-
-        <div className="nav-actions">
-          <button className="btn btn-outline">Log In</button>
-          <button className="btn btn-primary">Sign Up</button>
-        </div>
-      </header>
-    );
+  return (
+    <header className="custom-navbar">
+      <div className="logo">GamiDoc</div>
+      <div className="nav-actions">
+        {user ? (
+          <>
+            <span className="nav-user-email">{user.email}</span>
+            <button className="btn btn-outline" onClick={logout}>Log Out</button>
+          </>
+        ) : (
+          <>
+            <button className="btn btn-outline" onClick={onLogin}>Log In</button>
+            <button className="btn btn-primary" onClick={onSignup}>Sign Up</button>
+          </>
+        )}
+      </div>
+    </header>
+  );
 }
+
 export default Navbar;

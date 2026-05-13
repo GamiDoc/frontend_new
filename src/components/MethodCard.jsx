@@ -1,6 +1,6 @@
-function MethodCard({ title, description, tags, icon }) {
+function MethodCard({ title, description, tags, icon, tagClass = '', selected = false, onToggle }) {
   return (
-    <div className="method-card">
+    <div className={`method-card${selected ? ' method-card--selected' : ''}`}>
       <div className="method-card-left">
         <div className="method-card-icon">{icon}</div>
 
@@ -10,7 +10,7 @@ function MethodCard({ title, description, tags, icon }) {
 
           <div className="method-card-tags">
             {tags.map((tag, index) => (
-              <span key={index} className="method-tag">
+              <span key={index} className={`method-tag ${tagClass}`}>
                 {tag}
               </span>
             ))}
@@ -19,7 +19,11 @@ function MethodCard({ title, description, tags, icon }) {
       </div>
 
       <div className="method-card-right">
-        <input type="checkbox" />
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={() => onToggle && onToggle(title)}
+        />
       </div>
     </div>
   );
