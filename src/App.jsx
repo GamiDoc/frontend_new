@@ -6,21 +6,26 @@ import InfoSection from './components/InfoSection';
 import Footer from './components/Footer';
 import EvaluationSetup from './pages/EvaluationSetup';
 import MethodSelection from './pages/MethodSelection';
+import InstrumentSelection from './pages/InstrumentSelection';
+import BrowseInstruments from './pages/BrowseInstruments';
+import CustomConstruct from './pages/CustomConstruct';
+import EvaluationReview from './pages/EvaluationReview';
+import Dashboard from './pages/Dashboard';
+import ProjectDetail from './pages/ProjectDetail';
 import AuthModal from './components/AuthModal';
 import { useWizard } from './context/WizardContext';
+import { useAuth } from './context/AuthContext';
 
 function LandingPage({ onOpenLogin, onOpenSignup }) {
   const { startWizard, loading } = useWizard();
-
-  function handleStartProject() {
-    startWizard();
-  }
+  const { user } = useAuth();
+  const { setPage } = useWizard();
 
   return (
     <div className="page">
       <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
       <main>
-        <Hero onStart={handleStartProject} loading={loading} />
+        <Hero onStart={startWizard} loading={loading} />
         <FeatureCards />
         <InfoSection />
       </main>
@@ -29,32 +34,35 @@ function LandingPage({ onOpenLogin, onOpenSignup }) {
   );
 }
 
+function ProjectDetailWrapper({ onOpenLogin, onOpenSignup }) {
+  const { currentProjectId } = useWizard();
+  return <ProjectDetail projectId={currentProjectId} onOpenLogin={onOpenLogin} onOpenSignup={onOpenSignup} />;
+}
+
 function App() {
   const { page } = useWizard();
-  const [authModal, setAuthModal] = useState(null); // null | 'login' | 'register'
+  const [authModal, setAuthModal] = useState(null);
+  const [currentProjectId, setCurrentProjectId] = useState(null);
 
   const openLogin = () => setAuthModal('login');
   const openSignup = () => setAuthModal('register');
   const closeModal = () => setAuthModal(null);
 
+  const navProps = { onOpenLogin: openLogin, onOpenSignup: openSignup };
+
   return (
     <div className="page">
       {authModal && <AuthModal mode={authModal} onClose={closeModal} />}
 
-      {page === 'landing' && (
-        <LandingPage onOpenLogin={openLogin} onOpenSignup={openSignup} />
-      )}
-      {page === 'setup' && (
-        <EvaluationSetup onOpenLogin={openLogin} onOpenSignup={openSignup} />
-      )}
-      {page === 'methods' && (
-        <MethodSelection onOpenLogin={openLogin} onOpenSignup={openSignup} />
-      )}
-      {page === 'instruments' && (
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
-          <h2>Instrument Selection — coming soon</h2>
-        </div>
-      )}
+      {page === 'landing'            && <LandingPage {...navProps} />}
+      {page === 'setup'              && <EvaluationSetup {...navProps} />}
+      {page === 'methods'            && <MethodSelection {...navProps} />}
+      {page === 'instruments'        && <InstrumentSelection {...navProps} />}
+      {page === 'browse-instruments' && <BrowseInstruments {...navProps} />}
+      {page === 'custom-construct'   && <CustomConstruct {...navProps} />}
+      {page === 'evaluation'         && <EvaluationReview {...navProps} />}
+      {page === 'dashboard'          && <Dashboard {...navProps} />}
+      {page === 'project-detail'     && <ProjectDetailWrapper {...navProps} />}
     </div>
   );
 }
