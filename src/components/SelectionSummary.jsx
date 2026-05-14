@@ -1,4 +1,4 @@
-function SelectionSummary({ goals, developmentStage, constraints }) {
+function SelectionSummary({ goals, developmentStage, constraints, methods }) {
   return (
     <section className="selection-summary-section">
       <div className="selection-summary-box">
@@ -23,7 +23,6 @@ function SelectionSummary({ goals, developmentStage, constraints }) {
                 );
               })}
             </div>
-
           </div>
 
           <div className="selection-summary-row">
@@ -47,6 +46,21 @@ function SelectionSummary({ goals, developmentStage, constraints }) {
               <span>{constraints.join(", ")}</span>
             </div>
           </div>
+
+          {methods && (
+            <div className="selection-summary-methods">
+              <h4>Selected evaluation methods</h4>
+
+              {methods.map((method, index) => {
+                return (
+                  <div key={index} className="selected-method-row">
+                    <span className="selection-summary-icon">◎</span>
+                    <span>{method}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </section>

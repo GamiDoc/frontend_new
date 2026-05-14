@@ -20,7 +20,7 @@ function MethodSelection() {
       description:
         "Observe users as they interact with the system to identify usability issues and pain points.",
       tags: ["Usability", "Engagement"],
-      icon: "🖥️"
+      icon: "ðŸ–¥ï¸"
     },
     {
       id: 2,
@@ -28,7 +28,7 @@ function MethodSelection() {
       description:
         "Collect quantitative data by asking users structured questions to measure attitudes, engagement, and learning outcomes.",
       tags: ["Learning Outcomes", "Engagement"],
-      icon: "📋"
+      icon: "ðŸ“‹"
     }
   ];
 
