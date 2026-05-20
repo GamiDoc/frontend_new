@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Stepper from "../components/Stepper";
@@ -21,8 +21,10 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
   } = useWizard();
 
   const [showAllMethods, setShowAllMethods] = useState(false);
+  const [selectionError, setSelectionError] = useState(false);
 
   function handleToggleMethod(methodName) {
+    setSelectionError(false);
     setStep2Data((prev) => {
       const selected = prev.selectedMethods;
       const next = selected.includes(methodName)
@@ -34,9 +36,10 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
 
   function handleNext() {
     if (step2Data.selectedMethods.length === 0) {
-      alert('Please select at least one method.');
+      setSelectionError(true);
       return;
     }
+    setSelectionError(false);
     submitStep2();
   }
 
@@ -101,13 +104,16 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
             methods={displayMethods}
             selectedMethods={step2Data.selectedMethods}
             onToggleMethod={handleToggleMethod}
+            hasError={selectionError}
           />
         ) : (
           <section className="recommended-methods-section">
-            <div className="recommended-methods-container">
+            <div className={`recommended-methods-container${selectionError ? ' section--error' : ''}`}
+                 style={{ padding: '1rem', borderRadius: 8, border: selectionError ? undefined : 'none' }}>
               <p style={{ color: '#888' }}>
                 No recommendations available. Use "Browse all methods" below to add one.
               </p>
+              {selectionError && <p className="field-error">Select at least one method.</p>}
             </div>
           </section>
         )}
@@ -120,6 +126,7 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
           onBack={() => setPage('setup')}
           onNext={handleNext}
           nextLabel={loading ? 'Saving…' : 'Next: Instrument Selection'}
+          error={selectionError ? 'Select at least one method to continue.' : null}
         />
       </main>
 

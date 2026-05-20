@@ -30,4 +30,12 @@ export const api = {
   put: (path, body) => request(path, { method: 'PUT', body: JSON.stringify(body) }),
   patch: (path, body) => request(path, { method: 'PATCH', body: JSON.stringify(body) }),
   delete: (path) => request(path, { method: 'DELETE' }),
+  downloadBlob: async (path) => {
+    const res = await fetch(`${BASE_URL}${path}`, { method: 'GET', headers: getHeaders() });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw Object.assign(new Error(data.message || 'Download failed'), { status: res.status });
+    }
+    return res.blob();
+  },
 };

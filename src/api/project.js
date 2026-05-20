@@ -12,4 +12,6 @@ export const projectApi = {
     api.post(`/projects/${projectId}/wizard/recommendations`, { forStep }),
   generatePDF: (projectId) =>
     api.post(`/projects/${projectId}/generate-pdf`, {}),
+  downloadPDF: (projectId) =>
+    api.downloadBlob(`/projects/${projectId}/download-pdf`),
 };

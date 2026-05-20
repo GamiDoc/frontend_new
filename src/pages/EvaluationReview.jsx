@@ -1,20 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Stepper from '../components/Stepper';
 import { useWizard } from '../context/WizardContext';
 import { useAuth } from '../context/AuthContext';
 import { sessionApi } from '../api/session';
+import { projectApi } from '../api/project';
 
 function EvaluationReview({ onOpenLogin, onOpenSignup }) {
   const {
-    step1Data, step2Data, step3Data,
-    sessionId, generatePDF, setPage,
+    step1Data, step2Data, step3Data, step4Data,
+    sessionId, editingProjectId, generatePDF, setPage,
   } = useWizard();
   const { user } = useAuth();
 
   const [generating, setGenerating] = useState(false);
   const [pdfError, setPdfError] = useState(null);
+
+  // Mark project/session as complete on arrival at step 4
+  useEffect(() => {
+    if (editingProjectId) {
+      projectApi.saveStep(editingProjectId, 4, step4Data).catch(() => {});
+    } else if (sessionId) {
+      sessionApi.saveStep(sessionId, 4, step4Data).catch(() => {});
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Save-to-dashboard state
   const [saving, setSaving] = useState(false);
@@ -57,13 +67,17 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
         setPdfError('PDF generation failed — no URL returned.');
         return;
       }
+      const blob = editingProjectId
+        ? await projectApi.downloadPDF(editingProjectId)
+        : await sessionApi.downloadPDF(sessionId);
+      const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = result.pdfUrl;
+      a.href = blobUrl;
       a.download = 'evaluation-plan.pdf';
-      a.target = '_blank';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
     } catch (e) {
       setPdfError(e.message || 'PDF generation failed.');
     } finally {
@@ -195,7 +209,12 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                   {generating ? 'Generating…' : '⬇ Download Evaluation Plan (PDF)'}
                 </button>
 
-                {!user ? (
+                {editingProjectId ? (
+                  /* Editing existing project — already saved, just go back */
+                  <button className="btn eval-btn-save" onClick={() => setPage('dashboard')}>
+                    ⊞ Back to dashboard
+                  </button>
+                ) : !user ? (
                   <button className="btn eval-btn-save" onClick={onOpenLogin}>
                     Log in to save
                   </button>
@@ -234,7 +253,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
         <div className="nav-buttons">
           <button className="btn btn-secondary" onClick={() => setPage('instruments')}>← Back</button>
           <button className="btn btn-primary" onClick={() => setPage('landing')}>
-            Finish Evaluation Plan →
+            Finish Evaluation Plan
           </button>
         </div>
       </main>

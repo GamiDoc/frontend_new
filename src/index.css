@@ -486,7 +486,7 @@ button {
   transition: width 0.3s ease;
 }
 
-.step-item:hover {
+.step-item--clickable:hover {
   cursor: pointer;
   opacity: 0.85;
 }
@@ -1407,8 +1407,10 @@ button {
 
 /* ── Navbar user display ─────────────────────────────────── */
 .nav-user-email {
-  font-size: 0.9rem;
-  color: #555;
+  font-size: 1rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
 }
 
 /* ── Project type input ──────────────────────────────────── */
@@ -1435,6 +1437,60 @@ button {
   border-radius: 8px;
   color: #c0392b;
   font-size: 0.95rem;
+}
+
+/* ── Inline field / section errors ──────────────────────── */
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: #c0392b;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.field-error::before {
+  content: "⚠";
+  font-size: 0.9rem;
+}
+
+.input--error {
+  border-color: #e74c3c !important;
+  background: #fff8f8 !important;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12) !important;
+}
+
+.section--error {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.08) !important;
+}
+
+.nav-error {
+  color: #c0392b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-error::before {
+  content: "⚠";
+}
+
+/* Auth modal field errors */
+.auth-field-error {
+  color: #c0392b;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.auth-field-error::before {
+  content: "⚠";
 }
 
 /* ── Selected method card highlight ─────────────────────── */

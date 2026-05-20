@@ -1,49 +1,59 @@
-import { useState } from "react";
 import InfoTooltip from "./InfoTooltip";
 
+function ResearchSpecification({
+  enabled = false,
+  onEnabledChange,
+  objective = '',
+  onObjectiveChange,
+  researchQuestions = [],
+  onResearchQuestionsChange,
+  hypotheses = [],
+  onHypothesesChange,
+}) {
+  const defineHypothesis = hypotheses.length > 0;
 
-function ResearchSpecification() {
-  const [enabled, setEnabled] = useState(false);
-  const [researchQuestions, setResearchQuestions] = useState([]);
-  const [defineHypothesis, setDefineHypothesis] = useState(false);
-  const [hypotheses, setHypotheses] = useState([]);
+  function addResearchQuestion() {
+    onResearchQuestionsChange && onResearchQuestionsChange([...researchQuestions, '']);
+  }
 
-  const addResearchQuestion = () => {
-    setResearchQuestions([...researchQuestions, ""]);
-  };
-
-  const addHypothesis = () => {
-    setHypotheses([...hypotheses, ""]);
-  };
-
-  const updateResearchQuestion = (index, value) => {
+  function updateResearchQuestion(index, value) {
     const updated = [...researchQuestions];
     updated[index] = value;
-    setResearchQuestions(updated);
-  };
+    onResearchQuestionsChange && onResearchQuestionsChange(updated);
+  }
 
-  const updateHypothesis = (index, value) => {
+  function toggleHypotheses() {
+    if (defineHypothesis) {
+      onHypothesesChange && onHypothesesChange([]);
+    } else {
+      onHypothesesChange && onHypothesesChange(['']);
+    }
+  }
+
+  function addHypothesis() {
+    onHypothesesChange && onHypothesesChange([...hypotheses, '']);
+  }
+
+  function updateHypothesis(index, value) {
     const updated = [...hypotheses];
     updated[index] = value;
-    setHypotheses(updated);
-  };
+    onHypothesesChange && onHypothesesChange(updated);
+  }
 
   return (
     <section className="research-section">
       <div className="research-box">
         <div className="research-header">
-          <h2>Research specification
-             <InfoTooltip text="Provide research-specific details when the evaluation is intended for academic study or publication." />
-
-
+          <h2>
+            Research specification
+            <InfoTooltip text="Provide research-specific details when the evaluation is intended for academic study or publication." />
           </h2>
-         
 
           <label className="toggle-switch">
             <input
               type="checkbox"
               checked={enabled}
-              onChange={() => setEnabled(!enabled)}
+              onChange={() => onEnabledChange && onEnabledChange(!enabled)}
             />
             <span className="slider"></span>
           </label>
@@ -56,15 +66,15 @@ function ResearchSpecification() {
               <p className="section-description">
                 Enter specific details if your evaluation is for research publication.
               </p>
-
               <p className="question-label">
                 What is the main research objective of this evaluation?
               </p>
-
               <input
                 type="text"
                 className="text-input"
                 placeholder="e.g. to test whether competitive gamification increases intrinsic motivation in students."
+                value={objective}
+                onChange={(e) => onObjectiveChange && onObjectiveChange(e.target.value)}
               />
             </div>
 
@@ -73,7 +83,6 @@ function ResearchSpecification() {
               <button className="secondary-btn" onClick={addResearchQuestion}>
                 + Add Research question
               </button>
-
               <div className="dynamic-inputs">
                 {researchQuestions.map((question, index) => (
                   <input
@@ -92,22 +101,19 @@ function ResearchSpecification() {
               <h3>
                 Hypotheses <span className="optional">(optional)</span>
               </h3>
-
               <label className="checkbox-row">
                 <input
                   type="checkbox"
                   checked={defineHypothesis}
-                  onChange={() => setDefineHypothesis(!defineHypothesis)}
+                  onChange={toggleHypotheses}
                 />
                 <span>Define Hypothesis</span>
               </label>
-
               {defineHypothesis && (
                 <>
                   <button className="secondary-btn" onClick={addHypothesis}>
                     + Add hypotheses
                   </button>
-
                   <div className="dynamic-inputs">
                     {hypotheses.map((hypothesis, index) => (
                       <input

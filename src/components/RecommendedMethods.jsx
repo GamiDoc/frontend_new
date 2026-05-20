@@ -1,9 +1,10 @@
 import MethodCard from "./MethodCard";
 
-function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod }) {
+function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod, hasError }) {
   return (
     <section className="recommended-methods-section">
-      <div className="recommended-methods-container">
+      <div className={`recommended-methods-container${hasError ? ' section--error' : ''}`}
+           style={hasError ? { padding: '1rem', borderRadius: 8 } : {}}>
         <h3>Recommended methods based on your selections</h3>
         <p>
           These methods are suggested based on your selected goals, development
@@ -24,6 +25,12 @@ function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod }) {
             />
           ))}
         </div>
+
+        {hasError && (
+          <p className="field-error" style={{ marginTop: '0.75rem' }}>
+            Select at least one method.
+          </p>
+        )}
       </div>
     </section>
   );

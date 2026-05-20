@@ -2,8 +2,11 @@ import projectIcon from '../assets/icons/project.svg';
 import knowledgeIcon from '../assets/icons/knowledge.svg';
 import evaluationIcon from '../assets/icons/evaluation.svg';
 import FeatureCard from './FeatureCard';
+import { useWizard } from '../context/WizardContext';
 
 function FeatureCards() {
+  const { setPage } = useWizard();
+
   return (
     <section className="cards-section">
       <div className="cards-container">
@@ -13,6 +16,7 @@ function FeatureCards() {
           title="Work on your project"
           description="Start a new gamification project or resume your work."
           buttonText="Go to projects"
+          onClick={() => setPage('dashboard')}
         />
 
          <FeatureCard

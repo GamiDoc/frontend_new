@@ -5,13 +5,14 @@ import { projectApi } from '../api/project';
 import { useWizard } from '../context/WizardContext';
 
 function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
-  const { setPage } = useWizard();
+  const { setPage, startWizard, loadProject } = useWizard();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     if (!projectId) return;
@@ -34,6 +35,47 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
       setEditingName(false);
     } catch (e) {
       setError(e.message);
+    }
+  }
+
+  const STEP_TO_PAGE = { 1: 'setup', 2: 'methods', 3: 'instruments', 4: 'evaluation' };
+
+  async function handleGeneratePDF() {
+    setGenerating(true);
+    setError(null);
+    try {
+      await projectApi.generatePDF(projectId);
+      const blob = await projectApi.downloadPDF(projectId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'evaluation-plan.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      const updated = await projectApi.get(projectId);
+      setProject(updated);
+    } catch (e) {
+      setError(e.message || 'Failed to generate PDF.');
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  async function handleDownloadPDF(projectId) {
+    try {
+      const blob = await projectApi.downloadPDF(projectId);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'evaluation-plan.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e.message || 'Download failed.');
     }
   }
 
@@ -90,7 +132,10 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             </div>
 
             <div className="project-detail-actions">
-              <button className="btn btn-primary" onClick={() => setPage('setup')}>+ New Documents</button>
+              <button className="btn btn-primary" onClick={() => loadProject(project)}>
+                ✏️ Edit Evaluation Plan
+              </button>
+              <button className="btn btn-secondary" onClick={startWizard}>+ New Documents</button>
               <button className="btn btn-secondary" onClick={handleDelete} disabled={deleting} style={{ color: '#c00', borderColor: '#c00' }}>
                 {deleting ? 'Deleting…' : '🗑 Delete'}
               </button>
@@ -110,13 +155,25 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                     <span className="project-doc-date">Created {formatDate(project.updatedAt)}</span>
                   </div>
                   <div className="project-doc-actions">
-                    <a href={project.pdfUrl} target="_blank" rel="noreferrer" className="btn btn-secondary">Download PDF</a>
+                    <button className="btn btn-secondary" onClick={() => handleDownloadPDF(project.projectId)}>Download PDF</button>
                   </div>
+                </div>
+              ) : project.wizardStatus?.isComplete ? (
+                <div className="project-doc-empty">
+                  <p>Evaluation plan complete. Generate the PDF document.</p>
+                  <button className="btn btn-primary" onClick={handleGeneratePDF} disabled={generating}>
+                    {generating ? 'Generating…' : '⬇ Generate & Download PDF'}
+                  </button>
                 </div>
               ) : (
                 <div className="project-doc-empty">
-                  <p>No documents yet.</p>
-                  <button className="btn btn-primary" onClick={() => setPage('setup')}>Generate Evaluation Plan</button>
+                  <p>Complete all wizard steps to generate the evaluation plan.</p>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => loadProject(project, STEP_TO_PAGE[project.wizardStatus?.currentStep] || 'setup')}
+                  >
+                    Continue Evaluation →
+                  </button>
                 </div>
               )}
             </div>

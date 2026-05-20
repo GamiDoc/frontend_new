@@ -6,7 +6,7 @@ import { useWizard } from '../context/WizardContext';
 import { useAuth } from '../context/AuthContext';
 
 function Dashboard({ onOpenLogin, onOpenSignup }) {
-  const { setPage, setCurrentProjectId } = useWizard();
+  const { setPage, setCurrentProjectId, startWizard, createProject } = useWizard();
   const { user, logout } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
             <div className="dashboard-card dashboard-card--projects">
               <h2>My Projects</h2>
 
-              <button className="dashboard-new-project-btn" onClick={() => setPage('setup')}>
+              <button className="dashboard-new-project-btn" onClick={user ? createProject : startWizard}>
                 + Create New Project
               </button>
 

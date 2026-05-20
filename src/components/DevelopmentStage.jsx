@@ -7,10 +7,10 @@ const STAGES = [
   "Deployed system",
 ];
 
-function DevelopmentStage({ value = '', onChange }) {
+function DevelopmentStage({ value = '', onChange, hasError }) {
   return (
     <section className="development-stage-section">
-      <div className="development-stage-box">
+      <div className={`development-stage-box${hasError ? ' section--error' : ''}`}>
         <h2 className="section-title">
           Development Stage
           <InfoTooltip text="Select the current maturity level of your system." />
@@ -32,6 +32,10 @@ function DevelopmentStage({ value = '', onChange }) {
             </label>
           ))}
         </div>
+
+        {hasError && (
+          <p className="field-error">Select a development stage.</p>
+        )}
       </div>
     </section>
   );

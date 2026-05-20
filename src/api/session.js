@@ -9,6 +9,8 @@ export const sessionApi = {
     api.post(`/sessions/${sessionId}/wizard/recommendations`, { forStep }),
   generatePDF: (sessionId) =>
     api.post(`/sessions/${sessionId}/generate-pdf`, {}),
+  downloadPDF: (sessionId) =>
+    api.downloadBlob(`/sessions/${sessionId}/download-pdf`),
   convertToProject: (sessionId, name, description) =>
     api.post(`/sessions/${sessionId}/convert`, { name, description }),
 };

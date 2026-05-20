@@ -14,6 +14,7 @@ function ConstraintsSection({
   onTimeChange,
   extraConstraints = [],
   onExtraConstraintsChange,
+  hasParticipantsError,
 }) {
   function toggleExtra(option) {
     if (!onExtraConstraintsChange) return;
@@ -39,14 +40,20 @@ function ConstraintsSection({
           <div className="constraint-options-row">
             {ACCESSIBILITY_OPTIONS.map((option, index) => (
               <label key={index} className="constraint-option">
-                <input type="radio" name="accessibility" />
+                <input
+                  type="radio"
+                  name="accessibility"
+                  checked={accessibility === option}
+                  onChange={() => onAccessibilityChange && onAccessibilityChange(option)}
+                />
                 <span>{option}</span>
               </label>
             ))}
           </div>
         </div>
 
-        <div className="constraint-group">
+        <div className={`constraint-group${hasParticipantsError ? ' section--error' : ''}`}
+             style={hasParticipantsError ? { borderRadius: 8, padding: '12px', marginTop: 28 } : {}}>
           <h3>How many participants can you recruit?</h3>
           <div className="constraint-options-row">
             {PARTICIPANT_OPTIONS.map((option, index) => (
@@ -61,6 +68,9 @@ function ConstraintsSection({
               </label>
             ))}
           </div>
+          {hasParticipantsError && (
+            <p className="field-error">Select a participant range.</p>
+          )}
         </div>
 
         <div className="constraint-group">
@@ -68,7 +78,12 @@ function ConstraintsSection({
           <div className="constraint-options-row">
             {TIME_OPTIONS.map((option, index) => (
               <label key={index} className="constraint-option">
-                <input type="radio" name="time" />
+                <input
+                  type="radio"
+                  name="time"
+                  checked={time === option}
+                  onChange={() => onTimeChange && onTimeChange(option)}
+                />
                 <span>{option}</span>
               </label>
             ))}
@@ -80,7 +95,11 @@ function ConstraintsSection({
           <div className="constraint-options-column">
             {EXTRA_CONSTRAINTS.map((option, index) => (
               <label key={index} className="constraint-option">
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={extraConstraints.includes(option)}
+                  onChange={() => toggleExtra(option)}
+                />
                 <span>{option}</span>
               </label>
             ))}

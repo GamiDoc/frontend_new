@@ -31,7 +31,7 @@ const GOAL_CATEGORIES = [
   },
 ];
 
-function EvaluationGoals({ value = [], onChange }) {
+function EvaluationGoals({ value = [], onChange, hasError }) {
   function handleToggle(option) {
     if (!onChange) return;
     const next = value.includes(option)
@@ -42,7 +42,7 @@ function EvaluationGoals({ value = [], onChange }) {
 
   return (
     <section className="evaluation-goals-section">
-      <div className="evaluation-goals-box">
+      <div className={`evaluation-goals-box${hasError ? ' section--error' : ''}`}>
         <h2>Evaluation Goals</h2>
         <p className="section-description">Define your evaluation goals.</p>
 
@@ -58,6 +58,10 @@ function EvaluationGoals({ value = [], onChange }) {
             />
           ))}
         </div>
+
+        {hasError && (
+          <p className="field-error">Select at least one evaluation goal.</p>
+        )}
       </div>
     </section>
   );

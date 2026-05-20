@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Stepper from '../components/Stepper';
@@ -6,19 +7,26 @@ import SelectionSummary from '../components/SelectionSummary';
 import { useWizard } from '../context/WizardContext';
 import ALL_INSTRUMENTS, { METHOD_NAME_TO_ID } from '../data/instruments';
 
+/* ── Single instrument card – mirrors MethodCard from main ── */
 function InstrumentCard({ instrument, selected, onToggle }) {
   return (
-    <div className={`instrument-card${selected ? ' instrument-card--selected' : ''}`}>
-      <div className="instrument-card-left">
+    <div
+      className={`method-card${selected ? ' method-card--selected' : ''}`}
+      onClick={() => onToggle(instrument.name)}
+      style={{ cursor: 'pointer' }}
+    >
+      <div className="method-card-left">
         <div className="method-card-icon">{instrument.icon}</div>
-        <div className="instrument-card-content">
+        <div className="method-card-content">
           <h4>{instrument.name}</h4>
           <p>{instrument.description}</p>
           <div className="method-card-tags">
-            {instrument.tags.map((t) => <span key={t} className="method-tag">{t}</span>)}
+            {instrument.tags.map((tag) => (
+              <span key={tag} className="method-tag">{tag}</span>
+            ))}
           </div>
-          {instrument.attributes.map((a, i) => (
-            <p key={i} className="instrument-attribute">⚡ {a}</p>
+          {instrument.attributes?.map((attr, i) => (
+            <p key={i} className="instrument-attribute">⚡ {attr}</p>
           ))}
         </div>
       </div>
@@ -27,59 +35,128 @@ function InstrumentCard({ instrument, selected, onToggle }) {
           type="checkbox"
           checked={selected}
           onChange={() => onToggle(instrument.name)}
+          onClick={(e) => e.stopPropagation()}
         />
       </div>
     </div>
   );
 }
 
+/* ── Group of recommended instruments for one method ── */
+function RecommendedInstruments({ methodName, instruments, selectedInstruments, onToggle, hasError }) {
+  if (instruments.length === 0) return null;
+
+  const anySelected = instruments.some((i) => selectedInstruments.includes(i.name));
+
+  return (
+    <section className="recommended-methods-section">
+      <div className={`recommended-methods-container${hasError && !anySelected ? ' section--error' : ''}`}
+           style={hasError && !anySelected ? { padding: '1rem', borderRadius: 8 } : {}}>
+        <h3>Recommended instruments for {methodName}</h3>
+        <p>
+          These instruments are suggested based on your selected evaluation method and project
+          constraints.
+        </p>
+        <div className="methods-list">
+          {instruments.map((inst) => (
+            <InstrumentCard
+              key={inst.id || inst.name}
+              instrument={inst}
+              selected={selectedInstruments.includes(inst.name)}
+              onToggle={onToggle}
+            />
+          ))}
+        </div>
+        {hasError && !anySelected && (
+          <p className="field-error" style={{ marginTop: '0.75rem' }}>
+            Select at least one instrument for {methodName}.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   InstrumentSelection page
+══════════════════════════════════════════════════════════ */
 function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
   const {
-    step1Data, step2Data, step3Data, setStep3Data,
-    step3Recommendations, submitStep3, setPage, loading, error,
+    step1Data,
+    step2Data,
+    step3Data, setStep3Data,
+    step3Recommendations,
+    submitStep3,
+    setPage,
+    loading,
+    error,
   } = useWizard();
 
+  const [selectionError, setSelectionError] = useState(false);
+
+  /* Toggle an instrument in / out of the selection */
   function toggleInstrument(name) {
+    setSelectionError(false);
     setStep3Data((prev) => {
       const sel = prev.selectedInstruments;
-      const next = sel.includes(name) ? sel.filter((i) => i !== name) : [...sel, name];
+      const next = sel.includes(name)
+        ? sel.filter((i) => i !== name)
+        : [...sel, name];
       return { ...prev, selectedInstruments: next };
     });
   }
 
   function handleNext() {
     if (step3Data.selectedInstruments.length === 0) {
-      alert('Please select at least one instrument.');
+      setSelectionError(true);
       return;
     }
+    setSelectionError(false);
     submitStep3();
   }
 
-  // Group recommended instruments by selected method
-  const recommendedIds = step3Recommendations.map((r) => r.id);
-
+  /* Build one group per selected method.
+     Priority: API recommendations (context-aware).
+     Fallback: all local instruments for that method when API has no matches.
+     Always append manually-browsed extras not already shown. */
   const groups = step2Data.selectedMethods.map((methodName) => {
-    const methodId = METHOD_NAME_TO_ID[methodName] || methodName.toLowerCase().replace(/\s+/g, '-');
-    // API-recommended instruments for this method
-    const apiInstruments = step3Recommendations.filter((r) =>
-      ALL_INSTRUMENTS.find((i) => i.id === r.id && i.forMethodIds.includes(methodId))
-    );
-    // Extras selected from browse page not yet in API list
+    const methodId =
+      METHOD_NAME_TO_ID[methodName] || methodName.toLowerCase().replace(/\s+/g, '-');
+
+    // API-recommended instruments that match this method in local data
+    const apiMatched = step3Recommendations
+      .filter((r) => ALL_INSTRUMENTS.find((i) => i.id === r.id && i.forMethodIds.includes(methodId)))
+      .map((r) => ALL_INSTRUMENTS.find((i) => i.id === r.id) || {
+        id: r.id,
+        name: r.name,
+        description: r.description,
+        tags: [r.priority].filter(Boolean),
+        attributes: [],
+        icon: '📋',
+        forMethodIds: [],
+      });
+
+    // If API has no matches for this method, fall back to ALL local instruments for it
+    const base = apiMatched.length > 0
+      ? apiMatched
+      : ALL_INSTRUMENTS.filter((i) => i.forMethodIds.includes(methodId));
+
+    // Manually-browsed extras not already in base
+    const baseIds = new Set(base.map((i) => i.id).filter(Boolean));
+    const baseNames = new Set(base.map((i) => i.name));
     const extras = step3Data.selectedInstruments
-      .filter((name) => {
-        const loc = ALL_INSTRUMENTS.find((i) => i.name === name);
-        return loc && loc.forMethodIds.includes(methodId) && !apiInstruments.find((r) => r.name === name);
-      })
-      .map((name) => ALL_INSTRUMENTS.find((i) => i.name === name));
+      .map((name) => ALL_INSTRUMENTS.find((i) => i.name === name))
+      .filter((inst) =>
+        inst &&
+        inst.forMethodIds.includes(methodId) &&
+        !baseIds.has(inst.id) &&
+        !baseNames.has(inst.name)
+      );
 
-    const allForMethod = [
-      ...apiInstruments.map((r) => ALL_INSTRUMENTS.find((i) => i.id === r.id) || { ...r, tags: [r.priority], attributes: [], icon: '📋', forMethodIds: [] }),
-      ...extras,
-    ].filter(Boolean);
-
-    return { methodName, instruments: allForMethod };
+    return { methodName, instruments: [...base, ...extras].filter(Boolean) };
   });
 
+  const hasAnyInstruments = groups.some((g) => g.instruments.length > 0);
   const summaryConstraints = [step1Data.participants].filter(Boolean);
 
   return (
@@ -96,14 +173,19 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
       <Stepper currentStep={3} />
 
       <main className="method-selection-page">
+        {/* ── Intro ── */}
         <section className="method-selection-intro">
           <div className="method-selection-container">
             <h2>Instrument Selection</h2>
-            <p>Select specific instruments (e.g., questionnaires, protocols, scripts) to operationalize
-              your chosen evaluation methods. The following recommendations are based on your selections.</p>
+            <p>
+              Select specific instruments (e.g. questionnaires, protocols, scripts) to
+              operationalise your chosen evaluation methods. The recommendations below are based
+              on your previous selections.
+            </p>
           </div>
         </section>
 
+        {/* ── Summary of previous steps ── */}
         <SelectionSummary
           goals={step1Data.evaluationGoals}
           developmentStage={step1Data.developmentStage}
@@ -111,55 +193,61 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
           selectedMethods={step2Data.selectedMethods}
         />
 
-        {groups.every((g) => g.instruments.length === 0) && (
+        {/* ── Recommended instruments per method ── */}
+        {!hasAnyInstruments && (
           <section className="recommended-methods-section">
             <div className="recommended-methods-container">
-              <p style={{ color: '#888' }}>No instrument recommendations available. Use "Browse all instruments" below.</p>
+              <p style={{ color: '#888' }}>
+                No instrument recommendations available. Use "Browse all instruments" below to add
+                instruments manually.
+              </p>
             </div>
           </section>
         )}
 
-        {groups.map(({ methodName, instruments }) =>
-          instruments.length === 0 ? null : (
-            <section key={methodName} className="recommended-methods-section">
-              <div className="recommended-methods-container">
-                <h3>Recommended Instruments for {methodName}</h3>
-                <div className="methods-list">
-                  {instruments.map((inst) => (
-                    <InstrumentCard
-                      key={inst.id || inst.name}
-                      instrument={inst}
-                      selected={step3Data.selectedInstruments.includes(inst.name)}
-                      onToggle={toggleInstrument}
-                    />
-                  ))}
-                </div>
-              </div>
-            </section>
-          )
-        )}
+        {groups.map(({ methodName, instruments }) => (
+          <RecommendedInstruments
+            key={methodName}
+            methodName={methodName}
+            instruments={instruments}
+            selectedInstruments={step3Data.selectedInstruments}
+            onToggle={toggleInstrument}
+            hasError={selectionError}
+          />
+        ))}
 
+        {/* ── Alternative instruments box ── */}
         <section className="alternative-methods-section">
           <div className="alternative-methods-box">
             <div className="alternative-methods-header">
               <span className="alternative-methods-arrow">›</span>
               <span>Looking for alternative instruments?</span>
             </div>
-            <button className="alternative-methods-link" onClick={() => setPage('browse-instruments')}>
+            <button
+              className="alternative-methods-link"
+              onClick={() => setPage('browse-instruments')}
+            >
               Browse all instruments
             </button>
-            <button className="alternative-methods-link" style={{ marginLeft: '1.5rem' }} onClick={() => setPage('custom-construct')}>
+            <button
+              className="alternative-methods-link"
+              style={{ marginLeft: '1.5rem' }}
+              onClick={() => setPage('custom-construct')}
+            >
               Custom questionnaire
             </button>
           </div>
         </section>
 
+        {/* ── API / server error ── */}
         {error && <div className="wizard-error">{error}</div>}
 
+        {/* ── Navigation ── */}
         <NavigationButtons
           onBack={() => setPage('methods')}
           onNext={handleNext}
           nextLabel={loading ? 'Saving…' : 'Next: Evaluation'}
+          error={selectionError ? 'Select at least one instrument to continue.' : null}
         />
       </main>
 

@@ -1,4 +1,8 @@
+import { useWizard } from '../context/WizardContext';
+
 function Stepper({ currentStep }) {
+  const { maxStep, navigateToStep } = useWizard();
+
   const steps = [
     "Evaluation Planning",
     "Method Selection",
@@ -13,11 +17,13 @@ function Stepper({ currentStep }) {
           {steps.map((step, index) => {
             const stepNumber = index + 1;
             const isActive = currentStep === stepNumber;
+            const isClickable = stepNumber !== currentStep && stepNumber <= maxStep;
 
             return (
               <div
                 key={index}
-                className={`step-item ${isActive ? "active" : ""}`}
+                className={`step-item ${isActive ? "active" : ""} ${isClickable ? "step-item--clickable" : ""}`}
+                onClick={isClickable ? () => navigateToStep(stepNumber) : undefined}
               >
                 <div className="step-number">{stepNumber}</div>
                 <span className="step-text">{step}</span>

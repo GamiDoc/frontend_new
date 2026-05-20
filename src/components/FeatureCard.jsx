@@ -1,5 +1,5 @@
-function FeatureCard({icon, title,description,buttonText}){
-  
+function FeatureCard({icon, title, description, buttonText, onClick}){
+
     return(
  <div className="feature-card">
           <div className="card-icon">
@@ -7,7 +7,7 @@ function FeatureCard({icon, title,description,buttonText}){
           </div>
           <h3>{title}</h3>
           <p>{description}</p>
-          <button className="btn btn-secondary">{buttonText}</button>
+          <button className="btn btn-secondary" onClick={onClick}>{buttonText}</button>
         </div>
     );
 }
