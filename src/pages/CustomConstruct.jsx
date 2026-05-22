@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
+import ALL_INSTRUMENTS from '../data/instruments';
 import { useWizard } from '../context/WizardContext';
 
-const GOALS = ['Usability', 'Engagement', 'Perceived usefulness', 'Learning outcomes', 'Motivation', 'Fairness/ethics', 'Enjoyment', 'Other'];
+const GOALS = [...new Set(ALL_INSTRUMENTS.flatMap(i => i.coversGoals))].sort();
 
 function CustomConstruct({ onOpenLogin, onOpenSignup }) {
   const { step3Data, setStep3Data, setPage } = useWizard();

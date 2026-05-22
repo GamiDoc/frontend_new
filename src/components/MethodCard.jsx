@@ -1,6 +1,6 @@
 function MethodCard({ title, description, tags, icon, tagClass = '', selected = false, onToggle }) {
   return (
-    <div className={`method-card${selected ? ' method-card--selected' : ''}`}>
+    <div className={`method-card${selected ? ' method-card--selected' : ''}`} onClick={() => onToggle && onToggle(title)} style={{ cursor: 'pointer' }}>
       <div className="method-card-left">
         <div className="method-card-icon">{icon}</div>
 
@@ -23,6 +23,7 @@ function MethodCard({ title, description, tags, icon, tagClass = '', selected = 
           type="checkbox"
           checked={selected}
           onChange={() => onToggle && onToggle(title)}
+          onClick={e => e.stopPropagation()}
         />
       </div>
     </div>

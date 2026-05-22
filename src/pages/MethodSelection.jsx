@@ -6,7 +6,7 @@ import NavigationButtons from "../components/NavigationButtons";
 import SelectionSummary from "../components/SelectionSummary";
 import RecommendedMethods from "../components/RecommendedMethods";
 import AlternativeMethodsBox from "../components/AlternativeMethodsBox";
-import AllMethodsModal from "../components/AllMethodsModal";
+import SelectedMethodsList from "../components/SelectedMethodsList";
 import ALL_METHODS from "../data/methods";
 import { useWizard } from "../context/WizardContext";
 
@@ -20,7 +20,6 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
     loading, error,
   } = useWizard();
 
-  const [showAllMethods, setShowAllMethods] = useState(false);
   const [selectionError, setSelectionError] = useState(false);
 
   function handleToggleMethod(methodName) {
@@ -64,14 +63,6 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
   return (
     <div>
       <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
-
-      {showAllMethods && (
-        <AllMethodsModal
-          selectedMethods={step2Data.selectedMethods}
-          onToggleMethod={handleToggleMethod}
-          onClose={() => setShowAllMethods(false)}
-        />
-      )}
 
       <section className="evaluation-header">
         <div className="container evaluation-header-inner">
@@ -118,7 +109,13 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
           </section>
         )}
 
-        <AlternativeMethodsBox onOpen={() => setShowAllMethods(true)} />
+        <AlternativeMethodsBox onOpen={() => setPage('browse-methods')} />
+
+        <SelectedMethodsList
+          selectedMethods={step2Data.selectedMethods}
+          recommendations={recommendations}
+          onRemove={handleToggleMethod}
+        />
 
         {error && <div className="wizard-error">{error}</div>}
 

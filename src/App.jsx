@@ -8,6 +8,7 @@ import EvaluationSetup from './pages/EvaluationSetup';
 import MethodSelection from './pages/MethodSelection';
 import InstrumentSelection from './pages/InstrumentSelection';
 import BrowseInstruments from './pages/BrowseInstruments';
+import BrowseMethods from './pages/BrowseMethods';
 import CustomConstruct from './pages/CustomConstruct';
 import EvaluationReview from './pages/EvaluationReview';
 import Dashboard from './pages/Dashboard';
@@ -59,6 +60,7 @@ function App() {
       {page === 'methods'            && <MethodSelection {...navProps} />}
       {page === 'instruments'        && <InstrumentSelection {...navProps} />}
       {page === 'browse-instruments' && <BrowseInstruments {...navProps} />}
+      {page === 'browse-methods'     && <BrowseMethods {...navProps} />}
       {page === 'custom-construct'   && <CustomConstruct {...navProps} />}
       {page === 'evaluation'         && <EvaluationReview {...navProps} />}
       {page === 'dashboard'          && <Dashboard {...navProps} />}

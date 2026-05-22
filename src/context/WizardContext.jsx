@@ -122,8 +122,9 @@ export function WizardProvider({ children }) {
   }, [setPage]);
 
   // ── Load an existing project into the wizard for editing ─────────────────
-  const loadProject = useCallback((project, targetPage = 'setup') => {
+  const loadProject = useCallback(async (project, targetPage = 'setup') => {
     const steps = project.wizardStatus?.steps || {};
+    const currentStep = project.wizardStatus?.currentStep || 1;
 
     setEditingProjectId(project.projectId);
     setCurrentProjectId(project.projectId);
@@ -131,11 +132,28 @@ export function WizardProvider({ children }) {
     setStep2Data({ ...STEP2_DEFAULTS, ...(steps['2'] || {}) });
     setStep3Data({ ...STEP3_DEFAULTS, ...(steps['3'] || {}) });
     setStep4Data({ ...STEP4_DEFAULTS, ...(steps['4'] || {}) });
-    setRecommendations([]);
-    setStep3Recommendations([]);
     setPdfUrl(project.pdfUrl || null);
-    setMaxStep(project.wizardStatus?.currentStep || 1);
+    setMaxStep(currentStep);
     setPendingAuthProject(false);
+
+    try {
+      const rec2 = currentStep >= 2
+        ? await projectApi.recommend(project.projectId, 2)
+        : null;
+      setRecommendations(rec2?.recommendations || []);
+    } catch {
+      setRecommendations([]);
+    }
+
+    try {
+      const rec3 = currentStep >= 3
+        ? await projectApi.recommend(project.projectId, 3)
+        : null;
+      setStep3Recommendations(rec3?.recommendations || []);
+    } catch {
+      setStep3Recommendations([]);
+    }
+
     setPage(targetPage);
   }, [setPage]);
 

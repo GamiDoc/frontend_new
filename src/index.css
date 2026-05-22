@@ -1565,6 +1565,32 @@ button {
 .instrument-card-content p  { font-size: 15px; color: #333; line-height: 1.45; margin-bottom: 8px; }
 .instrument-card-left { display: flex; align-items: flex-start; gap: 16px; flex: 1; }
 .instrument-attribute { font-size: 13px; color: #666; margin-top: 5px !important; }
+.instrument-uncovered { font-size: 12px; color: #b05e00; background: #fff8ee; border: 1px solid #f5d89a; border-radius: 5px; padding: 3px 8px; margin-top: 8px !important; display: inline-block; }
+
+.recommended-instruments-header {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none;
+}
+.recommended-instruments-header h3 { margin: 0; }
+.recommended-instruments-arrow {
+  font-size: 28px; color: #888; transition: transform 0.2s; line-height: 1;
+  transform: rotate(90deg);
+}
+.recommended-instruments-arrow--collapsed { transform: rotate(0deg); }
+.recommended-instruments-header:hover .recommended-instruments-arrow { color: #333; }
+
+.instruments-expand-btn {
+  background: none;
+  border: none;
+  color: #384250;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0 2px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.instruments-expand-btn:hover { color: #000; }
 
 /* ═══════════════════════════════════════════════════
    BROWSE PAGE (instruments / methods)
@@ -1650,6 +1676,12 @@ button {
   background: none; border: none; font-size: 13px; color: #555;
   cursor: pointer; text-decoration: underline;
 }
+.browse-instrument-type-tag,
+.browse-method-type-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px;
+  background: #f0f0f0; color: #555; white-space: nowrap; flex-shrink: 0;
+}
+.browse-method-rationale { font-size: 13px; color: #666; font-style: italic; margin-bottom: 6px; }
 .browse-attributes { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
 .browse-attribute  { font-size: 12px; color: #777; }
 .browse-instrument-check { padding-top: 4px; flex-shrink: 0; }
@@ -1808,10 +1840,30 @@ button {
 .dashboard-project-name { font-weight: 600; font-size: 15px; }
 .dashboard-project-desc { font-size: 13px; color: #777; }
 .dashboard-project-date { font-size: 12px; color: #999; }
-.dashboard-view-all {
-  margin-top: 14px; width: 100%; background: none; border: none;
-  font-size: 14px; color: #555; cursor: pointer; text-align: right; text-decoration: underline;
+.dashboard-search-wrapper {
+  position: relative; margin-top: 12px; margin-bottom: 4px;
 }
+.dashboard-search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; color: #aaa; pointer-events: none;
+}
+.dashboard-search-input {
+  width: 100%; padding: 0.55rem 0.75rem 0.55rem 2rem;
+  border: 1.5px solid #ccc; border-radius: 8px; font-size: 0.9rem;
+  box-sizing: border-box; background: #fafafa; color: #333;
+}
+.dashboard-search-input:focus { outline: none; border-color: #111; background: #fff; }
+.dashboard-search-input::placeholder { color: #bbb; }
+.dashboard-pagination {
+  display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 14px;
+}
+.dashboard-pagination-btn {
+  background: none; border: 1px solid #ddd; border-radius: 6px; padding: 4px 12px;
+  font-size: 13px; color: #555; cursor: pointer;
+}
+.dashboard-pagination-btn:disabled { color: #bbb; border-color: #eee; cursor: default; }
+.dashboard-pagination-btn:not(:disabled):hover { background: #f5f5f5; }
+.dashboard-pagination-info { font-size: 13px; color: #777; }
 
 .dashboard-right-col { display: flex; flex-direction: column; gap: 16px; }
 .dashboard-card--info {

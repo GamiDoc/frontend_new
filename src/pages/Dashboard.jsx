@@ -12,6 +12,9 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const PAGE_SIZE = 8;
 
   useEffect(() => {
     if (!user) return;
@@ -25,6 +28,10 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
     if (!iso) return '—';
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
+
+  const filteredProjects = projects.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   function openProject(id) {
     setCurrentProjectId(id);
@@ -65,8 +72,19 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
               {loading && <p style={{ color: '#888', marginTop: '1rem' }}>Loading…</p>}
               {error && <p className="auth-error">{error}</p>}
 
+              <div className="dashboard-search-wrapper">
+                <span className="dashboard-search-icon">&#128269;</span>
+                <input
+                  className="dashboard-search-input"
+                  type="text"
+                  placeholder="Search projects…"
+                  value={searchQuery}
+                  onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                />
+              </div>
+
               <div className="dashboard-project-list">
-                {projects.slice(0, 4).map((p) => (
+                {filteredProjects.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((p) => (
                   <div key={p.projectId} className="dashboard-project-item" onClick={() => openProject(p.projectId)}>
                     <div className="dashboard-project-icon">
                       {p.wizardStatus?.isComplete ? '✅' : '○'}
@@ -80,13 +98,33 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
                     </div>
                   </div>
                 ))}
-                {projects.length === 0 && !loading && (
-                  <p style={{ color: '#888', marginTop: '1rem' }}>No projects yet. Create your first one!</p>
+                {filteredProjects.length === 0 && !loading && (
+                  <p style={{ color: '#888', marginTop: '1rem' }}>
+                    {searchQuery ? 'No projects match your search.' : 'No projects yet. Create your first one!'}
+                  </p>
                 )}
               </div>
 
-              {projects.length > 4 && (
-                <button className="dashboard-view-all">View All Projects &gt;</button>
+              {filteredProjects.length > PAGE_SIZE && (
+                <div className="dashboard-pagination">
+                  <button
+                    className="dashboard-pagination-btn"
+                    onClick={() => setCurrentPage(p => p - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    &lt; Prev
+                  </button>
+                  <span className="dashboard-pagination-info">
+                    {currentPage} / {Math.ceil(filteredProjects.length / PAGE_SIZE)}
+                  </span>
+                  <button
+                    className="dashboard-pagination-btn"
+                    onClick={() => setCurrentPage(p => p + 1)}
+                    disabled={currentPage === Math.ceil(filteredProjects.length / PAGE_SIZE)}
+                  >
+                    Next &gt;
+                  </button>
+                </div>
               )}
             </div>
 

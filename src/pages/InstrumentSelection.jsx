@@ -8,7 +8,11 @@ import { useWizard } from '../context/WizardContext';
 import ALL_INSTRUMENTS, { METHOD_NAME_TO_ID } from '../data/instruments';
 
 /* ── Single instrument card – mirrors MethodCard from main ── */
-function InstrumentCard({ instrument, selected, onToggle }) {
+function InstrumentCard({ instrument, selected, onToggle, userGoals = [] }) {
+  const uncoveredGoals = userGoals.filter(
+    (g) => !(instrument.coversGoals || []).includes(g)
+  );
+
   return (
     <div
       className={`method-card${selected ? ' method-card--selected' : ''}`}
@@ -28,6 +32,11 @@ function InstrumentCard({ instrument, selected, onToggle }) {
           {instrument.attributes?.map((attr, i) => (
             <p key={i} className="instrument-attribute">⚡ {attr}</p>
           ))}
+          {uncoveredGoals.length > 0 && (
+            <p className="instrument-uncovered">
+              ⚠️ Does not measure: {uncoveredGoals.join(', ')}
+            </p>
+          )}
         </div>
       </div>
       <div className="method-card-right">
@@ -42,35 +51,63 @@ function InstrumentCard({ instrument, selected, onToggle }) {
   );
 }
 
+const COLLAPSED_COUNT = 3;
+
 /* ── Group of recommended instruments for one method ── */
-function RecommendedInstruments({ methodName, instruments, selectedInstruments, onToggle, hasError }) {
+function RecommendedInstruments({ methodName, instruments, selectedInstruments, onToggle, hasError, userGoals }) {
+  const [expanded, setExpanded] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
   if (instruments.length === 0) return null;
 
   const anySelected = instruments.some((i) => selectedInstruments.includes(i.name));
+  const visible = expanded ? instruments : instruments.slice(0, COLLAPSED_COUNT);
+  const hiddenCount = instruments.length - COLLAPSED_COUNT;
 
   return (
     <section className="recommended-methods-section">
       <div className={`recommended-methods-container${hasError && !anySelected ? ' section--error' : ''}`}
            style={hasError && !anySelected ? { padding: '1rem', borderRadius: 8 } : {}}>
-        <h3>Recommended instruments for {methodName}</h3>
-        <p>
-          These instruments are suggested based on your selected evaluation method and project
-          constraints.
-        </p>
-        <div className="methods-list">
-          {instruments.map((inst) => (
-            <InstrumentCard
-              key={inst.id || inst.name}
-              instrument={inst}
-              selected={selectedInstruments.includes(inst.name)}
-              onToggle={onToggle}
-            />
-          ))}
+        <div className="recommended-instruments-header" onClick={() => setCollapsed(v => !v)}>
+          <h3>Recommended instruments for {methodName}</h3>
+          <span className={`recommended-instruments-arrow${collapsed ? ' recommended-instruments-arrow--collapsed' : ''}`}>
+            ›
+          </span>
         </div>
-        {hasError && !anySelected && (
-          <p className="field-error" style={{ marginTop: '0.75rem' }}>
-            Select at least one instrument for {methodName}.
-          </p>
+
+        {!collapsed && (
+          <>
+            <p>
+              These instruments are suggested based on your selected evaluation method and project
+              constraints.
+            </p>
+            <div className="methods-list">
+              {visible.map((inst) => (
+                <InstrumentCard
+                  key={inst.id || inst.name}
+                  instrument={inst}
+                  selected={selectedInstruments.includes(inst.name)}
+                  onToggle={onToggle}
+                  userGoals={userGoals}
+                />
+              ))}
+            </div>
+
+            {hiddenCount > 0 && (
+              <button
+                className="instruments-expand-btn"
+                onClick={() => setExpanded((v) => !v)}
+              >
+                {expanded ? '↑ Show less' : `↓ Show ${hiddenCount} more instruments`}
+              </button>
+            )}
+
+            {hasError && !anySelected && (
+              <p className="field-error" style={{ marginTop: '0.75rem' }}>
+                Select at least one instrument for {methodName}.
+              </p>
+            )}
+          </>
         )}
       </div>
     </section>
@@ -115,10 +152,13 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
     submitStep3();
   }
 
+  const userGoals = step1Data.evaluationGoals || [];
+
   /* Build one group per selected method.
      Priority: API recommendations (context-aware).
      Fallback: all local instruments for that method when API has no matches.
-     Always append manually-browsed extras not already shown. */
+     Always append manually-browsed extras not already shown.
+     Sorted by how many of the user's evaluation goals each instrument covers (desc). */
   const groups = step2Data.selectedMethods.map((methodName) => {
     const methodId =
       METHOD_NAME_TO_ID[methodName] || methodName.toLowerCase().replace(/\s+/g, '-');
@@ -134,6 +174,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
         attributes: [],
         icon: '📋',
         forMethodIds: [],
+        coversGoals: [],
       });
 
     // If API has no matches for this method, fall back to ALL local instruments for it
@@ -153,7 +194,23 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
         !baseNames.has(inst.name)
       );
 
-    return { methodName, instruments: [...base, ...extras].filter(Boolean) };
+    let all = [...base, ...extras].filter(Boolean);
+
+    // Remove instruments that cover none of the user's goals (when goals are known).
+    // Instruments with no coversGoals data are always kept (e.g. protocol instruments).
+    if (userGoals.length > 0) {
+      all = all.filter((inst) => {
+        const cg = inst.coversGoals || [];
+        return cg.length === 0 || cg.some((g) => userGoals.includes(g));
+      });
+    }
+
+    // Sort: instruments covering more of the user's goals rank higher
+    const coverageScore = (inst) =>
+      (inst.coversGoals || []).filter((g) => userGoals.includes(g)).length;
+    all.sort((a, b) => coverageScore(b) - coverageScore(a));
+
+    return { methodName, instruments: all };
   });
 
   const hasAnyInstruments = groups.some((g) => g.instruments.length > 0);
@@ -213,6 +270,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
             selectedInstruments={step3Data.selectedInstruments}
             onToggle={toggleInstrument}
             hasError={selectionError}
+            userGoals={userGoals}
           />
         ))}
 
@@ -238,6 +296,40 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
             </button>
           </div>
         </section>
+
+        {/* ── Selected instruments summary ── */}
+        {step3Data.selectedInstruments.length > 0 && (
+          <section className="selected-methods-section">
+            <div className="selected-methods-container">
+              <h3>Your selected instruments</h3>
+              <div className="methods-list">
+                {step3Data.selectedInstruments.map((name) => {
+                  const inst = ALL_INSTRUMENTS.find((i) => i.name === name);
+                  return (
+                    <div key={name} className="method-card method-card--selected">
+                      <div className="method-card-left">
+                        <div className="method-card-icon">{inst?.icon || '📋'}</div>
+                        <div className="method-card-content">
+                          <h4>{name}</h4>
+                          {inst?.description && <p>{inst.description}</p>}
+                        </div>
+                      </div>
+                      <div className="method-card-right">
+                        <button
+                          className="selected-method-remove"
+                          onClick={() => toggleInstrument(name)}
+                          title="Remove"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── API / server error ── */}
         {error && <div className="wizard-error">{error}</div>}

@@ -8,8 +8,13 @@ const GOAL_CATEGORIES = [
   },
   {
     title: "Hedonic UX",
-    description: "Enjoyment and aesthetic appeal.",
+    description: "Enjoyment, novelty, and aesthetic appeal.",
     options: ["Novelty / Curiosity", "Aesthetic & Attractiveness"],
+  },
+  {
+    title: "Emotional Experience",
+    description: "Affective states and psychological pressure during interaction.",
+    options: ["Affective Experience", "Tension / Pressure"],
   },
   {
     title: "Psychological Needs",
@@ -21,12 +26,26 @@ const GOAL_CATEGORIES = [
     ],
   },
   {
+    title: "Motivational Dynamics",
+    description: "Intrinsic vs. extrinsic motivation and behavioural impact.",
+    options: ["Motivation Spectrum", "Behavioral Impact"],
+  },
+  {
     title: "Cognitive Engagement",
-    description: "Attention, immersion, and focus.",
+    description: "Attention, immersion, progress, and flow.",
     options: [
       "Progress / Accomplishment",
       "Engagement",
       "Immersion / Flow / Focused Attention",
+    ],
+  },
+  {
+    title: "Eudaimonic Experience",
+    description: "Meaning, purpose, and transcendence.",
+    options: [
+      "Personal Meaning & Relevance",
+      "Purpose & Values Alignment",
+      "Self-Transcendence",
     ],
   },
 ];
