@@ -1323,7 +1323,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
+  transform: translateZ(0);
 }
 
 .auth-modal {
@@ -2098,7 +2099,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
+  transform: translateZ(0);
   padding: 24px;
 }
 
@@ -2360,6 +2362,16 @@ button {
   .all-methods-modal {
     max-width: calc(100% - 32px);
     max-height: 90vh;
+  }
+
+  /* ── Learn More modal ────────────────────────────── */
+  .lm-overlay {
+    padding: 16px;
+  }
+  .lm-modal {
+    width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
   }
 
   /* ── Misc grids → single column ─────────────────── */

@@ -14,7 +14,7 @@ function InfoTooltip({ text, learnMore }) {
             <a
               href="#"
               className="tooltip-link"
-              onClick={e => { e.preventDefault(); setOpen(true); }}
+              onClick={e => { e.preventDefault(); e.currentTarget.blur(); setOpen(true); }}
             >
               {' '}Learn more
             </a>
