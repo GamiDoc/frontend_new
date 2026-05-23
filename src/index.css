@@ -4,6 +4,10 @@
   padding: 0;
 }
 
+html {
+  overflow-x: clip;
+}
+
 body {
   font-family: Arial, sans-serif;
   background: #f5f2f2;
@@ -1324,7 +1328,6 @@ button {
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  transform: translateZ(0);
 }
 
 .auth-modal {
@@ -2100,7 +2103,6 @@ button {
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  transform: translateZ(0);
   padding: 24px;
 }
 
@@ -2269,6 +2271,27 @@ button {
     margin-right: 16px;
   }
   .wizard-error { margin: 0.75rem 16px; }
+
+  /* ── Info tooltip: pin to viewport bottom on mobile ─ */
+  .info-wrapper {
+    position: static;
+  }
+  .tooltip-box {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 24px;
+    top: auto;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    transform: none;
+    z-index: 9998;
+    text-align: left;
+  }
+  .tooltip-box::before {
+    display: none;
+  }
 
   /* ── Goals grid → single column ─────────────────── */
   .goals-grid { grid-template-columns: 1fr; gap: 16px; }
