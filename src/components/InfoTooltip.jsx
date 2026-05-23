@@ -1,15 +1,35 @@
-function InfoTooltip({ text }) {
-  return (
-    <span className="info-wrapper">
-      <span className="info-icon">i</span>
+import { useState } from 'react';
+import LearnMoreModal from './LearnMoreModal';
 
-      <span className="tooltip-box">
-        {text}{" "}
-        <a href="#" className="tooltip-link">
-          Learn more
-        </a>
+function InfoTooltip({ text, learnMore }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <span className="info-wrapper">
+        <span className="info-icon">i</span>
+        <span className="tooltip-box">
+          {text}
+          {learnMore && (
+            <a
+              href="#"
+              className="tooltip-link"
+              onClick={e => { e.preventDefault(); setOpen(true); }}
+            >
+              {' '}Learn more
+            </a>
+          )}
+        </span>
       </span>
-    </span>
+      {open && learnMore && (
+        <LearnMoreModal
+          title={learnMore.title}
+          intro={learnMore.intro}
+          items={learnMore.items}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
   );
 }
 

@@ -7,13 +7,27 @@ const STAGES = [
   "Deployed system",
 ];
 
+const DEVELOPMENT_STAGE_INFO = {
+  title: "Development Stage",
+  intro: "The development stage defines how mature your gamified system is. It directly shapes which evaluation methods are meaningful and feasible — different stages call for different approaches.",
+  items: [
+    { name: "Concept / Idea", desc: "Early exploration phase. Expert reviews, personas, and interviews are ideal for validating assumptions before any resource is committed to building." },
+    { name: "Low-fidelity prototype", desc: "Paper sketches or simple wireframes. Think-aloud sessions and focus groups can surface usability issues at very low cost." },
+    { name: "High-fidelity prototype", desc: "Interactive, near-final interfaces. Structured usability tests and validated questionnaires become applicable for the first time." },
+    { name: "Deployed system", desc: "Live product with real users. Longitudinal methods like diary studies, surveys, and behavioral analytics capture actual usage patterns and satisfaction over time." },
+  ],
+};
+
 function DevelopmentStage({ value = '', onChange, hasError }) {
   return (
     <section className="development-stage-section">
       <div className={`development-stage-box${hasError ? ' section--error' : ''}`}>
         <h2 className="section-title">
           Development Stage
-          <InfoTooltip text="Select the current maturity level of your system." />
+          <InfoTooltip
+            text="The development stage defines how mature your system is and determines which evaluation methods are appropriate."
+            learnMore={DEVELOPMENT_STAGE_INFO}
+          />
         </h2>
         <p className="section-description">
           What is the current stage of the system?

@@ -1,6 +1,6 @@
 function NavigationButtons({ onBack, onNext, nextLabel = 'Next', error }) {
   return (
-    <div>
+    <>
       <div className="nav-buttons">
         <button className="btn-secondary" onClick={onBack}>
           Back
@@ -9,8 +9,8 @@ function NavigationButtons({ onBack, onNext, nextLabel = 'Next', error }) {
           {nextLabel}
         </button>
       </div>
-      {error && <p className="nav-error" style={{ textAlign: 'center', marginTop: '0.5rem' }}>{error}</p>}
-    </div>
+      {error && <p className="nav-error nav-error--right">{error}</p>}
+    </>
   );
 }
 

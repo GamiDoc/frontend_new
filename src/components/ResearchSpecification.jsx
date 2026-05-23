@@ -1,5 +1,16 @@
 import InfoTooltip from "./InfoTooltip";
 
+const RESEARCH_INFO = {
+  title: "Research Specification",
+  intro: "Enable this section when your evaluation is intended for academic research or publication — a peer-reviewed paper, thesis, or conference submission — and requires formal methodology.",
+  items: [
+    { name: "Research Objective", desc: "A clear, concise statement of what the study aims to demonstrate or discover. It aligns all design decisions: method selection, instrument choice, and sample size." },
+    { name: "Research Questions (RQ)", desc: "Specific, answerable questions that frame the inquiry. Good RQs are focused and directly testable with the chosen methods." },
+    { name: "Hypotheses", desc: "Formal predictions about expected outcomes, typically formulated as H0 (null) and H1 (alternative) pairs. Required for confirmatory studies that use inferential statistics." },
+    { name: "Sample size considerations", desc: "For academic work, sample size should be justified via power analysis (e.g., G*Power). Standard targets: power ≥ 0.80, significance level α = 0.05. Effect size estimates from prior literature guide the required number of participants." },
+  ],
+};
+
 function ResearchSpecification({
   enabled = false,
   onEnabledChange,
@@ -46,7 +57,10 @@ function ResearchSpecification({
         <div className="research-header">
           <h2>
             Research specification
-            <InfoTooltip text="Provide research-specific details when the evaluation is intended for academic study or publication." />
+            <InfoTooltip
+              text="Enable this when your evaluation is intended for academic research or publication. Define objectives, research questions, and hypotheses."
+              learnMore={RESEARCH_INFO}
+            />
           </h2>
 
           <label className="toggle-switch">

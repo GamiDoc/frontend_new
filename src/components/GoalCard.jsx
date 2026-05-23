@@ -1,11 +1,11 @@
 import InfoTooltip from "./InfoTooltip";
 
-function GoalCard({ title, description, options, selectedOptions = [], onToggle }) {
+function GoalCard({ title, description, options, selectedOptions = [], onToggle, learnMore }) {
   return (
     <div className="goal-card">
       <h3>
         {title}
-        <InfoTooltip text={description} />
+        <InfoTooltip text={description} learnMore={learnMore} />
       </h3>
       <p className="goal-card-description">{description}</p>
 

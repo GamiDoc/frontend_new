@@ -5,6 +5,17 @@ const PARTICIPANT_OPTIONS = ["< 10", "10-30", "30-100", "100+"];
 const TIME_OPTIONS = ["1 week", "1-2 weeks", "1 month", "3+ months"];
 const EXTRA_CONSTRAINTS = ["Technical limitation", "Sensitive population"];
 
+const CONSTRAINTS_INFO = {
+  title: "Evaluation Constraints",
+  intro: "Constraints are practical limitations that shape which evaluation methods are feasible for your study. Identifying them early prevents selecting methods that cannot be realistically executed.",
+  items: [
+    { name: "Participant access", desc: "The ease of reaching your target users determines whether lab studies, remote sessions, or self-administered instruments are realistic. Difficult-to-access populations (e.g., clinical users, children, domain experts) require adapted recruitment strategies." },
+    { name: "Sample size", desc: "The number of participants directly affects statistical reliability. Fewer than 10 participants suits qualitative methods like interviews or think-aloud; 30 or more enables quantitative analyses with validated questionnaires." },
+    { name: "Time", desc: "Study duration constrains the depth of data you can collect. Short windows (1 week) suit quick usability tests; longitudinal designs (3+ months) are needed to capture behavioral change or learning effects over time." },
+    { name: "Technical and ethical constraints", desc: "Sensitive populations (e.g., minors, patients) require additional ethical approval and limit data collection approaches. Technical limitations may restrict logging, screen recording, or the use of specific instruments." },
+  ],
+};
+
 function ConstraintsSection({
   participants = '',
   onParticipantsChange,
@@ -29,7 +40,10 @@ function ConstraintsSection({
       <div className="constraints-box">
         <h2 className="section-title">
           Constraints
-          <InfoTooltip text="Define practical limitations that may affect your evaluation design." />
+          <InfoTooltip
+            text="Practical constraints — participants, time, and ethics — shape which evaluation methods are feasible for your study."
+            learnMore={CONSTRAINTS_INFO}
+          />
         </h2>
         <p className="section-description">
           Are there any constraints affecting evaluation?
