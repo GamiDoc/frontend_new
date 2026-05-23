@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 function LearnMoreModal({ title, intro, items, onClose }) {
   useEffect(() => {
@@ -7,7 +8,7 @@ function LearnMoreModal({ title, intro, items, onClose }) {
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="lm-overlay" onClick={onClose}>
       <div className="lm-modal" onClick={e => e.stopPropagation()}>
         <div className="lm-header">
@@ -28,7 +29,8 @@ function LearnMoreModal({ title, intro, items, onClose }) {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

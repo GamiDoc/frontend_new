@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 
 function AuthModal({ mode: initialMode, onClose, onSuccess }) {
@@ -75,7 +76,7 @@ function AuthModal({ mode: initialMode, onClose, onSuccess }) {
     setPassword('');
   }
 
-  return (
+  return createPortal(
     <div className="auth-modal-overlay" onClick={onClose}>
       <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
         <button className="auth-modal-close" onClick={onClose}>✕</button>
@@ -121,7 +122,8 @@ function AuthModal({ mode: initialMode, onClose, onSuccess }) {
           )}
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

@@ -1,7 +1,8 @@
+import { createPortal } from 'react-dom';
 import ALL_METHODS from '../data/methods';
 
 function AllMethodsModal({ selectedMethods = [], onToggleMethod, onClose }) {
-  return (
+  return createPortal(
     <div className="auth-modal-overlay" onClick={onClose}>
       <div className="all-methods-modal" onClick={(e) => e.stopPropagation()}>
 
@@ -55,7 +56,8 @@ function AllMethodsModal({ selectedMethods = [], onToggleMethod, onClose }) {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
