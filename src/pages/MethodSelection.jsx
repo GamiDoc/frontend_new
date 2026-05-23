@@ -6,7 +6,6 @@ import NavigationButtons from "../components/NavigationButtons";
 import SelectionSummary from "../components/SelectionSummary";
 import RecommendedMethods from "../components/RecommendedMethods";
 import AlternativeMethodsBox from "../components/AlternativeMethodsBox";
-import SelectedMethodsList from "../components/SelectedMethodsList";
 import ALL_METHODS from "../data/methods";
 import { useWizard } from "../context/WizardContext";
 
@@ -110,12 +109,6 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
         )}
 
         <AlternativeMethodsBox onOpen={() => setPage('browse-methods')} />
-
-        <SelectedMethodsList
-          selectedMethods={step2Data.selectedMethods}
-          recommendations={recommendations}
-          onRemove={handleToggleMethod}
-        />
 
         {error && <div className="wizard-error">{error}</div>}
 

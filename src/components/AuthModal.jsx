@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-function AuthModal({ mode: initialMode, onClose }) {
+function AuthModal({ mode: initialMode, onClose, onSuccess }) {
   const { login, register } = useAuth();
   const [mode, setMode] = useState(initialMode);
   const [email, setEmail] = useState('');
@@ -48,7 +48,7 @@ function AuthModal({ mode: initialMode, onClose }) {
       } else {
         await register(email, password);
       }
-      onClose();
+      (onSuccess || onClose)();
     } catch (err) {
       const code = err.code;
       if (code === 'INVALID_CREDENTIALS') {

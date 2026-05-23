@@ -16,7 +16,7 @@ function Hero({ onStart, loading }) {
           onClick={onStart}
           disabled={loading}
         >
-          {loading ? 'Starting…' : 'Start a Project'}
+          {loading ? 'Starting…' : 'Start Evaluation Planning'}
         </button>
       </div>
     </section>

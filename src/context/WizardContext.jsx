@@ -163,7 +163,7 @@ export function WizardProvider({ children }) {
     setError(null);
     try {
       if (pendingAuthProject) {
-        const project = await projectApi.create(step1Data.projectType || 'New Project', '');
+        const project = await projectApi.create(step1Data.projectType || 'Evaluation Plan', step1Data.projectType || '');
         setEditingProjectId(project.projectId);
         setCurrentProjectId(project.projectId);
         setPendingAuthProject(false);

@@ -1833,6 +1833,7 @@ button {
 }
 .dashboard-project-item:last-child { border-bottom: none; }
 .dashboard-project-item:hover { background: #fafafa; }
+.dashboard-project-item:hover .dashboard-project-name { text-decoration: underline; }
 .dashboard-project-icon { font-size: 20px; flex-shrink: 0; }
 .dashboard-project-info {
   display: flex; flex-direction: column; gap: 2px; flex: 1;
@@ -2061,4 +2062,219 @@ button {
   font-size: 0.9rem;
   color: #555;
   font-weight: 500;
+}
+
+/* =====================================================
+   HAMBURGER BUTTON — hidden on desktop
+   ===================================================== */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+/* =====================================================
+   MOBILE — max-width 640px (phones)
+   ===================================================== */
+@media (max-width: 640px) {
+
+  /* ── Navbar ──────────────────────────────────────── */
+  .custom-navbar {
+    position: relative;
+    height: auto;
+    min-height: 56px;
+    padding: 10px 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .nav-hamburger { display: flex; }
+  .nav-actions {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    padding: 12px 0 10px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    margin-top: 10px;
+  }
+  .nav-actions--open { display: flex; }
+  .nav-actions .btn {
+    width: 100%;
+    padding: 12px 16px;
+    min-height: 44px;
+    text-align: center;
+  }
+  .nav-user-email { font-size: 0.9rem; padding: 4px 0; }
+
+  /* ── Hero ────────────────────────────────────────── */
+  .hero    { padding: 40px 16px; }
+  .hero h1 { font-size: 28px; line-height: 1.25; }
+  .hero p  { font-size: 17px; }
+
+  /* ── Feature cards ───────────────────────────────── */
+  .cards-section { padding: 40px 16px; }
+  .feature-card  { width: 100%; min-height: auto; }
+
+  /* ── Info section ────────────────────────────────── */
+  .info-section   { padding: 48px 16px; }
+  .info-container { padding: 0; flex-direction: column; gap: 32px; }
+  .info-text      { min-width: 0; }
+  .info-visual    { min-width: 0; width: 100%; }
+  .visual-box     { width: 100%; height: auto; min-height: 120px; }
+  .info-text h2   { font-size: 24px; }
+  .info-text h3   { font-size: 22px; }
+  .info-paragraph { font-size: 17px; max-width: 100%; }
+  .info-text li   { font-size: 17px; }
+  .info-title     { padding: 0 16px; font-size: 26px; }
+  .page-title     { padding: 16px 16px 0; font-size: 22px; }
+  .form-container { padding: 0 16px 60px; }
+
+  /* ── Footer ──────────────────────────────────────── */
+  .footer-container { flex-direction: column; gap: 24px; }
+  .footer-column    { min-width: 0; }
+
+  /* ── Stepper ─────────────────────────────────────── */
+  .stepper-box { padding: 0 12px; }
+  .stepper-labels { gap: 4px; }
+  .step-item  { font-size: 13px; gap: 5px; }
+  .step-item:not(.active) .step-text { display: none; }
+
+  /* ── Evaluation page header ──────────────────────── */
+  .evaluation-header-inner { padding: 0 16px; }
+  .evaluation-header h1    { font-size: 20px; }
+
+  /* ── Wizard boxes: add horizontal margin ─────────── */
+  .evaluation-goals-box,
+  .development-stage-box,
+  .constraints-box,
+  .research-box {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  .wizard-error { margin: 0.75rem 16px; }
+
+  /* ── Goals grid → single column ─────────────────── */
+  .goals-grid { grid-template-columns: 1fr; gap: 16px; }
+
+  /* ── Development stage grid → single column ──────── */
+  .development-stage-grid { grid-template-columns: 1fr; gap: 0; }
+
+  /* ── Checkboxes / radios: bigger tap area ────────── */
+  .goal-option input,
+  .constraint-option input,
+  .development-option input {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* ── Nav buttons ─────────────────────────────────── */
+  .nav-buttons {
+    padding: 0 16px;
+    justify-content: space-between;
+  }
+  .nav-buttons .btn-primary {
+    min-width: 0;
+    flex: 1;
+    max-width: 72%;
+    font-size: 14px;
+  }
+
+  /* ── Method selection containers ─────────────────── */
+  .method-selection-intro  { padding: 20px 0 8px; }
+  .method-selection-container { padding: 0 16px; }
+  .selection-summary-box,
+  .recommended-methods-container,
+  .alternative-methods-box { margin: 0 16px; }
+
+  /* Summary row → stack label above value */
+  .selection-summary-row   { flex-direction: column; gap: 8px; }
+  .selection-summary-label { width: auto; }
+
+  /* Method card → stack content above checkbox */
+  .method-card { flex-direction: column; gap: 12px; }
+  .method-card-right { align-self: flex-end; }
+  .method-card-right input { width: 22px; height: 22px; }
+
+  /* ── Browse page ─────────────────────────────────── */
+  .browse-page   { padding: 16px 16px 40px; }
+  .browse-layout { grid-template-columns: 1fr; gap: 20px; }
+
+  /* ── Evaluation review (step 4) ───────────────────── */
+  .eval-summary-box,
+  .eval-plan-box { margin-left: 16px; margin-right: 16px; }
+  .eval-nextsteps-section .method-selection-container { padding: 0 16px; }
+
+  .eval-plan-box    { flex-direction: column; gap: 12px; }
+  .eval-plan-icon   { font-size: 28px; }
+  .eval-plan-actions { flex-direction: column; gap: 8px; }
+  .eval-btn-download,
+  .eval-btn-save    { width: 100%; text-align: center; min-height: 44px; }
+
+  .eval-summary-row { flex-wrap: wrap; gap: 6px; }
+  .eval-summary-key { min-width: 80px; }
+
+  .eval-name-input-row { flex-direction: column; align-items: stretch; }
+  .eval-name-input-row .btn {
+    width: 100%;
+    margin-left: 0 !important;
+    min-height: 44px;
+  }
+
+  /* ── Dashboard ───────────────────────────────────── */
+  .dashboard-main      { padding: 24px 0; }
+  .dashboard-container { padding: 0 16px; }
+  .dashboard-grid      { grid-template-columns: 1fr; }
+  .dashboard-welcome   { font-size: 22px; }
+
+  /* ── Project detail ──────────────────────────────── */
+  .project-detail-main      { padding: 24px 0; }
+  .project-detail-container { padding: 0 16px; }
+  .project-detail-body      { grid-template-columns: 1fr; }
+  .project-detail-header    { flex-direction: column; gap: 12px; }
+  .project-detail-title     { font-size: 20px; }
+  .project-detail-actions   { flex-wrap: wrap; }
+
+  /* ── Auth modal ──────────────────────────────────── */
+  .auth-modal {
+    margin: 16px;
+    max-width: calc(100% - 32px);
+    padding: 1.5rem;
+  }
+
+  /* ── All-methods modal ───────────────────────────── */
+  .all-methods-modal {
+    max-width: calc(100% - 32px);
+    max-height: 90vh;
+  }
+
+  /* ── Misc grids → single column ─────────────────── */
+  .checkbox-group           { grid-template-columns: 1fr; }
+  .custom-construct-goals   { grid-template-columns: 1fr; }
+  .custom-construct-actions { flex-direction: column; gap: 8px; }
+
+  /* ── General: ensure all buttons are tap-friendly ── */
+  .btn { min-height: 44px; }
+}
+
+/* =====================================================
+   TABLET — max-width 768px (only where needed)
+   ===================================================== */
+@media (max-width: 768px) {
+  /* Sidebar collapses early on small tablets */
+  .browse-layout { grid-template-columns: 1fr; gap: 20px; }
 }

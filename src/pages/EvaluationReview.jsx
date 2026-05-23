@@ -26,12 +26,35 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Save-to-dashboard state
+  // Save-to-dashboard state (anonymous flow)
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [saved, setSaved] = useState(false);
   const [showNameInput, setShowNameInput] = useState(false);
   const [projectName, setProjectName] = useState(step1Data.projectType || '');
+
+  // Rename state (editingProjectId flow)
+  const [showRename, setShowRename] = useState(false);
+  const [renameName, setRenameName] = useState(step1Data.projectType || '');
+  const [renaming, setRenaming] = useState(false);
+  const [renameError, setRenameError] = useState(null);
+  const [renameDone, setRenameDone] = useState(false);
+
+  async function handleRename() {
+    const name = renameName.trim();
+    if (!name) return;
+    setRenaming(true);
+    setRenameError(null);
+    try {
+      await projectApi.update(editingProjectId, name, step1Data.projectType || '');
+      setRenameDone(true);
+      setShowRename(false);
+    } catch (e) {
+      setRenameError(e.message || 'Failed to rename project.');
+    } finally {
+      setRenaming(false);
+    }
+  }
 
   async function handleSave() {
     if (!user) { onOpenLogin(); return; }
@@ -210,10 +233,48 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                 </button>
 
                 {editingProjectId ? (
-                  /* Editing existing project — already saved, just go back */
-                  <button className="btn eval-btn-save" onClick={() => setPage('dashboard')}>
-                    ⊞ Back to dashboard
-                  </button>
+                  /* Editing existing project — rename + go back */
+                  <>
+                    {showRename ? (
+                      <div className="eval-name-input-row">
+                        <input
+                          className="project-type-input"
+                          type="text"
+                          placeholder="Project name"
+                          value={renameName}
+                          onChange={(e) => setRenameName(e.target.value)}
+                          autoFocus
+                        />
+                        <button
+                          className="btn eval-btn-save"
+                          onClick={handleRename}
+                          disabled={renaming}
+                          style={{ marginLeft: '0.5rem' }}
+                        >
+                          {renaming ? 'Saving…' : 'Confirm'}
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => { setShowRename(false); setRenameError(null); }}
+                          style={{ marginLeft: '0.5rem' }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => { setShowRename(true); setRenameDone(false); }}
+                      >
+                        ✏️ Rename project
+                      </button>
+                    )}
+                    {renameError && <p className="auth-error" style={{ marginTop: '0.5rem' }}>{renameError}</p>}
+                    {renameDone && <p style={{ color: '#4caf50', marginTop: '0.5rem' }}>✅ Project renamed.</p>}
+                    <button className="btn eval-btn-save" onClick={() => setPage('dashboard')}>
+                      ⊞ Back to dashboard
+                    </button>
+                  </>
                 ) : !user ? (
                   <button className="btn eval-btn-save" onClick={onOpenLogin}>
                     Log in to save

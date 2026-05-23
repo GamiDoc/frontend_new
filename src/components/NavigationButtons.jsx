@@ -1,16 +1,15 @@
 function NavigationButtons({ onBack, onNext, nextLabel = 'Next', error }) {
   return (
-    <div className="nav-buttons">
-      <button className="btn-secondary" onClick={onBack}>
-        Back
-      </button>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        {error && <span className="nav-error">{error}</span>}
+    <div>
+      <div className="nav-buttons">
+        <button className="btn-secondary" onClick={onBack}>
+          Back
+        </button>
         <button className="btn-primary" onClick={onNext}>
           {nextLabel}
         </button>
       </div>
+      {error && <p className="nav-error" style={{ textAlign: 'center', marginTop: '0.5rem' }}>{error}</p>}
     </div>
   );
 }

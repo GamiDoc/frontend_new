@@ -41,19 +41,20 @@ function ProjectDetailWrapper({ onOpenLogin, onOpenSignup }) {
 }
 
 function App() {
-  const { page } = useWizard();
+  const { page, setPage } = useWizard();
   const [authModal, setAuthModal] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
 
   const openLogin = () => setAuthModal('login');
   const openSignup = () => setAuthModal('register');
   const closeModal = () => setAuthModal(null);
+  const loginSuccess = () => { setAuthModal(null); setPage('dashboard'); };
 
   const navProps = { onOpenLogin: openLogin, onOpenSignup: openSignup };
 
   return (
     <div className="page">
-      {authModal && <AuthModal mode={authModal} onClose={closeModal} />}
+      {authModal && <AuthModal mode={authModal} onClose={closeModal} onSuccess={loginSuccess} />}
 
       {page === 'landing'            && <LandingPage {...navProps} />}
       {page === 'setup'              && <EvaluationSetup {...navProps} />}
