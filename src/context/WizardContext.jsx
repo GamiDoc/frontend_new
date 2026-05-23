@@ -65,6 +65,10 @@ export function WizardProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
+
+  useEffect(() => {
     window.history.replaceState({ page: 'landing' }, '', window.location.pathname);
     const handlePopState = (e) => {
       if (e.state?.page) setPageRaw(e.state.page);

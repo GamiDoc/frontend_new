@@ -13,6 +13,9 @@ async function request(path, options = {}) {
     headers: { ...getHeaders(), ...options.headers },
   });
   if (res.status === 204) return null;
+  if (res.status === 401) {
+    window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+  }
   const data = await res.json();
   if (!res.ok) {
     throw Object.assign(new Error(data.message || 'Request failed'), {
