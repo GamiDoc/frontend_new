@@ -615,9 +615,11 @@ button {
   border: 1px solid #dfe5ec;
 }
 
-.goal-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+@media (hover: hover) {
+  .goal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  }
 }
 
 
