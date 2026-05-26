@@ -292,7 +292,7 @@ export function WizardProvider({ children }) {
         page, setPage,
         maxStep, effectiveMaxStep, navigateToStep,
         sessionId,
-        editingProjectId,
+        editingProjectId, setEditingProjectId,
         step1Data, setStep1Data,
         step2Data, setStep2Data,
         step3Data, setStep3Data,

@@ -10,7 +10,8 @@ import { projectApi } from '../api/project';
 function EvaluationReview({ onOpenLogin, onOpenSignup }) {
   const {
     step1Data, step2Data, step3Data, step4Data,
-    sessionId, editingProjectId, generatePDF, setPage,
+    sessionId, editingProjectId, setEditingProjectId,
+    generatePDF, setPage, setCurrentProjectId,
   } = useWizard();
   const { user } = useAuth();
 
@@ -75,7 +76,11 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
     setSaving(true);
     setSaveError(null);
     try {
-      await sessionApi.convertToProject(sessionId, name, '');
+      const project = await sessionApi.convertToProject(sessionId, name, '');
+      if (project?.projectId) {
+        setEditingProjectId(project.projectId);
+        setCurrentProjectId(project.projectId);
+      }
       setSaved(true);
       setShowNameInput(false);
     } catch (e) {

@@ -132,7 +132,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             </div>
 
             <div className="project-detail-actions">
-              <button className="btn btn-primary" onClick={() => loadProject(project)}>
+              <button className="btn btn-primary" onClick={() => loadProject(project, STEP_TO_PAGE[project.wizardStatus?.currentStep] || 'setup')}>
                 ✏️ Edit Evaluation Plan
               </button>
               <button className="btn btn-secondary" onClick={startWizard}>+ New Documents</button>
