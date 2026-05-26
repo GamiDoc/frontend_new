@@ -33,7 +33,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
   const [saveError, setSaveError] = useState(null);
   const [saved, setSaved] = useState(false);
   const [showNameInput, setShowNameInput] = useState(false);
-  const [projectName, setProjectName] = useState(step1Data.projectType || '');
+  const [projectName, setProjectName] = useState(step1Data.projectName || step1Data.projectType || '');
   const pendingSaveRef = useRef(false);
 
   // After login from "Log in to save", auto-show name input
@@ -46,7 +46,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
 
   // Rename state (editingProjectId flow)
   const [showRename, setShowRename] = useState(false);
-  const [renameName, setRenameName] = useState(step1Data.projectType || '');
+  const [renameName, setRenameName] = useState(step1Data.projectName || step1Data.projectType || '');
   const [renaming, setRenaming] = useState(false);
   const [renameError, setRenameError] = useState(null);
   const [renameDone, setRenameDone] = useState(false);
@@ -57,7 +57,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
     setRenaming(true);
     setRenameError(null);
     try {
-      await projectApi.update(editingProjectId, name, step1Data.projectType || '');
+      await projectApi.update(editingProjectId, name, step1Data.projectType);
       setRenameDone(true);
       setShowRename(false);
     } catch (e) {
@@ -73,11 +73,11 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
       setShowNameInput(true);
       return;
     }
-    const name = projectName.trim() || step1Data.projectType || 'My Evaluation Project';
+    const name = projectName.trim() || step1Data.projectName || step1Data.projectType || 'My Evaluation Project';
     setSaving(true);
     setSaveError(null);
     try {
-      const project = await sessionApi.convertToProject(sessionId, name, '');
+      const project = await sessionApi.convertToProject(sessionId, name, step1Data.projectType || '');
       if (project?.projectId) {
         setEditingProjectId(project.projectId);
         setCurrentProjectId(project.projectId);

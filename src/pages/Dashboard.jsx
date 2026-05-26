@@ -107,7 +107,9 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
                       <div className="dashboard-project-info">
                         <span className="dashboard-project-name">{p.name}</span>
                         <span className="dashboard-project-desc">
-                          {status === 'complete' ? 'Evaluation' : 'Not completed'}
+                          {status === 'complete'
+                            ? (p.description || 'Evaluation')
+                            : 'Not completed'}
                         </span>
                       </div>
                       <span className="dashboard-project-date">

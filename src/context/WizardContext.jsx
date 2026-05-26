@@ -9,6 +9,7 @@ function deepEqual(a, b) {
 }
 
 const STEP1_DEFAULTS = {
+  projectName: '',
   evaluationGoals: [],
   projectType: '',
   participants: '',
@@ -202,7 +203,7 @@ export function WizardProvider({ children }) {
     setError(null);
     try {
       if (pendingAuthProject) {
-        const project = await projectApi.create(step1Data.projectType || 'Evaluation Plan', step1Data.projectType || '');
+        const project = await projectApi.create(step1Data.projectName || step1Data.projectType || 'Evaluation Plan', step1Data.projectType || '');
         setEditingProjectId(project.projectId);
         setCurrentProjectId(project.projectId);
         setPendingAuthProject(false);
@@ -210,6 +211,9 @@ export function WizardProvider({ children }) {
         const recResult = await projectApi.recommend(project.projectId, 2);
         setRecommendations(recResult?.recommendations || []);
       } else if (editingProjectId) {
+        if (step1Data.projectName) {
+          await projectApi.update(editingProjectId, step1Data.projectName, step1Data.projectType || '');
+        }
         await projectApi.saveStep(editingProjectId, 1, step1Data);
         const recResult = await projectApi.recommend(editingProjectId, 2);
         setRecommendations(recResult?.recommendations || []);

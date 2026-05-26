@@ -21,6 +21,7 @@ function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
 
   function handleNext() {
     const newErrors = {
+      projectName:     !step1Data.projectName.trim(),
       evaluationGoals: step1Data.evaluationGoals.length === 0,
       projectType:     !step1Data.projectType.trim(),
       participants:    !step1Data.participants,
@@ -55,8 +56,25 @@ function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
 
       <main>
         <section className="evaluation-goals-section">
-          <div className={`evaluation-goals-box${errors.projectType ? ' section--error' : ''}`}>
-            <h2>Project Type</h2>
+          <div className={`evaluation-goals-box${errors.projectName ? ' section--error' : ''}`}>
+            <h2>Project Name</h2>
+            <p className="section-description">
+              Give your evaluation project a name.
+            </p>
+            <input
+              className={`project-type-input${errors.projectName ? ' input--error' : ''}`}
+              type="text"
+              placeholder="e.g. Duolingo Gamification Study, Health App UX Evaluation"
+              value={step1Data.projectName}
+              onChange={(e) => update('projectName', e.target.value)}
+            />
+            {errors.projectName && (
+              <p className="field-error">Enter a project name.</p>
+            )}
+          </div>
+
+          <div className={`evaluation-goals-box${errors.projectType ? ' section--error' : ''}`} style={{ marginTop: 24 }}>
+            <h2>Project Description</h2>
             <p className="section-description">
               Briefly describe the type of gamified system you are evaluating.
             </p>
