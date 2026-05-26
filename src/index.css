@@ -1523,6 +1523,38 @@ button {
   content: "⚠";
 }
 
+/* Auth password toggle */
+.auth-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-password-wrapper input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  color: #777;
+  display: flex;
+  align-items: center;
+}
+
+.auth-password-toggle:hover {
+  color: #333;
+}
+
 /* Auth modal field errors */
 .auth-field-error {
   color: #c0392b;
