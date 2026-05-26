@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Stepper from '../components/Stepper';
@@ -32,6 +32,15 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
   const [saved, setSaved] = useState(false);
   const [showNameInput, setShowNameInput] = useState(false);
   const [projectName, setProjectName] = useState(step1Data.projectType || '');
+  const pendingSaveRef = useRef(false);
+
+  // After login from "Log in to save", auto-show name input
+  useEffect(() => {
+    if (user && pendingSaveRef.current && !editingProjectId && !saved) {
+      pendingSaveRef.current = false;
+      setShowNameInput(true);
+    }
+  }, [user]);
 
   // Rename state (editingProjectId flow)
   const [showRename, setShowRename] = useState(false);
@@ -57,7 +66,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
   }
 
   async function handleSave() {
-    if (!user) { onOpenLogin(); return; }
+    if (!user) { pendingSaveRef.current = true; onOpenLogin(); return; }
     if (!showNameInput) {
       setShowNameInput(true);
       return;
@@ -276,7 +285,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                     </button>
                   </>
                 ) : !user ? (
-                  <button className="btn eval-btn-save" onClick={onOpenLogin}>
+                  <button className="btn eval-btn-save" onClick={() => { pendingSaveRef.current = true; onOpenLogin(); }}>
                     Log in to save
                   </button>
                 ) : saved ? (

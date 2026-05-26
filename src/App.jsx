@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import FeatureCards from './components/FeatureCards';
@@ -44,26 +44,35 @@ function App() {
   const { page, setPage } = useWizard();
   const [authModal, setAuthModal] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
+  const stayOnPageRef = useRef(false);
 
-  const openLogin = () => setAuthModal('login');
-  const openSignup = () => setAuthModal('register');
-  const closeModal = () => setAuthModal(null);
-  const loginSuccess = () => { setAuthModal(null); setPage('dashboard'); };
+  const openLogin = () => { stayOnPageRef.current = false; setAuthModal('login'); };
+  const openSignup = () => { stayOnPageRef.current = false; setAuthModal('register'); };
+  const openLoginStay = () => { stayOnPageRef.current = true; setAuthModal('login'); };
+  const openSignupStay = () => { stayOnPageRef.current = true; setAuthModal('register'); };
+  const closeModal = () => { stayOnPageRef.current = false; setAuthModal(null); };
+  const loginSuccess = () => {
+    const stay = stayOnPageRef.current;
+    stayOnPageRef.current = false;
+    setAuthModal(null);
+    if (!stay) setPage('dashboard');
+  };
 
   const navProps = { onOpenLogin: openLogin, onOpenSignup: openSignup };
+  const wizardProps = { onOpenLogin: openLoginStay, onOpenSignup: openSignupStay };
 
   return (
     <div className="page">
       {authModal && <AuthModal mode={authModal} onClose={closeModal} onSuccess={loginSuccess} />}
 
       {page === 'landing'            && <LandingPage {...navProps} />}
-      {page === 'setup'              && <EvaluationSetup {...navProps} />}
-      {page === 'methods'            && <MethodSelection {...navProps} />}
-      {page === 'instruments'        && <InstrumentSelection {...navProps} />}
-      {page === 'browse-instruments' && <BrowseInstruments {...navProps} />}
-      {page === 'browse-methods'     && <BrowseMethods {...navProps} />}
-      {page === 'custom-construct'   && <CustomConstruct {...navProps} />}
-      {page === 'evaluation'         && <EvaluationReview {...navProps} />}
+      {page === 'setup'              && <EvaluationSetup {...wizardProps} />}
+      {page === 'methods'            && <MethodSelection {...wizardProps} />}
+      {page === 'instruments'        && <InstrumentSelection {...wizardProps} />}
+      {page === 'browse-instruments' && <BrowseInstruments {...wizardProps} />}
+      {page === 'browse-methods'     && <BrowseMethods {...wizardProps} />}
+      {page === 'custom-construct'   && <CustomConstruct {...wizardProps} />}
+      {page === 'evaluation'         && <EvaluationReview {...wizardProps} />}
       {page === 'dashboard'          && <Dashboard {...navProps} />}
       {page === 'project-detail'     && <ProjectDetailWrapper {...navProps} />}
     </div>
