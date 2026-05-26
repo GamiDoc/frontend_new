@@ -318,7 +318,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
                   const custom = customIndex !== -1 ? step3Data.customConstructs[customIndex] : null;
 
                   return (
-                    <span key={instName} className="selected-method-tag">
+                    <span key={instName} className={`selected-method-tag${custom ? ' selected-method-tag--custom' : ''}`}>
                       <span className="selected-method-tag-icon">{custom ? '📝' : inst?.icon || '📋'}</span>
                       {instName}
                       {custom && (
@@ -330,7 +330,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
                           }}
                           title="Edit"
                         >
-                          ✎
+                          ✎ Edit
                         </button>
                       )}
                       <button
