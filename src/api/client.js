@@ -41,9 +41,10 @@ async function request(path, options = {}) {
     });
   }
   if (!res.ok) {
-    throw Object.assign(new Error(data.message || 'Request failed'), {
+    const err = data.error || data;
+    throw Object.assign(new Error(err.message || 'Request failed'), {
       status: res.status,
-      code: data.code,
+      code: err.code,
       data,
     });
   }
@@ -60,7 +61,8 @@ export const api = {
     const res = await fetch(`${BASE_URL}${path}`, { method: 'GET', headers: getHeaders() });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      throw Object.assign(new Error(data.message || 'Download failed'), { status: res.status });
+      const err = data.error || data;
+      throw Object.assign(new Error(err.message || 'Download failed'), { status: res.status, code: err.code });
     }
     return res.blob();
   },

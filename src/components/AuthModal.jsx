@@ -30,7 +30,7 @@ function AuthModal({ mode: initialMode, onClose, onSuccess }) {
     if (!password) {
       setPasswordError('Password is required.');
       ok = false;
-    } else if (password.length < 8) {
+    } else if (mode === 'register' && password.length < 8) {
       setPasswordError('Password must be at least 8 characters.');
       ok = false;
     }
@@ -53,16 +53,19 @@ function AuthModal({ mode: initialMode, onClose, onSuccess }) {
     } catch (err) {
       const code = err.code;
       if (code === 'INVALID_CREDENTIALS') {
-        setEmailError('Invalid email or password.');
-        setPasswordError('Invalid email or password.');
+        setGlobalError('Incorrect email or password.');
       } else if (code === 'EMAIL_ALREADY_EXISTS') {
-        setEmailError('This email is already registered.');
+        setEmailError('An account with this email already exists.');
       } else if (code === 'INVALID_PASSWORD') {
         setPasswordError('Password must be at least 8 characters.');
       } else if (code === 'INVALID_EMAIL') {
         setEmailError('Please enter a valid email address.');
+      } else if (code === 'NETWORK_ERROR') {
+        setGlobalError('Unable to connect to the server. Please check your connection and try again.');
+      } else if (code === 'INVALID_RESPONSE' || code === 'PARSE_ERROR') {
+        setGlobalError('The server is not responding correctly. Please try again later.');
       } else {
-        setGlobalError(err.message || 'Something went wrong. Please try again.');
+        setGlobalError('Something went wrong. Please try again.');
       }
     } finally {
       setLoading(false);
