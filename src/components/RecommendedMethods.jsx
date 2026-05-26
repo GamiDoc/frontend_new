@@ -36,7 +36,7 @@ function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod, has
                   description={method.description}
                   tags={method.tags || (method.priority ? [method.priority] : [])}
                   tagClass={method.priority === 'Added' ? 'method-tag--added' : ''}
-                  icon={method.icon || '📋'}
+                  icon={method.icon || 'clipboard'}
                   selected={selectedMethods.includes(method.name || method.title)}
                   onToggle={onToggleMethod}
                 />

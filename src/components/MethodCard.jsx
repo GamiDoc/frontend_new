@@ -1,8 +1,10 @@
+import Icon from './Icon';
+
 function MethodCard({ title, description, tags, icon, tagClass = '', selected = false, onToggle }) {
   return (
     <div className={`method-card${selected ? ' method-card--selected' : ''}`} onClick={() => onToggle && onToggle(title)} style={{ cursor: 'pointer' }}>
       <div className="method-card-left">
-        <div className="method-card-icon">{icon}</div>
+        <div className="method-card-icon"><Icon name={icon || 'clipboard'} size={22} /></div>
 
         <div className="method-card-content">
           <h4>{title}</h4>

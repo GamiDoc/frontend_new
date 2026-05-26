@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Stepper from '../components/Stepper';
+import Icon from '../components/Icon';
 import { useWizard } from '../context/WizardContext';
 import { useAuth } from '../context/AuthContext';
 import { sessionApi } from '../api/session';
@@ -164,13 +165,13 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
               </div>
 
               <div className="eval-summary-row">
-                <span className="eval-summary-icon">⬡</span>
+                <span className="eval-summary-icon"><Icon name="hexagon" size={16} /></span>
                 <span className="eval-summary-key">Methods:</span>
                 <span>{step2Data.selectedMethods.join(', ') || '—'}</span>
               </div>
 
               <div className="eval-summary-row">
-                <span className="eval-summary-icon">📋</span>
+                <span className="eval-summary-icon"><Icon name="clipboard" size={16} /></span>
                 <span className="eval-summary-key">Instruments:</span>
                 <span>{step3Data.selectedInstruments.join(', ') || '—'}</span>
               </div>
@@ -181,13 +182,13 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
 
               {step1Data.participants && (
                 <div className="eval-summary-row">
-                  <span className="eval-summary-icon">👥</span>
+                  <span className="eval-summary-icon"><Icon name="users" size={16} /></span>
                   <span>{step1Data.participants} participants</span>
                 </div>
               )}
 
               <div className="eval-summary-row">
-                <span className="eval-summary-icon">📄</span>
+                <span className="eval-summary-icon"><Icon name="fileText" size={16} /></span>
                 <span>A structured summary of your evaluation design will be included in the final Evaluation Plan document.</span>
               </div>
             </div>
@@ -197,7 +198,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
         {/* Evaluation Plan Ready */}
         <section className="eval-plan-section">
           <div className="eval-plan-box">
-            <div className="eval-plan-icon">📄</div>
+            <div className="eval-plan-icon"><Icon name="fileText" size={32} /></div>
             <div className="eval-plan-content">
               <h3>Evaluation Plan Ready</h3>
               <p>Use this document to conduct and document your evaluation sessions. This document includes:</p>
@@ -243,7 +244,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                   onClick={handleDownloadPDF}
                   disabled={generating}
                 >
-                  {generating ? 'Generating…' : '⬇ Download Evaluation Plan (PDF)'}
+                  {generating ? 'Generating…' : <><Icon name="download" size={16} /> Download Evaluation Plan (PDF)</>}
                 </button>
 
                 {editingProjectId ? (
@@ -280,11 +281,11 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                         className="btn btn-secondary"
                         onClick={() => { setShowRename(true); setRenameDone(false); }}
                       >
-                        ✏️ Rename project
+                        <Icon name="edit" size={16} /> Rename project
                       </button>
                     )}
                     {renameError && <p className="auth-error" style={{ marginTop: '0.5rem' }}>{renameError}</p>}
-                    {renameDone && <p style={{ color: '#4caf50', marginTop: '0.5rem' }}>✅ Project renamed.</p>}
+                    {renameDone && <p style={{ color: '#4caf50', marginTop: '0.5rem' }}>Project renamed.</p>}
                     <button className="btn eval-btn-save" onClick={() => setPage('dashboard')}>
                       ⊞ Back to dashboard
                     </button>
@@ -307,8 +308,8 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
               </div>
 
               {pdfError && <p className="auth-error" style={{ marginTop: '0.75rem' }}>{pdfError}</p>}
-              {saveError && <p className="auth-error" style={{ marginTop: '0.75rem' }}>⚠️ {saveError}</p>}
-              {saved && <p style={{ color: '#4caf50', marginTop: '0.75rem' }}>✅ Project saved to your dashboard.</p>}
+              {saveError && <p className="auth-error" style={{ marginTop: '0.75rem' }}>{saveError}</p>}
+              {saved && <p style={{ color: '#4caf50', marginTop: '0.75rem' }}>Project saved to your dashboard.</p>}
             </div>
           </div>
         </section>

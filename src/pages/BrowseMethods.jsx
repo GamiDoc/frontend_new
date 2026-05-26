@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
+import Icon from '../components/Icon';
 import ALL_METHODS from '../data/methods';
 import { useWizard } from '../context/WizardContext';
 
@@ -112,7 +113,7 @@ function BrowseMethods({ onOpenLogin, onOpenSignup }) {
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="browse-instrument-main">
-                    <div className="browse-instrument-icon">{method.icon}</div>
+                    <div className="browse-instrument-icon"><Icon name={method.icon || 'clipboard'} size={22} /></div>
                     <div className="browse-instrument-content">
                       <div className="browse-instrument-top">
                         <h4>{method.name}</h4>
@@ -120,14 +121,14 @@ function BrowseMethods({ onOpenLogin, onOpenSignup }) {
                       </div>
                       <p>{method.description}</p>
                       {method.rationale && (
-                        <p className="browse-method-rationale">💡 {method.rationale}</p>
+                        <p className="browse-method-rationale"><Icon name="lightbulb" size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} /> {method.rationale}</p>
                       )}
                       <div className="method-card-tags" style={{ marginTop: 6 }}>
                         {method.goals.map(g => <span key={g} className="method-tag">{g}</span>)}
                       </div>
                       <div className="browse-attributes">
                         {method.stages.map((s, i) => (
-                          <span key={i} className="browse-attribute">📍 {s}</span>
+                          <span key={i} className="browse-attribute"><Icon name="target" size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 3 }} /> {s}</span>
                         ))}
                       </div>
                     </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import Icon from '../components/Icon';
 import ALL_INSTRUMENTS from '../data/instruments';
 import { useWizard } from '../context/WizardContext';
 
@@ -94,7 +95,7 @@ function CustomConstruct({ onOpenLogin, onOpenSignup }) {
 
           <div className="custom-construct-section">
             <div className="custom-construct-info-box">
-              <span className="custom-construct-info-icon">ℹ️</span>
+              <span className="custom-construct-info-icon"><Icon name="info" size={18} /></span>
               <p>A construct should represent a measurable aspect of user experience (e.g., perceived clarity of instructions, sense of competence, social belonging).</p>
             </div>
           </div>

@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import Stepper from '../components/Stepper';
 import NavigationButtons from '../components/NavigationButtons';
 import SelectionSummary from '../components/SelectionSummary';
+import Icon from '../components/Icon';
 import { useWizard } from '../context/WizardContext';
 import ALL_INSTRUMENTS, { METHOD_NAME_TO_ID } from '../data/instruments';
 
@@ -20,7 +21,7 @@ function InstrumentCard({ instrument, selected, onToggle, userGoals = [] }) {
       style={{ cursor: 'pointer' }}
     >
       <div className="method-card-left">
-        <div className="method-card-icon">{instrument.icon}</div>
+        <div className="method-card-icon"><Icon name={instrument.icon || 'clipboard'} size={22} /></div>
         <div className="method-card-content">
           <h4>{instrument.name}</h4>
           <p>{instrument.description}</p>
@@ -30,11 +31,11 @@ function InstrumentCard({ instrument, selected, onToggle, userGoals = [] }) {
             ))}
           </div>
           {instrument.attributes?.map((attr, i) => (
-            <p key={i} className="instrument-attribute">⚡ {attr}</p>
+            <p key={i} className="instrument-attribute">{attr}</p>
           ))}
           {uncoveredGoals.length > 0 && (
             <p className="instrument-uncovered">
-              ⚠️ Does not measure: {uncoveredGoals.join(', ')}
+              Does not measure: {uncoveredGoals.join(', ')}
             </p>
           )}
         </div>
@@ -173,7 +174,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
         description: r.description,
         tags: [r.priority].filter(Boolean),
         attributes: [],
-        icon: '📋',
+        icon: 'clipboard',
         forMethodIds: [],
         coversGoals: [],
       });
@@ -319,7 +320,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
 
                   return (
                     <span key={instName} className={`selected-method-tag${custom ? ' selected-method-tag--custom' : ''}`}>
-                      <span className="selected-method-tag-icon">{custom ? '📝' : inst?.icon || '📋'}</span>
+                      <span className="selected-method-tag-icon"><Icon name={custom ? 'edit' : inst?.icon || 'clipboard'} size={14} /></span>
                       {instName}
                       {custom && (
                         <button

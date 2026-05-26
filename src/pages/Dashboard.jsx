@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
 import { useWizard } from '../context/WizardContext';
 import { useAuth } from '../context/AuthContext';
+
+function getProjectStatus(p) {
+  if (p.wizardStatus?.isComplete) return 'complete';
+  if (p.wizardStatus?.currentStep > 1) return 'in-progress';
+  return 'not-started';
+}
 
 function Dashboard({ onOpenLogin, onOpenSignup }) {
   const { setPage, setCurrentProjectId, startWizard, createProject } = useWizard();
@@ -73,7 +80,7 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
               {error && <p className="auth-error">{error}</p>}
 
               <div className="dashboard-search-wrapper">
-                <span className="dashboard-search-icon">&#128269;</span>
+                <Icon name="search" size={15} className="dashboard-search-icon" />
                 <input
                   className="dashboard-search-input"
                   type="text"
@@ -84,20 +91,31 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
               </div>
 
               <div className="dashboard-project-list">
-                {filteredProjects.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((p) => (
-                  <div key={p.projectId} className="dashboard-project-item" onClick={() => openProject(p.projectId)}>
-                    <div className="dashboard-project-icon">
-                      {p.wizardStatus?.isComplete ? '✅' : '○'}
-                    </div>
-                    <div className="dashboard-project-info">
-                      <span className="dashboard-project-name">{p.name}</span>
-                      <span className="dashboard-project-desc">{p.description || 'No description'}</span>
+                {filteredProjects.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE).map((p) => {
+                  const status = getProjectStatus(p);
+                  return (
+                    <div
+                      key={p.projectId}
+                      className={`dashboard-project-card dashboard-project-card--${status}`}
+                      onClick={() => openProject(p.projectId)}
+                    >
+                      <div className="dashboard-project-icon">
+                        {status === 'complete' && <Icon name="checkCircle" size={22} color="#4a8c3f" />}
+                        {status === 'in-progress' && <Icon name="circle" size={22} color="#c9a227" />}
+                        {status === 'not-started' && <Icon name="fileText" size={22} color="#999" />}
+                      </div>
+                      <div className="dashboard-project-info">
+                        <span className="dashboard-project-name">{p.name}</span>
+                        <span className="dashboard-project-desc">
+                          {status === 'complete' ? 'Evaluation' : status === 'in-progress' ? (p.description || 'In progress') : 'Incomplete'}
+                        </span>
+                      </div>
                       <span className="dashboard-project-date">
                         {p.updatedAt ? `Last Update ${formatDate(p.updatedAt)}` : `Created ${formatDate(p.createdAt)}`}
                       </span>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {filteredProjects.length === 0 && !loading && (
                   <p style={{ color: '#888', marginTop: '1rem' }}>
                     {searchQuery ? 'No projects match your search.' : 'No projects yet. Create your first one!'}
@@ -131,7 +149,9 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
             {/* Right column */}
             <div className="dashboard-right-col">
               <div className="dashboard-card dashboard-card--info">
-                <div className="dashboard-card-icon">📚</div>
+                <div className="dashboard-card-icon">
+                  <Icon name="knowledge" size={28} />
+                </div>
                 <div>
                   <h3>Knowledge & Documentation</h3>
                   <p>Access articles, frameworks, and best practices to support your gamification design and evaluation effort</p>
@@ -140,7 +160,9 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
               </div>
 
               <div className="dashboard-card dashboard-card--info">
-                <div className="dashboard-card-icon">🎨</div>
+                <div className="dashboard-card-icon">
+                  <Icon name="clipboardCheck" size={28} />
+                </div>
                 <div>
                   <h3>Reviewed Design</h3>
                   <p>Explore evaluated gamified systems shared by other users and get insights from their experiences.</p>

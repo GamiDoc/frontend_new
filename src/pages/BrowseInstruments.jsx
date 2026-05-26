@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
+import Icon from '../components/Icon';
 import ALL_INSTRUMENTS from '../data/instruments';
 import ALL_METHODS from '../data/methods';
 import { useWizard } from '../context/WizardContext';
@@ -144,7 +145,7 @@ function BrowseInstruments({ onOpenLogin, onOpenSignup }) {
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="browse-instrument-main">
-                    <div className="browse-instrument-icon">{inst.icon}</div>
+                    <div className="browse-instrument-icon"><Icon name={inst.icon || 'clipboard'} size={22} /></div>
                     <div className="browse-instrument-content">
                       <div className="browse-instrument-top">
                         <h4>{inst.name}</h4>
@@ -156,7 +157,7 @@ function BrowseInstruments({ onOpenLogin, onOpenSignup }) {
                       </div>
                       <div className="browse-attributes">
                         {inst.attributes.map((a, i) => (
-                          <span key={i} className="browse-attribute">⚡ {a}</span>
+                          <span key={i} className="browse-attribute">{a}</span>
                         ))}
                       </div>
                     </div>

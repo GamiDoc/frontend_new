@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom';
 import ALL_METHODS from '../data/methods';
+import Icon from './Icon';
 
 function AllMethodsModal({ selectedMethods = [], onToggleMethod, onClose }) {
   return createPortal(
@@ -24,12 +25,12 @@ function AllMethodsModal({ selectedMethods = [], onToggleMethod, onClose }) {
                 onClick={() => onToggleMethod(method.name)}
               >
                 <div className="all-methods-modal-item-left">
-                  <div className="all-methods-modal-icon">{method.icon}</div>
+                  <div className="all-methods-modal-icon"><Icon name={method.icon || 'clipboard'} size={22} /></div>
                   <div className="all-methods-modal-content">
                     <h4>{method.name}</h4>
                     <p>{method.description}</p>
                     {method.rationale && (
-                      <p className="all-methods-rationale">💡 {method.rationale}</p>
+                      <p className="all-methods-rationale"><Icon name="lightbulb" size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} /> {method.rationale}</p>
                     )}
                   </div>
                 </div>

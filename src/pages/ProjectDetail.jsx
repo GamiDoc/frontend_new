@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
 import { useWizard } from '../context/WizardContext';
 
@@ -125,19 +126,19 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
               ) : (
                 <h1 className="project-detail-title">
                   {project.name}
-                  <button className="project-edit-btn" onClick={() => setEditingName(true)} title="Rename">✏️</button>
+                  <button className="project-edit-btn" onClick={() => setEditingName(true)} title="Rename"><Icon name="edit" size={18} /></button>
                 </h1>
               )}
               <p className="project-detail-desc">{project.description || 'No description'}</p>
             </div>
 
             <div className="project-detail-actions">
-              <button className="btn btn-primary" onClick={() => loadProject(project, STEP_TO_PAGE[project.wizardStatus?.currentStep] || 'setup')}>
-                ✏️ Edit Evaluation Plan
+              <button className="btn btn-primary" onClick={() => loadProject(project, STEP_TO_PAGE[project.wizardStatus?.currentStep] || 'setup')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                <Icon name="edit" size={16} /> Edit Evaluation Plan
               </button>
               <button className="btn btn-secondary" onClick={startWizard}>+ New Documents</button>
-              <button className="btn btn-secondary" onClick={handleDelete} disabled={deleting} style={{ color: '#c00', borderColor: '#c00' }}>
-                {deleting ? 'Deleting…' : '🗑 Delete'}
+              <button className="btn btn-secondary" onClick={handleDelete} disabled={deleting} style={{ color: '#c00', borderColor: '#c00', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                {deleting ? 'Deleting…' : <><Icon name="trash" size={16} /> Delete</>}
               </button>
             </div>
           </div>
@@ -149,7 +150,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
 
               {project.pdfUrl ? (
                 <div className="project-doc-card">
-                  <div className="project-doc-icon">📄</div>
+                  <div className="project-doc-icon"><Icon name="fileText" size={26} /></div>
                   <div className="project-doc-info">
                     <span className="project-doc-name">Evaluation Plan</span>
                     <span className="project-doc-date">Created {formatDate(project.updatedAt)}</span>
@@ -162,7 +163,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                 <div className="project-doc-empty">
                   <p>Evaluation plan complete. Generate the PDF document.</p>
                   <button className="btn btn-primary" onClick={handleGeneratePDF} disabled={generating}>
-                    {generating ? 'Generating…' : '⬇ Generate & Download PDF'}
+                    {generating ? 'Generating…' : <><Icon name="download" size={16} /> Generate & Download PDF</>}
                   </button>
                 </div>
               ) : (

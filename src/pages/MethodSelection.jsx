@@ -6,6 +6,7 @@ import NavigationButtons from "../components/NavigationButtons";
 import SelectionSummary from "../components/SelectionSummary";
 import RecommendedMethods from "../components/RecommendedMethods";
 import AlternativeMethodsBox from "../components/AlternativeMethodsBox";
+import Icon from "../components/Icon";
 import ALL_METHODS from "../data/methods";
 import { useWizard } from "../context/WizardContext";
 
@@ -51,7 +52,7 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
       const found = ALL_METHODS.find((m) => m.name === name);
       return found
         ? { ...found, priority: 'Added' }
-        : { id: name, name, description: '', priority: 'Added', icon: '📋' };
+        : { id: name, name, description: '', priority: 'Added', icon: 'clipboard' };
     });
 
   // Final list: API recommendations first, then manually added ones.
@@ -124,7 +125,7 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
                   const m = ALL_METHODS.find((x) => x.name === name);
                   return (
                     <span key={name} className="selected-method-tag">
-                      <span className="selected-method-tag-icon">{m?.icon || '📋'}</span>
+                      <span className="selected-method-tag-icon"><Icon name={m?.icon || 'clipboard'} size={14} /></span>
                       {name}
                       <button
                         className="selected-method-tag-remove"

@@ -1,11 +1,11 @@
 import ALL_METHODS from '../data/methods';
+import Icon from './Icon';
 
-// Resolve method details from recommendations list or fallback to ALL_METHODS
 function resolveMethod(name, recommendations) {
   const fromRec = recommendations.find((r) => (r.name || r.title) === name);
   if (fromRec) return fromRec;
   const fromAll = ALL_METHODS.find((m) => m.name === name);
-  return fromAll || { name, description: '', priority: '', icon: '📋' };
+  return fromAll || { name, description: '', priority: '', icon: 'clipboard' };
 }
 
 function SelectedMethodsList({ selectedMethods, recommendations, onRemove }) {
@@ -21,7 +21,7 @@ function SelectedMethodsList({ selectedMethods, recommendations, onRemove }) {
             return (
               <div key={name} className="method-card method-card--selected">
                 <div className="method-card-left">
-                  <div className="method-card-icon">{m.icon || '📋'}</div>
+                  <div className="method-card-icon"><Icon name={m.icon || 'clipboard'} size={22} /></div>
                   <div className="method-card-content">
                     <h4>{m.name || m.title || name}</h4>
                     {m.description && <p>{m.description}</p>}
