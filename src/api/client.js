@@ -8,15 +8,38 @@ function getHeaders() {
 }
 
 async function request(path, options = {}) {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    ...options,
-    headers: { ...getHeaders(), ...options.headers },
-  });
+  let res;
+  try {
+    res = await fetch(`${BASE_URL}${path}`, {
+      ...options,
+      headers: { ...getHeaders(), ...options.headers },
+    });
+  } catch {
+    throw Object.assign(new Error('Unable to connect to the server. Please check your connection and try again.'), {
+      status: 0,
+      code: 'NETWORK_ERROR',
+    });
+  }
   if (res.status === 204) return null;
   if (res.status === 401) {
     window.dispatchEvent(new CustomEvent('auth:unauthorized'));
   }
-  const data = await res.json();
+  const contentType = res.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw Object.assign(new Error('The server is not responding correctly. Please try again later.'), {
+      status: res.status,
+      code: 'INVALID_RESPONSE',
+    });
+  }
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw Object.assign(new Error('The server returned an invalid response. Please try again later.'), {
+      status: res.status,
+      code: 'PARSE_ERROR',
+    });
+  }
   if (!res.ok) {
     throw Object.assign(new Error(data.message || 'Request failed'), {
       status: res.status,

@@ -33,6 +33,10 @@ function ResearchSpecification({
     onResearchQuestionsChange && onResearchQuestionsChange(updated);
   }
 
+  function removeResearchQuestion(index) {
+    onResearchQuestionsChange && onResearchQuestionsChange(researchQuestions.filter((_, i) => i !== index));
+  }
+
   function toggleHypotheses() {
     if (defineHypothesis) {
       onHypothesesChange && onHypothesesChange([]);
@@ -49,6 +53,10 @@ function ResearchSpecification({
     const updated = [...hypotheses];
     updated[index] = value;
     onHypothesesChange && onHypothesesChange(updated);
+  }
+
+  function removeHypothesis(index) {
+    onHypothesesChange && onHypothesesChange(hypotheses.filter((_, i) => i !== index));
   }
 
   return (
@@ -99,14 +107,22 @@ function ResearchSpecification({
               </button>
               <div className="dynamic-inputs">
                 {researchQuestions.map((question, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    className="text-input"
-                    placeholder={`Research question ${index + 1}`}
-                    value={question}
-                    onChange={(e) => updateResearchQuestion(index, e.target.value)}
-                  />
+                  <div key={index} className="dynamic-input-row">
+                    <input
+                      type="text"
+                      className="text-input"
+                      placeholder={`Research question ${index + 1}`}
+                      value={question}
+                      onChange={(e) => updateResearchQuestion(index, e.target.value)}
+                    />
+                    <button
+                      className="dynamic-input-remove"
+                      onClick={() => removeResearchQuestion(index)}
+                      title="Remove"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -130,14 +146,22 @@ function ResearchSpecification({
                   </button>
                   <div className="dynamic-inputs">
                     {hypotheses.map((hypothesis, index) => (
-                      <input
-                        key={index}
-                        type="text"
-                        className="text-input"
-                        placeholder={`Hypothesis ${index + 1}`}
-                        value={hypothesis}
-                        onChange={(e) => updateHypothesis(index, e.target.value)}
-                      />
+                      <div key={index} className="dynamic-input-row">
+                        <input
+                          type="text"
+                          className="text-input"
+                          placeholder={`Hypothesis ${index + 1}`}
+                          value={hypothesis}
+                          onChange={(e) => updateHypothesis(index, e.target.value)}
+                        />
+                        <button
+                          className="dynamic-input-remove"
+                          onClick={() => removeHypothesis(index)}
+                          title="Remove"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </>

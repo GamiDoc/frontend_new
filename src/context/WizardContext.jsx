@@ -26,6 +26,7 @@ const STEP2_DEFAULTS = {
 
 const STEP3_DEFAULTS = {
   selectedInstruments: [],
+  customConstructs: [],
 };
 
 const STEP4_DEFAULTS = {

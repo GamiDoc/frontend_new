@@ -130,6 +130,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
   } = useWizard();
 
   const [selectionError, setSelectionError] = useState(false);
+  const [altOpen, setAltOpen] = useState(false);
 
   /* Toggle an instrument in / out of the selection */
   function toggleInstrument(name) {
@@ -277,23 +278,31 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
         {/* ── Alternative instruments box ── */}
         <section className="alternative-methods-section">
           <div className="alternative-methods-box">
-            <div className="alternative-methods-header">
-              <span className="alternative-methods-arrow">›</span>
+            <div
+              className="alternative-methods-header"
+              onClick={() => setAltOpen((v) => !v)}
+              style={{ cursor: 'pointer' }}
+            >
+              <span className={`alternative-methods-arrow${altOpen ? ' alternative-methods-arrow--open' : ''}`}>›</span>
               <span>Looking for alternative instruments?</span>
             </div>
-            <button
-              className="alternative-methods-link"
-              onClick={() => setPage('browse-instruments')}
-            >
-              Browse all instruments
-            </button>
-            <button
-              className="alternative-methods-link"
-              style={{ marginLeft: '1.5rem' }}
-              onClick={() => setPage('custom-construct')}
-            >
-              Custom questionnaire
-            </button>
+            {altOpen && (
+              <>
+                <button
+                  className="alternative-methods-link"
+                  onClick={() => setPage('browse-instruments')}
+                >
+                  Browse all instruments
+                </button>
+                <button
+                  className="alternative-methods-link"
+                  style={{ marginLeft: '1.5rem' }}
+                  onClick={() => setPage('custom-construct')}
+                >
+                  Custom questionnaire
+                </button>
+              </>
+            )}
           </div>
         </section>
 
@@ -303,21 +312,49 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
             <div className="selected-methods-container">
               <h3>Your selected instruments</h3>
               <div className="methods-list">
-                {step3Data.selectedInstruments.map((name) => {
-                  const inst = ALL_INSTRUMENTS.find((i) => i.name === name);
+                {step3Data.selectedInstruments.map((instName) => {
+                  const inst = ALL_INSTRUMENTS.find((i) => i.name === instName);
+                  const customIndex = (step3Data.customConstructs || []).findIndex((c) => c.name === instName);
+                  const custom = customIndex !== -1 ? step3Data.customConstructs[customIndex] : null;
+
                   return (
-                    <div key={name} className="method-card method-card--selected">
+                    <div key={instName} className="method-card method-card--selected">
                       <div className="method-card-left">
-                        <div className="method-card-icon">{inst?.icon || '📋'}</div>
+                        <div className="method-card-icon">{custom ? '📝' : inst?.icon || '📋'}</div>
                         <div className="method-card-content">
-                          <h4>{name}</h4>
-                          {inst?.description && <p>{inst.description}</p>}
+                          <h4>{instName}</h4>
+                          {custom ? (
+                            <p>{custom.description}</p>
+                          ) : (
+                            inst?.description && <p>{inst.description}</p>
+                          )}
                         </div>
                       </div>
-                      <div className="method-card-right">
+                      <div className="method-card-right" style={{ display: 'flex', gap: 6 }}>
+                        {custom && (
+                          <button
+                            className="selected-method-remove"
+                            onClick={() => {
+                              setStep3Data((prev) => ({ ...prev, _editingCustomIndex: customIndex }));
+                              setPage('custom-construct');
+                            }}
+                            title="Edit"
+                            style={{ borderColor: '#8aa6c8', color: '#384250' }}
+                          >
+                            ✎
+                          </button>
+                        )}
                         <button
                           className="selected-method-remove"
-                          onClick={() => toggleInstrument(name)}
+                          onClick={() => {
+                            toggleInstrument(instName);
+                            if (custom) {
+                              setStep3Data((prev) => ({
+                                ...prev,
+                                customConstructs: (prev.customConstructs || []).filter((_, i) => i !== customIndex),
+                              }));
+                            }
+                          }}
                           title="Remove"
                         >
                           ✕
