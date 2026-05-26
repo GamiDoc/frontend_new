@@ -19,14 +19,14 @@ import { useAuth } from './context/AuthContext';
 
 function LandingPage({ onOpenLogin, onOpenSignup }) {
   const { startWizard, createProject, loading } = useWizard();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { setPage } = useWizard();
 
   return (
     <div className="page">
       <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
       <main>
-        <Hero onStart={user ? createProject : startWizard} loading={loading} />
+        <Hero onStart={user ? createProject : startWizard} loading={loading || authLoading} />
         <FeatureCards />
         <InfoSection />
       </main>
