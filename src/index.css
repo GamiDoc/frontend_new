@@ -1619,6 +1619,45 @@ button {
   background: #fff5f5;
 }
 
+/* ── Selected Methods Tags (Step 2) ─────────────────────── */
+.selected-methods-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.selected-method-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e8f0fe;
+  border: 1.5px solid #a8c4e6;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a3a5c;
+}
+
+.selected-method-tag-icon {
+  font-size: 16px;
+}
+
+.selected-method-tag-remove {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  padding: 0 0 0 4px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.selected-method-tag-remove:hover {
+  color: #e05555;
+}
+
 /* ═══════════════════════════════════════════════════
    INSTRUMENT CARD (step 3)
 ═══════════════════════════════════════════════════ */

@@ -54,8 +54,13 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
         : { id: name, name, description: '', priority: 'Added', icon: '📋' };
     });
 
-  // Final list: API recommendations first, then manually added ones
-  const displayMethods = [...recommendations, ...extraMethods];
+  // Final list: API recommendations first, then manually added ones.
+  // Surveys always float to the top when recommended.
+  const displayMethods = [...recommendations, ...extraMethods].sort((a, b) => {
+    const aIsSurvey = (a.id === 'surveys' || (a.name || '').toLowerCase().includes('survey')) ? 1 : 0;
+    const bIsSurvey = (b.id === 'surveys' || (b.name || '').toLowerCase().includes('survey')) ? 1 : 0;
+    return bIsSurvey - aIsSurvey;
+  });
 
   const summaryConstraints = [step1Data.participants].filter(Boolean);
 
@@ -109,6 +114,32 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
         )}
 
         <AlternativeMethodsBox onOpen={() => setPage('browse-methods')} />
+
+        {step2Data.selectedMethods.length > 0 && (
+          <section className="selected-methods-section">
+            <div className="selected-methods-container">
+              <h3>Your selected methods</h3>
+              <div className="selected-methods-tags">
+                {step2Data.selectedMethods.map((name) => {
+                  const m = ALL_METHODS.find((x) => x.name === name);
+                  return (
+                    <span key={name} className="selected-method-tag">
+                      <span className="selected-method-tag-icon">{m?.icon || '📋'}</span>
+                      {name}
+                      <button
+                        className="selected-method-tag-remove"
+                        onClick={() => handleToggleMethod(name)}
+                        title="Remove"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
 
         {error && <div className="wizard-error">{error}</div>}
 
