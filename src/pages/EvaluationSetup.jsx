@@ -23,7 +23,6 @@ function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
     const newErrors = {
       projectName:     !step1Data.projectName.trim(),
       evaluationGoals: step1Data.evaluationGoals.length === 0,
-      projectType:     !step1Data.projectType.trim(),
       participants:    !step1Data.participants,
       developmentStage: !step1Data.developmentStage,
     };
@@ -73,21 +72,18 @@ function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
             )}
           </div>
 
-          <div className={`evaluation-goals-box${errors.projectType ? ' section--error' : ''}`} style={{ marginTop: 24 }}>
-            <h2>Project Description</h2>
+          <div className="evaluation-goals-box" style={{ marginTop: 24 }}>
+            <h2>Project Description <span style={{ fontWeight: 400, fontSize: 14, color: '#999' }}>(optional)</span></h2>
             <p className="section-description">
-              Briefly describe the type of gamified system you are evaluating.
+              Briefly describe the gamified system you are evaluating.
             </p>
             <input
-              className={`project-type-input${errors.projectType ? ' input--error' : ''}`}
+              className="project-type-input"
               type="text"
-              placeholder="e.g. Educational game, Health app, E-commerce platform"
+              placeholder="e.g. A mobile health app using badges and streaks to encourage daily exercise"
               value={step1Data.projectType}
               onChange={(e) => update('projectType', e.target.value)}
             />
-            {errors.projectType && (
-              <p className="field-error">Describe the project type.</p>
-            )}
           </div>
         </section>
 
