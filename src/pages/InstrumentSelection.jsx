@@ -311,56 +311,44 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
           <section className="selected-methods-section">
             <div className="selected-methods-container">
               <h3>Your selected instruments</h3>
-              <div className="methods-list">
+              <div className="selected-methods-tags">
                 {step3Data.selectedInstruments.map((instName) => {
                   const inst = ALL_INSTRUMENTS.find((i) => i.name === instName);
                   const customIndex = (step3Data.customConstructs || []).findIndex((c) => c.name === instName);
                   const custom = customIndex !== -1 ? step3Data.customConstructs[customIndex] : null;
 
                   return (
-                    <div key={instName} className="method-card method-card--selected">
-                      <div className="method-card-left">
-                        <div className="method-card-icon">{custom ? '📝' : inst?.icon || '📋'}</div>
-                        <div className="method-card-content">
-                          <h4>{instName}</h4>
-                          {custom ? (
-                            <p>{custom.description}</p>
-                          ) : (
-                            inst?.description && <p>{inst.description}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="method-card-right" style={{ display: 'flex', gap: 6 }}>
-                        {custom && (
-                          <button
-                            className="selected-method-remove"
-                            onClick={() => {
-                              setStep3Data((prev) => ({ ...prev, _editingCustomIndex: customIndex }));
-                              setPage('custom-construct');
-                            }}
-                            title="Edit"
-                            style={{ borderColor: '#8aa6c8', color: '#384250' }}
-                          >
-                            ✎
-                          </button>
-                        )}
+                    <span key={instName} className="selected-method-tag">
+                      <span className="selected-method-tag-icon">{custom ? '📝' : inst?.icon || '📋'}</span>
+                      {instName}
+                      {custom && (
                         <button
-                          className="selected-method-remove"
+                          className="selected-method-tag-edit"
                           onClick={() => {
-                            toggleInstrument(instName);
-                            if (custom) {
-                              setStep3Data((prev) => ({
-                                ...prev,
-                                customConstructs: (prev.customConstructs || []).filter((_, i) => i !== customIndex),
-                              }));
-                            }
+                            setStep3Data((prev) => ({ ...prev, _editingCustomIndex: customIndex }));
+                            setPage('custom-construct');
                           }}
-                          title="Remove"
+                          title="Edit"
                         >
-                          ✕
+                          ✎
                         </button>
-                      </div>
-                    </div>
+                      )}
+                      <button
+                        className="selected-method-tag-remove"
+                        onClick={() => {
+                          toggleInstrument(instName);
+                          if (custom) {
+                            setStep3Data((prev) => ({
+                              ...prev,
+                              customConstructs: (prev.customConstructs || []).filter((_, i) => i !== customIndex),
+                            }));
+                          }
+                        }}
+                        title="Remove"
+                      >
+                        ✕
+                      </button>
+                    </span>
                   );
                 })}
               </div>

@@ -1658,6 +1658,21 @@ button {
   color: #e05555;
 }
 
+.selected-method-tag-edit {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #5b7fa5;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.selected-method-tag-edit:hover {
+  color: #1a3a5c;
+}
+
 /* ═══════════════════════════════════════════════════
    INSTRUMENT CARD (step 3)
 ═══════════════════════════════════════════════════ */
