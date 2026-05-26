@@ -1979,7 +1979,7 @@ button {
   border-left-color: #FCDD70;
 }
 .dashboard-project-card--in-progress {
-  border-left-color: #FCDD70;
+  border-left-color: #ccc;
 }
 .dashboard-project-card--not-started {
   border-left-color: #ccc;

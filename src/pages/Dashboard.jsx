@@ -101,13 +101,13 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
                     >
                       <div className="dashboard-project-icon">
                         {status === 'complete' && <Icon name="checkCircle" size={22} color="#4a8c3f" />}
-                        {status === 'in-progress' && <Icon name="circle" size={22} color="#c9a227" />}
+                        {status === 'in-progress' && <Icon name="circle" size={22} color="#999" />}
                         {status === 'not-started' && <Icon name="fileText" size={22} color="#999" />}
                       </div>
                       <div className="dashboard-project-info">
                         <span className="dashboard-project-name">{p.name}</span>
                         <span className="dashboard-project-desc">
-                          {status === 'complete' ? 'Evaluation' : status === 'in-progress' ? (p.description || 'In progress') : 'Incomplete'}
+                          {status === 'complete' ? 'Evaluation' : 'Not completed'}
                         </span>
                       </div>
                       <span className="dashboard-project-date">

@@ -3,8 +3,8 @@ import Icon from './Icon';
 
 function resolveMethod(name, recommendations) {
   const fromRec = recommendations.find((r) => (r.name || r.title) === name);
-  if (fromRec) return fromRec;
   const fromAll = ALL_METHODS.find((m) => m.name === name);
+  if (fromRec) return { ...fromRec, icon: fromRec.icon || fromAll?.icon || 'clipboard' };
   return fromAll || { name, description: '', priority: '', icon: 'clipboard' };
 }
 

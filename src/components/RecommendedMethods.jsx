@@ -1,7 +1,14 @@
 import { useState } from "react";
 import MethodCard from "./MethodCard";
+import ALL_METHODS from "../data/methods";
 
 const COLLAPSED_COUNT = 3;
+
+function resolveIcon(method) {
+  if (method.icon) return method.icon;
+  const match = ALL_METHODS.find(m => m.name === (method.name || method.title));
+  return match?.icon || 'clipboard';
+}
 
 function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod, hasError }) {
   const [expanded, setExpanded] = useState(false);
@@ -36,7 +43,7 @@ function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod, has
                   description={method.description}
                   tags={method.tags || (method.priority ? [method.priority] : [])}
                   tagClass={method.priority === 'Added' ? 'method-tag--added' : ''}
-                  icon={method.icon || 'clipboard'}
+                  icon={resolveIcon(method)}
                   selected={selectedMethods.includes(method.name || method.title)}
                   onToggle={onToggleMethod}
                 />
