@@ -1,7 +1,7 @@
 import { useWizard } from '../context/WizardContext';
 
 function Stepper({ currentStep }) {
-  const { maxStep, navigateToStep } = useWizard();
+  const { effectiveMaxStep, navigateToStep } = useWizard();
 
   const steps = [
     "Evaluation Planning",
@@ -17,7 +17,7 @@ function Stepper({ currentStep }) {
           {steps.map((step, index) => {
             const stepNumber = index + 1;
             const isActive = currentStep === stepNumber;
-            const isClickable = stepNumber !== currentStep && stepNumber <= maxStep;
+            const isClickable = stepNumber !== currentStep && stepNumber <= effectiveMaxStep;
 
             return (
               <div

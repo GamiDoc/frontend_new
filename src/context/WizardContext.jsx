@@ -1,8 +1,12 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
 import { sessionApi } from '../api/session';
 import { projectApi } from '../api/project';
 
 const WizardContext = createContext(null);
+
+function deepEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
 
 const STEP1_DEFAULTS = {
   evaluationGoals: [],
@@ -59,6 +63,24 @@ export function WizardProvider({ children }) {
   // true when an auth user started the wizard but the project hasn't been created yet
   const [pendingAuthProject, setPendingAuthProject] = useState(false);
 
+  // Saved snapshots — last-saved copy of each step's data
+  const [savedSnapshots, setSavedSnapshots] = useState({ 1: null, 2: null, 3: null });
+
+  const PAGE_TO_STEP = { setup: 1, methods: 2, instruments: 3, evaluation: 4 };
+  const currentStep = PAGE_TO_STEP[page] || null;
+
+  const currentStepDirty = useMemo(() => {
+    if (!currentStep || currentStep > maxStep) return false;
+    const snapshot = savedSnapshots[currentStep];
+    if (!snapshot) return false;
+    const dataMap = { 1: step1Data, 2: step2Data, 3: step3Data };
+    const current = dataMap[currentStep];
+    if (!current) return false;
+    return !deepEqual(current, snapshot);
+  }, [currentStep, maxStep, savedSnapshots, step1Data, step2Data, step3Data]);
+
+  const effectiveMaxStep = currentStepDirty ? currentStep : maxStep;
+
   // ── History-aware navigation ─────────────────────────────────────────────
   const setPage = useCallback((newPage) => {
     window.history.pushState({ page: newPage }, '', '#' + newPage);
@@ -79,9 +101,10 @@ export function WizardProvider({ children }) {
   }, []);
 
   const navigateToStep = useCallback((stepNumber) => {
+    if (stepNumber > effectiveMaxStep) return;
     const target = STEP_TO_PAGE[stepNumber];
     if (target) setPage(target);
-  }, [setPage]);
+  }, [setPage, effectiveMaxStep]);
 
   // ── New anonymous session → step 1 ──────────────────────────────────────
   const startWizard = useCallback(async () => {
@@ -101,6 +124,7 @@ export function WizardProvider({ children }) {
       setStep3Recommendations([]);
       setPdfUrl(null);
       setMaxStep(1);
+      setSavedSnapshots({ 1: null, 2: null, 3: null });
       setPendingAuthProject(false);
       setPage('setup');
     } catch (e) {
@@ -122,6 +146,7 @@ export function WizardProvider({ children }) {
     setStep3Recommendations([]);
     setPdfUrl(null);
     setMaxStep(1);
+    setSavedSnapshots({ 1: null, 2: null, 3: null });
     setPendingAuthProject(true);
     setPage('setup');
   }, [setPage]);
@@ -131,14 +156,23 @@ export function WizardProvider({ children }) {
     const steps = project.wizardStatus?.steps || {};
     const currentStep = project.wizardStatus?.currentStep || 1;
 
+    const s1 = { ...STEP1_DEFAULTS, ...(steps['1'] || {}) };
+    const s2 = { ...STEP2_DEFAULTS, ...(steps['2'] || {}) };
+    const s3 = { ...STEP3_DEFAULTS, ...(steps['3'] || {}) };
+
     setEditingProjectId(project.projectId);
     setCurrentProjectId(project.projectId);
-    setStep1Data({ ...STEP1_DEFAULTS, ...(steps['1'] || {}) });
-    setStep2Data({ ...STEP2_DEFAULTS, ...(steps['2'] || {}) });
-    setStep3Data({ ...STEP3_DEFAULTS, ...(steps['3'] || {}) });
+    setStep1Data(s1);
+    setStep2Data(s2);
+    setStep3Data(s3);
     setStep4Data({ ...STEP4_DEFAULTS, ...(steps['4'] || {}) });
     setPdfUrl(project.pdfUrl || null);
     setMaxStep(currentStep);
+    setSavedSnapshots({
+      1: currentStep >= 1 ? JSON.parse(JSON.stringify(s1)) : null,
+      2: currentStep >= 2 ? JSON.parse(JSON.stringify(s2)) : null,
+      3: currentStep >= 3 ? JSON.parse(JSON.stringify(s3)) : null,
+    });
     setPendingAuthProject(false);
 
     try {
@@ -184,6 +218,7 @@ export function WizardProvider({ children }) {
         const recResult = await sessionApi.recommend(sessionId, 2);
         setRecommendations(recResult?.recommendations || []);
       }
+      setSavedSnapshots((prev) => ({ ...prev, 1: JSON.parse(JSON.stringify(step1Data)) }));
       setMaxStep((prev) => Math.max(prev, 2));
       setPage('methods');
     } catch (e) {
@@ -207,6 +242,7 @@ export function WizardProvider({ children }) {
         const recResult = await sessionApi.recommend(sessionId, 3);
         setStep3Recommendations(recResult?.recommendations || []);
       }
+      setSavedSnapshots((prev) => ({ ...prev, 2: JSON.parse(JSON.stringify(step2Data)) }));
       setMaxStep((prev) => Math.max(prev, 3));
       setPage('instruments');
     } catch (e) {
@@ -226,6 +262,7 @@ export function WizardProvider({ children }) {
       } else {
         await sessionApi.saveStep(sessionId, 3, step3Data);
       }
+      setSavedSnapshots((prev) => ({ ...prev, 3: JSON.parse(JSON.stringify(step3Data)) }));
       setMaxStep((prev) => Math.max(prev, 4));
       setPage('evaluation');
     } catch (e) {
@@ -253,7 +290,7 @@ export function WizardProvider({ children }) {
     <WizardContext.Provider
       value={{
         page, setPage,
-        maxStep, navigateToStep,
+        maxStep, effectiveMaxStep, navigateToStep,
         sessionId,
         editingProjectId,
         step1Data, setStep1Data,
