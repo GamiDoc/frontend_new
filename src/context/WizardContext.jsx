@@ -157,7 +157,7 @@ export function WizardProvider({ children }) {
     const steps = project.wizardStatus?.steps || {};
     const currentStep = project.wizardStatus?.currentStep || 1;
 
-    const s1 = { ...STEP1_DEFAULTS, ...(steps['1'] || {}) };
+    const s1 = { ...STEP1_DEFAULTS, ...(steps['1'] || {}), projectName: project.name || steps['1']?.projectName || '' };
     const s2 = { ...STEP2_DEFAULTS, ...(steps['2'] || {}) };
     const s3 = { ...STEP3_DEFAULTS, ...(steps['3'] || {}) };
 
