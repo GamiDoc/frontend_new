@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
 import { useWizard } from '../context/WizardContext';
+import { activityApi } from '../api/activity';
 
 function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
   const { setPage, startWizard, loadProject } = useWizard();
@@ -85,6 +86,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     setDeleting(true);
     try {
       await projectApi.delete(projectId);
+      activityApi.record('frontend.project_deleted', { page: 'project-detail', projectId });
       setPage('dashboard');
     } catch (e) {
       setError(e.message);
