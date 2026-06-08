@@ -68,6 +68,10 @@ export function WizardProvider({ children }) {
   // Saved snapshots — last-saved copy of each step's data
   const [savedSnapshots, setSavedSnapshots] = useState({ 1: null, 2: null, 3: null });
 
+  // Track current page to record 'from' in page_view events
+  const pageRef = useRef('landing');
+  useEffect(() => { pageRef.current = page; }, [page]);
+
   const PAGE_TO_STEP = { setup: 1, methods: 2, instruments: 3, evaluation: 4 };
   const currentStep = PAGE_TO_STEP[page] || null;
 
@@ -86,8 +90,8 @@ export function WizardProvider({ children }) {
   // ── History-aware navigation ─────────────────────────────────────────────
   const setPage = useCallback((newPage) => {
     window.history.pushState({ page: newPage }, '', '#' + newPage);
+    activityApi.record('frontend.page_view', { page: newPage, metadata: { from: pageRef.current } });
     setPageRaw(newPage);
-    activityApi.record('frontend.page_view', { page: newPage });
   }, []);
 
   useEffect(() => {
