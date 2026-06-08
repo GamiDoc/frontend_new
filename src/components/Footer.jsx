@@ -1,3 +1,5 @@
+import ConstructionLink from './ConstructionLink';
+
 function Footer() {
   return (
     <footer className="footer">
@@ -17,22 +19,22 @@ function Footer() {
 
         <div className="footer-column">
           <h4>Resources</h4>
-          <a href="#">Documentation</a>
-          <a href="#">Gamification Frameworks</a>
-          <a href="#">UX Evaluation Methods</a>
-          <a href="#">Reviewed Designs</a>
+          <ConstructionLink>Documentation</ConstructionLink>
+          <ConstructionLink>Gamification Frameworks</ConstructionLink>
+          <ConstructionLink>UX Evaluation Methods</ConstructionLink>
+          <ConstructionLink>Reviewed Designs</ConstructionLink>
         </div>
 
         <div className="footer-column">
           <h4>Research & Publications</h4>
-          <a href="#">Related Publication</a>
-          <a href="#">How to cite GamiDoc</a>
+          <ConstructionLink>Related Publication</ConstructionLink>
+          <ConstructionLink>How to cite GamiDoc</ConstructionLink>
         </div>
 
         <div className="footer-column">
           <h4>Privacy policy</h4>
-          <a href="#">Terms of use</a>
-          <a href="#">Contact us</a>
+          <ConstructionLink>Terms of use</ConstructionLink>
+          <ConstructionLink>Contact us</ConstructionLink>
         </div>
       </div>
 

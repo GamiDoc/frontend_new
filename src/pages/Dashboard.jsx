@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
+import ConstructionButton from '../components/ConstructionButton';
 import { useWizard } from '../context/WizardContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -157,7 +158,7 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
                 <div>
                   <h3>Knowledge & Documentation</h3>
                   <p>Access articles, frameworks, and best practices to support your gamification design and evaluation effort</p>
-                  <button className="btn btn-primary dashboard-card-btn">Browse Resources</button>
+                  <ConstructionButton className="btn btn-primary dashboard-card-btn">Browse Resources</ConstructionButton>
                 </div>
               </div>
 
@@ -168,7 +169,7 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
                 <div>
                   <h3>Reviewed Design</h3>
                   <p>Explore evaluated gamified systems shared by other users and get insights from their experiences.</p>
-                  <button className="btn btn-primary dashboard-card-btn">Browse Designs</button>
+                  <ConstructionButton className="btn btn-primary dashboard-card-btn">Browse Designs</ConstructionButton>
                 </div>
               </div>
             </div>

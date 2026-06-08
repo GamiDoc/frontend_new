@@ -1,5 +1,6 @@
 
-import infographic from '../assets/infographic.png'
+import infographic from '../assets/infographic.png';
+import ConstructionLink from './ConstructionLink';
 
 function InfoSection(){
     return(
@@ -28,9 +29,9 @@ function InfoSection(){
                 <li>Design decisions are rarely documented over time</li>
               </ul>
 
-              <a href="#" className="learn-link">
+              <ConstructionLink className="learn-link">
                 Learn more about GamiDoc
-              </a>
+              </ConstructionLink>
             </div>
 
             <div className="info-visual">
