@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { authApi } from '../api/auth';
 import { setAccessToken } from '../api/client';
+import { activityApi } from '../api/activity';
 
 const AuthContext = createContext(null);
 
@@ -51,16 +52,19 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (email, password) => {
     const result = await authApi.login(email, password);
     applyAuthResult(result);
+    activityApi.record('frontend.auth.login', { page: 'auth' });
     return result;
   }, [applyAuthResult]);
 
   const register = useCallback(async (email, password) => {
     const result = await authApi.register(email, password);
     applyAuthResult(result);
+    activityApi.record('frontend.auth.register', { page: 'auth' });
     return result;
   }, [applyAuthResult]);
 
   const logout = useCallback(async () => {
+    activityApi.record('frontend.auth.logout', { page: 'auth' });
     try { await authApi.logout(); } catch { /* ignore */ }
     clearLogoutTimer();
     setAccessToken(null);
