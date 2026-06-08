@@ -208,14 +208,18 @@ export function WizardProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
+      let resolvedProjectId = editingProjectId;
+
       if (pendingAuthProject) {
         const project = await projectApi.create(step1Data.projectName || step1Data.projectType || 'Evaluation Plan', step1Data.projectType || '');
+        resolvedProjectId = project.projectId;
         setEditingProjectId(project.projectId);
         setCurrentProjectId(project.projectId);
         setPendingAuthProject(false);
         await projectApi.saveStep(project.projectId, 1, step1Data);
         const recResult = await projectApi.recommend(project.projectId, 2);
         setRecommendations(recResult?.recommendations || []);
+        activityApi.record('frontend.project_created', { page: 'setup', projectId: resolvedProjectId });
       } else if (editingProjectId) {
         if (step1Data.projectName) {
           await projectApi.update(editingProjectId, step1Data.projectName, step1Data.projectType || '');
@@ -230,6 +234,12 @@ export function WizardProvider({ children }) {
       }
       setSavedSnapshots((prev) => ({ ...prev, 1: JSON.parse(JSON.stringify(step1Data)) }));
       setMaxStep((prev) => Math.max(prev, 2));
+      activityApi.record('frontend.wizard.step_submitted', {
+        page: 'setup',
+        sessionId: resolvedProjectId ? undefined : sessionId,
+        projectId: resolvedProjectId || undefined,
+        metadata: { step: 1, mode: resolvedProjectId ? 'project' : 'session' },
+      });
       setPage('methods');
     } catch (e) {
       setError(e.message || 'Failed to save step 1.');
@@ -254,6 +264,12 @@ export function WizardProvider({ children }) {
       }
       setSavedSnapshots((prev) => ({ ...prev, 2: JSON.parse(JSON.stringify(step2Data)) }));
       setMaxStep((prev) => Math.max(prev, 3));
+      activityApi.record('frontend.wizard.step_submitted', {
+        page: 'methods',
+        sessionId: editingProjectId ? undefined : sessionId,
+        projectId: editingProjectId || undefined,
+        metadata: { step: 2, mode: editingProjectId ? 'project' : 'session' },
+      });
       setPage('instruments');
     } catch (e) {
       setError(e.message || 'Failed to save step 2.');
@@ -274,6 +290,12 @@ export function WizardProvider({ children }) {
       }
       setSavedSnapshots((prev) => ({ ...prev, 3: JSON.parse(JSON.stringify(step3Data)) }));
       setMaxStep((prev) => Math.max(prev, 4));
+      activityApi.record('frontend.wizard.step_submitted', {
+        page: 'instruments',
+        sessionId: editingProjectId ? undefined : sessionId,
+        projectId: editingProjectId || undefined,
+        metadata: { step: 3, mode: editingProjectId ? 'project' : 'session' },
+      });
       setPage('evaluation');
     } catch (e) {
       setError(e.message || 'Failed to save step 3.');
@@ -288,11 +310,21 @@ export function WizardProvider({ children }) {
       await projectApi.saveStep(editingProjectId, 4, step4Data);
       const result = await projectApi.generatePDF(editingProjectId);
       setPdfUrl(result?.pdfUrl || null);
+      activityApi.record('frontend.pdf_generated', {
+        page: 'evaluation',
+        projectId: editingProjectId,
+        metadata: { mode: 'project' },
+      });
       return result;
     }
     await sessionApi.saveStep(sessionId, 4, step4Data);
     const result = await sessionApi.generatePDF(sessionId);
     setPdfUrl(result?.pdfUrl || null);
+    activityApi.record('frontend.pdf_generated', {
+      page: 'evaluation',
+      sessionId,
+      metadata: { mode: 'session' },
+    });
     return result;
   }, [editingProjectId, sessionId, step4Data]);
 
