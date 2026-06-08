@@ -64,11 +64,11 @@ export function AuthProvider({ children }) {
   }, [applyAuthResult]);
 
   const logout = useCallback(async () => {
-    activityApi.record('frontend.auth.logout', { page: 'auth' });
     try { await authApi.logout(); } catch { /* ignore */ }
     clearLogoutTimer();
     setAccessToken(null);
     setUser(null);
+    activityApi.record('frontend.auth.logout', { page: 'auth' });
   }, [clearLogoutTimer]);
 
   // Listen for 401 events from the API client
