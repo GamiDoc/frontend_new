@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
 import { sessionApi } from '../api/session';
 import { projectApi } from '../api/project';
+import { activityApi } from '../api/activity';
 
 const WizardContext = createContext(null);
 
@@ -86,6 +87,7 @@ export function WizardProvider({ children }) {
   const setPage = useCallback((newPage) => {
     window.history.pushState({ page: newPage }, '', '#' + newPage);
     setPageRaw(newPage);
+    activityApi.record('frontend.page_view', { page: newPage });
   }, []);
 
   useEffect(() => {
