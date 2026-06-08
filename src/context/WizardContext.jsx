@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { sessionApi } from '../api/session';
 import { projectApi } from '../api/project';
 import { activityApi } from '../api/activity';
