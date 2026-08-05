@@ -46,24 +46,44 @@ const STEP4_DEFAULTS = {
 
 const STEP_TO_PAGE = { 1: 'setup', 2: 'methods', 3: 'instruments', 4: 'evaluation' };
 
+// R1 — the wizard configuration lives client-side until the user decides to
+// save it, so registration can be postponed to the end of the flow without
+// ever losing what has been entered.
+const DRAFT_KEY = 'gamidoc.wizardDraft';
+
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+const draft = loadDraft();
+
 export function WizardProvider({ children }) {
   const [page, setPageRaw] = useState('landing');
-  const [maxStep, setMaxStep] = useState(1);
+  const [maxStep, setMaxStep] = useState(draft?.maxStep || 1);
   const [sessionId, setSessionId] = useState(() => localStorage.getItem('sessionId') || null);
   // When editing an existing project, editingProjectId is set; null = anonymous session mode
-  const [editingProjectId, setEditingProjectId] = useState(null);
-  const [step1Data, setStep1Data] = useState(STEP1_DEFAULTS);
-  const [step2Data, setStep2Data] = useState(STEP2_DEFAULTS);
-  const [step3Data, setStep3Data] = useState(STEP3_DEFAULTS);
-  const [step4Data, setStep4Data] = useState(STEP4_DEFAULTS);
+  const [editingProjectId, setEditingProjectId] = useState(draft?.editingProjectId || null);
+  const [step1Data, setStep1Data] = useState(draft?.step1Data || STEP1_DEFAULTS);
+  const [step2Data, setStep2Data] = useState(draft?.step2Data || STEP2_DEFAULTS);
+  const [step3Data, setStep3Data] = useState(draft?.step3Data || STEP3_DEFAULTS);
+  const [step4Data, setStep4Data] = useState(draft?.step4Data || STEP4_DEFAULTS);
   const [recommendations, setRecommendations] = useState([]);
   const [step3Recommendations, setStep3Recommendations] = useState([]);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [currentProjectId, setCurrentProjectId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // true when an auth user started the wizard but the project hasn't been created yet
-  const [pendingAuthProject, setPendingAuthProject] = useState(false);
+  // true when a logged-in user started the wizard — the project is created only
+  // once the plan is finished (R1), not on step 1.
+  const [pendingAuthProject, setPendingAuthProject] = useState(draft?.pendingAuthProject || false);
+  // Set when the user jumps back to an earlier step from the review page, so we
+  // can offer a forward-facing way back instead of re-walking the whole wizard (R6).
+  const [reviewReturn, setReviewReturn] = useState(false);
 
   // Saved snapshots — last-saved copy of each step's data
   const [savedSnapshots, setSavedSnapshots] = useState({ 1: null, 2: null, 3: null });
@@ -87,6 +107,26 @@ export function WizardProvider({ children }) {
 
   const effectiveMaxStep = currentStepDirty ? currentStep : maxStep;
 
+  // ── Persist the draft locally so registering / reloading never loses work ──
+  useEffect(() => {
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({
+        maxStep, editingProjectId, pendingAuthProject,
+        step1Data, step2Data, step3Data, step4Data,
+      }));
+    } catch {
+      // storage full or disabled — the wizard still works, just without recovery
+    }
+  }, [maxStep, editingProjectId, pendingAuthProject, step1Data, step2Data, step3Data, step4Data]);
+
+  const clearDraft = useCallback(() => {
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
+  }, []);
+
+  const [draftAvailable, setDraftAvailable] = useState(
+    Boolean(draft?.step1Data?.projectName) && (draft?.maxStep || 1) > 1
+  );
+
   // ── History-aware navigation ─────────────────────────────────────────────
   const setPage = useCallback((newPage) => {
     window.history.pushState({ page: newPage }, '', '#' + newPage);
@@ -107,6 +147,30 @@ export function WizardProvider({ children }) {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // ── Session recovery ─────────────────────────────────────────────────────
+  // The local draft outlives the backend session, so a step save may hit a
+  // session that no longer exists. In that case create a fresh one and replay
+  // every step from the draft — the user never re-enters anything (R1).
+  const saveSessionStep = useCallback(async (stepNumber) => {
+    const steps = { 1: step1Data, 2: step2Data, 3: step3Data, 4: step4Data };
+    if (sessionId) {
+      try {
+        await sessionApi.saveStep(sessionId, stepNumber, steps[stepNumber]);
+        return sessionId;
+      } catch (e) {
+        if (e.status !== 404) throw e;
+      }
+    }
+    const created = await sessionApi.create();
+    const sid = created.sessionId || created.id;
+    localStorage.setItem('sessionId', sid);
+    setSessionId(sid);
+    for (let s = 1; s <= stepNumber; s++) {
+      await sessionApi.saveStep(sid, s, steps[s]);
+    }
+    return sid;
+  }, [sessionId, step1Data, step2Data, step3Data, step4Data]);
+
   const navigateToStep = useCallback((stepNumber) => {
     if (stepNumber > effectiveMaxStep) return;
     const target = STEP_TO_PAGE[stepNumber];
@@ -114,7 +178,9 @@ export function WizardProvider({ children }) {
   }, [setPage, effectiveMaxStep]);
 
   // ── New anonymous session → step 1 ──────────────────────────────────────
-  const startWizard = useCallback(async () => {
+  // saveAtEnd marks a flow started by a logged-in user: the wizard still runs on
+  // a transient session and only becomes a dashboard project once finished (R1).
+  const startWizard = useCallback(async (saveAtEnd = false) => {
     setLoading(true);
     setError(null);
     try {
@@ -123,6 +189,7 @@ export function WizardProvider({ children }) {
       localStorage.setItem('sessionId', sid);
       setSessionId(sid);
       setEditingProjectId(null);
+      setCurrentProjectId(null);
       setStep1Data(STEP1_DEFAULTS);
       setStep2Data(STEP2_DEFAULTS);
       setStep3Data(STEP3_DEFAULTS);
@@ -132,31 +199,38 @@ export function WizardProvider({ children }) {
       setPdfUrl(null);
       setMaxStep(1);
       setSavedSnapshots({ 1: null, 2: null, 3: null });
-      setPendingAuthProject(false);
+      setPendingAuthProject(saveAtEnd);
+      setReviewReturn(false);
+      setDraftAvailable(false);
       setPage('setup');
     } catch (e) {
       setError(e.message || 'Failed to start session.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setPage]);
 
-  // ── Start wizard for authenticated user — project created lazily on step 1 submit ─
-  const createProject = useCallback(() => {
-    setEditingProjectId(null);
-    setCurrentProjectId(null);
+  // ── Start wizard for an authenticated user — project created at the end ──
+  const createProject = useCallback(() => startWizard(true), [startWizard]);
+
+  // ── Resume the locally stored draft without touching the backend ─────────
+  const resumeDraft = useCallback(() => {
+    setReviewReturn(false);
+    setDraftAvailable(false);
+    setPage(STEP_TO_PAGE[Math.min(draft?.maxStep || 1, 4)] || 'setup');
+  }, [setPage]);
+
+  const discardDraft = useCallback(() => {
+    clearDraft();
+    setDraftAvailable(false);
     setStep1Data(STEP1_DEFAULTS);
     setStep2Data(STEP2_DEFAULTS);
     setStep3Data(STEP3_DEFAULTS);
     setStep4Data(STEP4_DEFAULTS);
-    setRecommendations([]);
-    setStep3Recommendations([]);
-    setPdfUrl(null);
     setMaxStep(1);
-    setSavedSnapshots({ 1: null, 2: null, 3: null });
-    setPendingAuthProject(true);
-    setPage('setup');
-  }, [setPage]);
+    setEditingProjectId(null);
+    setPendingAuthProject(false);
+  }, [clearDraft]);
 
   // ── Load an existing project into the wizard for editing ─────────────────
   const loadProject = useCallback(async (project, targetPage = 'setup') => {
@@ -181,6 +255,8 @@ export function WizardProvider({ children }) {
       3: currentStep >= 3 ? JSON.parse(JSON.stringify(s3)) : null,
     });
     setPendingAuthProject(false);
+    setReviewReturn(false);
+    setDraftAvailable(false);
 
     try {
       const rec2 = currentStep >= 2
@@ -208,19 +284,9 @@ export function WizardProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      let resolvedProjectId = editingProjectId;
+      const resolvedProjectId = editingProjectId;
 
-      if (pendingAuthProject) {
-        const project = await projectApi.create(step1Data.projectName || step1Data.projectType || 'Evaluation Plan', step1Data.projectType || '');
-        resolvedProjectId = project.projectId;
-        setEditingProjectId(project.projectId);
-        setCurrentProjectId(project.projectId);
-        setPendingAuthProject(false);
-        await projectApi.saveStep(project.projectId, 1, step1Data);
-        const recResult = await projectApi.recommend(project.projectId, 2);
-        setRecommendations(recResult?.recommendations || []);
-        activityApi.record('frontend.project_created', { page: 'setup', projectId: resolvedProjectId });
-      } else if (editingProjectId) {
+      if (editingProjectId) {
         if (step1Data.projectName) {
           await projectApi.update(editingProjectId, step1Data.projectName, step1Data.projectType || '');
         }
@@ -228,8 +294,8 @@ export function WizardProvider({ children }) {
         const recResult = await projectApi.recommend(editingProjectId, 2);
         setRecommendations(recResult?.recommendations || []);
       } else {
-        await sessionApi.saveStep(sessionId, 1, step1Data);
-        const recResult = await sessionApi.recommend(sessionId, 2);
+        const sid = await saveSessionStep(1);
+        const recResult = await sessionApi.recommend(sid, 2);
         setRecommendations(recResult?.recommendations || []);
       }
       setSavedSnapshots((prev) => ({ ...prev, 1: JSON.parse(JSON.stringify(step1Data)) }));
@@ -240,13 +306,18 @@ export function WizardProvider({ children }) {
         projectId: resolvedProjectId || undefined,
         metadata: { step: 1, mode: resolvedProjectId ? 'project' : 'session' },
       });
-      setPage('methods');
+      if (reviewReturn) {
+        setReviewReturn(false);
+        setPage('evaluation');
+      } else {
+        setPage('methods');
+      }
     } catch (e) {
       setError(e.message || 'Failed to save step 1.');
     } finally {
       setLoading(false);
     }
-  }, [pendingAuthProject, editingProjectId, sessionId, step1Data, setPage]);
+  }, [editingProjectId, sessionId, step1Data, setPage, saveSessionStep, reviewReturn]);
 
   // ── Save step 2 and fetch step-3 recommendations ─────────────────────────
   const submitStep2 = useCallback(async () => {
@@ -258,8 +329,8 @@ export function WizardProvider({ children }) {
         const recResult = await projectApi.recommend(editingProjectId, 3);
         setStep3Recommendations(recResult?.recommendations || []);
       } else {
-        await sessionApi.saveStep(sessionId, 2, step2Data);
-        const recResult = await sessionApi.recommend(sessionId, 3);
+        const sid = await saveSessionStep(2);
+        const recResult = await sessionApi.recommend(sid, 3);
         setStep3Recommendations(recResult?.recommendations || []);
       }
       setSavedSnapshots((prev) => ({ ...prev, 2: JSON.parse(JSON.stringify(step2Data)) }));
@@ -270,13 +341,18 @@ export function WizardProvider({ children }) {
         projectId: editingProjectId || undefined,
         metadata: { step: 2, mode: editingProjectId ? 'project' : 'session' },
       });
-      setPage('instruments');
+      if (reviewReturn) {
+        setReviewReturn(false);
+        setPage('evaluation');
+      } else {
+        setPage('instruments');
+      }
     } catch (e) {
       setError(e.message || 'Failed to save step 2.');
     } finally {
       setLoading(false);
     }
-  }, [editingProjectId, sessionId, step2Data]);
+  }, [editingProjectId, sessionId, step2Data, setPage, saveSessionStep, reviewReturn]);
 
   // ── Save step 3 and navigate to review ───────────────────────────────────
   const submitStep3 = useCallback(async () => {
@@ -286,7 +362,7 @@ export function WizardProvider({ children }) {
       if (editingProjectId) {
         await projectApi.saveStep(editingProjectId, 3, step3Data);
       } else {
-        await sessionApi.saveStep(sessionId, 3, step3Data);
+        await saveSessionStep(3);
       }
       setSavedSnapshots((prev) => ({ ...prev, 3: JSON.parse(JSON.stringify(step3Data)) }));
       setMaxStep((prev) => Math.max(prev, 4));
@@ -296,13 +372,29 @@ export function WizardProvider({ children }) {
         projectId: editingProjectId || undefined,
         metadata: { step: 3, mode: editingProjectId ? 'project' : 'session' },
       });
+      setReviewReturn(false);
       setPage('evaluation');
     } catch (e) {
       setError(e.message || 'Failed to save step 3.');
     } finally {
       setLoading(false);
     }
-  }, [editingProjectId, sessionId, step3Data]);
+  }, [editingProjectId, sessionId, step3Data, setPage, saveSessionStep]);
+
+  // ── Editing a single step from the review page (R6) ──────────────────────
+  // Instead of walking backwards through the wizard, the user jumps straight to
+  // the step being changed and is returned forward to the review on save.
+  const editStepFromReview = useCallback((stepNumber) => {
+    const target = STEP_TO_PAGE[stepNumber];
+    if (!target) return;
+    setReviewReturn(true);
+    setPage(target);
+  }, [setPage]);
+
+  const returnToReview = useCallback(() => {
+    setReviewReturn(false);
+    setPage('evaluation');
+  }, [setPage]);
 
   // ── Save step 4 and generate PDF — caller must catch errors ──────────────
   const generatePDF = useCallback(async () => {
@@ -317,16 +409,16 @@ export function WizardProvider({ children }) {
       });
       return result;
     }
-    await sessionApi.saveStep(sessionId, 4, step4Data);
-    const result = await sessionApi.generatePDF(sessionId);
+    const sid = await saveSessionStep(4);
+    const result = await sessionApi.generatePDF(sid);
     setPdfUrl(result?.pdfUrl || null);
     activityApi.record('frontend.pdf_generated', {
       page: 'evaluation',
-      sessionId,
+      sessionId: sid,
       metadata: { mode: 'session' },
     });
     return result;
-  }, [editingProjectId, sessionId, step4Data]);
+  }, [editingProjectId, step4Data, saveSessionStep]);
 
   return (
     <WizardContext.Provider
@@ -344,6 +436,9 @@ export function WizardProvider({ children }) {
         pdfUrl,
         currentProjectId, setCurrentProjectId,
         loading, error,
+        pendingAuthProject,
+        reviewReturn, editStepFromReview, returnToReview,
+        draftAvailable, resumeDraft, discardDraft, clearDraft,
         startWizard,
         createProject,
         loadProject,

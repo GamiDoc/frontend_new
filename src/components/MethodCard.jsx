@@ -1,6 +1,17 @@
 import Icon from './Icon';
+import MatchRationale from './MatchRationale';
 
-function MethodCard({ title, description, tags, icon, tagClass = '', selected = false, onToggle }) {
+function MethodCard({
+  title,
+  description,
+  tags,
+  icon,
+  tagClass = '',
+  selected = false,
+  onToggle,
+  rationale,
+  matchChips = [],
+}) {
   return (
     <div className={`method-card${selected ? ' method-card--selected' : ''}`} onClick={() => onToggle && onToggle(title)} style={{ cursor: 'pointer' }}>
       <div className="method-card-left">
@@ -17,6 +28,8 @@ function MethodCard({ title, description, tags, icon, tagClass = '', selected = 
               </span>
             ))}
           </div>
+
+          <MatchRationale rationale={rationale} chips={matchChips} />
         </div>
       </div>
 

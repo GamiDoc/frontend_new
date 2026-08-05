@@ -6,6 +6,8 @@ import NavigationButtons from "../components/NavigationButtons";
 import SelectionSummary from "../components/SelectionSummary";
 import RecommendedMethods from "../components/RecommendedMethods";
 import AlternativeMethodsBox from "../components/AlternativeMethodsBox";
+import EditReturnBar from "../components/EditReturnBar";
+import WizardAccountNotice from "../components/WizardAccountNotice";
 import Icon from "../components/Icon";
 import ALL_METHODS from "../data/methods";
 import { useWizard } from "../context/WizardContext";
@@ -18,6 +20,7 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
     submitStep2,
     setPage,
     loading, error,
+    reviewReturn,
   } = useWizard();
 
   const [selectionError, setSelectionError] = useState(false);
@@ -77,6 +80,8 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
       </section>
 
       <Stepper currentStep={2} />
+      <EditReturnBar step={2} />
+      <WizardAccountNotice onOpenLogin={onOpenLogin} />
 
       <main className="method-selection-page">
         <section className="method-selection-intro">
@@ -101,6 +106,7 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
             selectedMethods={step2Data.selectedMethods}
             onToggleMethod={handleToggleMethod}
             hasError={selectionError}
+            step1Data={step1Data}
           />
         ) : (
           <section className="recommended-methods-section">
@@ -147,7 +153,7 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
         <NavigationButtons
           onBack={() => setPage('setup')}
           onNext={handleNext}
-          nextLabel={loading ? 'Saving…' : 'Next: Instrument Selection'}
+          nextLabel={loading ? 'Saving…' : reviewReturn ? 'Save & return to Evaluation' : 'Next: Instrument Selection'}
           error={selectionError ? 'Select at least one method to continue.' : null}
         />
       </main>

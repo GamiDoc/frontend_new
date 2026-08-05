@@ -7,10 +7,12 @@ import DevelopmentStage from "../components/DevelopmentStage";
 import ConstraintsSection from "../components/ConstraintsSection";
 import ResearchSpecification from "../components/ResearchSpecification";
 import NavigationButtons from "../components/NavigationButtons";
+import EditReturnBar from "../components/EditReturnBar";
+import WizardAccountNotice from "../components/WizardAccountNotice";
 import { useWizard } from "../context/WizardContext";
 
 function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
-  const { step1Data, setStep1Data, submitStep1, setPage, loading, error } = useWizard();
+  const { step1Data, setStep1Data, submitStep1, setPage, loading, error, reviewReturn } = useWizard();
   const [errors, setErrors] = useState({});
 
   function update(field, value) {
@@ -52,6 +54,8 @@ function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
       </section>
 
       <Stepper currentStep={1} />
+      <EditReturnBar step={1} />
+      <WizardAccountNotice onOpenLogin={onOpenLogin} />
 
       <main>
         <section className="evaluation-goals-section">
@@ -127,7 +131,7 @@ function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
         <NavigationButtons
           onBack={() => setPage('landing')}
           onNext={handleNext}
-          nextLabel={loading ? 'Saving…' : 'Go to Methods'}
+          nextLabel={loading ? 'Saving…' : reviewReturn ? 'Save & return to Evaluation' : 'Go to Methods'}
           error={navError}
         />
       </main>

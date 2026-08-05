@@ -2652,3 +2652,440 @@ button {
   justify-content: flex-end;
 }
 
+
+/* =====================================================
+   R1 — DEFERRED ACCOUNT CREATION
+   ===================================================== */
+.draft-banner-section {
+  padding: 20px 0 0;
+}
+
+.draft-banner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid #e7c74f;
+  border-radius: 10px;
+  background: #fdf8e6;
+}
+
+.draft-banner-icon {
+  display: flex;
+  color: #8a6d15;
+}
+
+.draft-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+}
+
+.draft-banner-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.wizard-notice-section {
+  padding: 16px 0 0;
+}
+
+.wizard-notice {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 1px solid #d9dde3;
+  border-radius: 10px;
+  background: #f7f9fb;
+  font-size: 15px;
+  color: #333;
+}
+
+.wizard-notice-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e6f2e6;
+  color: #2f6b2f;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.wizard-notice-text {
+  flex: 1;
+  min-width: 240px;
+  line-height: 1.45;
+}
+
+.wizard-notice-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1f5f9e;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* =====================================================
+   R3 — WHY A RECOMMENDATION FITS
+   ===================================================== */
+.match-rationale {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-left: 3px solid #e7c74f;
+  border-radius: 0 8px 8px 0;
+  background: #fbfaf5;
+}
+
+.match-rationale-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #8a6d15;
+  margin-bottom: 6px;
+}
+
+.match-rationale-text {
+  font-size: 15px !important;
+  color: #333 !important;
+  line-height: 1.5;
+  margin-bottom: 8px !important;
+}
+
+.match-rationale-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.match-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid #d9dde3;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  color: #222;
+}
+
+.match-chip-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #777;
+}
+
+/* =====================================================
+   R4 — INSTRUMENT SUITES & GOAL COVERAGE
+   ===================================================== */
+.bundles-section,
+.coverage-section {
+  padding: 8px 0 24px;
+}
+
+.bundles-box,
+.coverage-box {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.bundles-box > p,
+.coverage-box > p {
+  font-size: 16px;
+  color: #222;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.bundles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.bundle-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid #d9dde3;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.bundle-card--applied {
+  border-color: #4a8c3f;
+  background: #f6fbf5;
+}
+
+.bundle-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.bundle-card-head h4 {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.bundle-applied-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4a8c3f;
+  white-space: nowrap;
+}
+
+.bundle-card-desc {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.45;
+}
+
+.bundle-card-goals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bundle-card-instruments {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: #333;
+}
+
+.bundle-inst--in {
+  color: #4a8c3f;
+  font-weight: 600;
+}
+
+.bundle-card-burden {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #777;
+}
+
+.bundle-card-btn {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.coverage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.coverage-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.coverage-score {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fdf1e0;
+  color: #8a5b15;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.coverage-score--full {
+  background: #e6f2e6;
+  color: #2f6b2f;
+}
+
+.coverage-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #d9dde3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.coverage-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eceff3;
+  font-size: 15px;
+}
+
+.coverage-row:last-child {
+  border-bottom: none;
+}
+
+.coverage-mark {
+  width: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.coverage-row--ok .coverage-mark { color: #4a8c3f; }
+.coverage-row--gap .coverage-mark { color: #c07a1e; }
+.coverage-row--gap { background: #fffaf2; }
+
+.coverage-goal {
+  font-weight: 600;
+  color: #111;
+  min-width: 220px;
+}
+
+.coverage-detail {
+  color: #555;
+}
+
+.coverage-add-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1f5f9e;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* =====================================================
+   R6 — FORWARD-FACING NAVIGATION
+   ===================================================== */
+.stepper-caption {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.step-item--done .step-number {
+  background: #4a8c3f;
+  color: #fff;
+}
+
+.step-item--done .step-text {
+  color: #444;
+}
+
+.step-item--upcoming .step-number {
+  background: #eceff3;
+  color: #9aa1aa;
+}
+
+.step-item--upcoming .step-text {
+  color: #9aa1aa;
+}
+
+.edit-return-section {
+  padding: 14px 0 0;
+}
+
+.edit-return-bar {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 1px solid #e7c74f;
+  border-radius: 10px;
+  background: #fdf8e6;
+  font-size: 15px;
+  color: #333;
+}
+
+.edit-return-text {
+  flex: 1;
+  min-width: 240px;
+  line-height: 1.45;
+}
+
+.edit-return-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1f5f9e;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.eval-summary-hint {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.eval-summary-edit {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid #d9dde3;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.eval-summary-edit:hover {
+  background: #f3f1f5;
+}
+
+.dashboard-hierarchy-note,
+.project-docs-note {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  max-width: 720px;
+}
+
+@media (max-width: 900px) {
+  .draft-banner,
+  .edit-return-bar { flex-direction: column; align-items: flex-start; }
+  .coverage-row { flex-direction: column; gap: 4px; }
+  .coverage-goal { min-width: 0; }
+  .eval-summary-edit { margin-left: 0; }
+}
+
+@media (max-width: 640px) {
+  /* Match the horizontal inset the other wizard containers use */
+  .draft-banner,
+  .wizard-notice,
+  .edit-return-bar,
+  .bundles-box,
+  .coverage-box { margin-left: 16px; margin-right: 16px; }
+  .bundles-grid { grid-template-columns: 1fr; }
+}

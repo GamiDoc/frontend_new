@@ -4,15 +4,23 @@ import Footer from '../components/Footer';
 import Stepper from '../components/Stepper';
 import NavigationButtons from '../components/NavigationButtons';
 import SelectionSummary from '../components/SelectionSummary';
+import EditReturnBar from '../components/EditReturnBar';
+import WizardAccountNotice from '../components/WizardAccountNotice';
+import InstrumentBundles from '../components/InstrumentBundles';
+import GoalCoverage from '../components/GoalCoverage';
+import MatchRationale from '../components/MatchRationale';
 import Icon from '../components/Icon';
 import { useWizard } from '../context/WizardContext';
 import ALL_INSTRUMENTS, { METHOD_NAME_TO_ID } from '../data/instruments';
+import { matchChips, fallbackRationale } from '../data/rationale';
 
 /* ── Single instrument card – mirrors MethodCard from main ── */
-function InstrumentCard({ instrument, selected, onToggle, userGoals = [] }) {
+function InstrumentCard({ instrument, selected, onToggle, userGoals = [], step1Data = {}, selectedMethods = [] }) {
   const uncoveredGoals = userGoals.filter(
     (g) => !(instrument.coversGoals || []).includes(g)
   );
+  const chips = matchChips(instrument, step1Data, selectedMethods, instrument);
+  const rationale = instrument.rationale || fallbackRationale(chips);
 
   return (
     <div
@@ -38,6 +46,7 @@ function InstrumentCard({ instrument, selected, onToggle, userGoals = [] }) {
               Does not measure: {uncoveredGoals.join(', ')}
             </p>
           )}
+          <MatchRationale rationale={rationale} chips={chips} />
         </div>
       </div>
       <div className="method-card-right">
@@ -55,7 +64,7 @@ function InstrumentCard({ instrument, selected, onToggle, userGoals = [] }) {
 const COLLAPSED_COUNT = 3;
 
 /* ── Group of recommended instruments for one method ── */
-function RecommendedInstruments({ methodName, instruments, selectedInstruments, onToggle, hasError, userGoals }) {
+function RecommendedInstruments({ methodName, instruments, selectedInstruments, onToggle, hasError, userGoals, step1Data, selectedMethods }) {
   const [expanded, setExpanded] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -90,6 +99,8 @@ function RecommendedInstruments({ methodName, instruments, selectedInstruments, 
                   selected={selectedInstruments.includes(inst.name)}
                   onToggle={onToggle}
                   userGoals={userGoals}
+                  step1Data={step1Data}
+                  selectedMethods={selectedMethods}
                 />
               ))}
             </div>
@@ -128,6 +139,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
     setPage,
     loading,
     error,
+    reviewReturn,
   } = useWizard();
 
   const [selectionError, setSelectionError] = useState(false);
@@ -143,6 +155,25 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
         : [...sel, name];
       return { ...prev, selectedInstruments: next };
     });
+  }
+
+  /* Bulk add / remove used by the instrument suites (R4) */
+  function addInstruments(names) {
+    setSelectionError(false);
+    setStep3Data((prev) => ({
+      ...prev,
+      selectedInstruments: [
+        ...prev.selectedInstruments,
+        ...names.filter((n) => !prev.selectedInstruments.includes(n)),
+      ],
+    }));
+  }
+
+  function removeInstruments(names) {
+    setStep3Data((prev) => ({
+      ...prev,
+      selectedInstruments: prev.selectedInstruments.filter((n) => !names.includes(n)),
+    }));
   }
 
   function handleNext() {
@@ -168,15 +199,23 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
     // API-recommended instruments that match this method in local data
     const apiMatched = step3Recommendations
       .filter((r) => ALL_INSTRUMENTS.find((i) => i.id === r.id && i.forMethodIds.includes(methodId)))
-      .map((r) => ALL_INSTRUMENTS.find((i) => i.id === r.id) || {
-        id: r.id,
-        name: r.name,
-        description: r.description,
-        tags: [r.priority].filter(Boolean),
-        attributes: [],
-        icon: 'clipboard',
-        forMethodIds: [],
-        coversGoals: [],
+      .map((r) => {
+        const local = ALL_INSTRUMENTS.find((i) => i.id === r.id);
+        // Keep the engine's rationale and matched signals alongside catalog data (R3)
+        return {
+          ...(local || {
+            id: r.id,
+            name: r.name,
+            description: r.description,
+            tags: [r.priority].filter(Boolean),
+            attributes: [],
+            icon: 'clipboard',
+            forMethodIds: [],
+            coversGoals: [],
+          }),
+          rationale: r.rationale,
+          matchedOn: r.matchedOn,
+        };
       });
 
     // If API has no matches for this method, fall back to ALL local instruments for it
@@ -217,6 +256,9 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
 
   const hasAnyInstruments = groups.some((g) => g.instruments.length > 0);
   const summaryConstraints = [step1Data.participants].filter(Boolean);
+  const selectedMethodIds = step2Data.selectedMethods.map(
+    (n) => METHOD_NAME_TO_ID[n] || n.toLowerCase().replace(/\s+/g, '-')
+  );
 
   return (
     <div>
@@ -230,6 +272,8 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
       </section>
 
       <Stepper currentStep={3} />
+      <EditReturnBar step={3} />
+      <WizardAccountNotice onOpenLogin={onOpenLogin} />
 
       <main className="method-selection-page">
         {/* ── Intro ── */}
@@ -250,6 +294,23 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
           developmentStage={step1Data.developmentStage}
           constraints={summaryConstraints}
           selectedMethods={step2Data.selectedMethods}
+        />
+
+        {/* ── Pre-packaged suites, offered before manual picking (R4) ── */}
+        <InstrumentBundles
+          userGoals={userGoals}
+          selectedMethodIds={selectedMethodIds}
+          selectedInstruments={step3Data.selectedInstruments}
+          onApply={addInstruments}
+          onRemove={removeInstruments}
+        />
+
+        {/* ── Coverage of the declared evaluation goals (R4) ── */}
+        <GoalCoverage
+          userGoals={userGoals}
+          selectedInstruments={step3Data.selectedInstruments}
+          selectedMethodIds={selectedMethodIds}
+          onAdd={(name) => addInstruments([name])}
         />
 
         {/* ── Recommended instruments per method ── */}
@@ -273,6 +334,8 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
             onToggle={toggleInstrument}
             hasError={selectionError}
             userGoals={userGoals}
+            step1Data={step1Data}
+            selectedMethods={step2Data.selectedMethods}
           />
         ))}
 
@@ -364,7 +427,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
         <NavigationButtons
           onBack={() => setPage('methods')}
           onNext={handleNext}
-          nextLabel={loading ? 'Saving…' : 'Next: Evaluation'}
+          nextLabel={loading ? 'Saving…' : reviewReturn ? 'Save & return to Evaluation' : 'Next: Evaluation'}
           error={selectionError ? 'Select at least one instrument to continue.' : null}
         />
       </main>

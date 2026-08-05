@@ -14,19 +14,25 @@ import EvaluationReview from './pages/EvaluationReview';
 import Dashboard from './pages/Dashboard';
 import ProjectDetail from './pages/ProjectDetail';
 import AuthModal from './components/AuthModal';
+import DraftResumeBanner from './components/DraftResumeBanner';
 import { useWizard } from './context/WizardContext';
 import { useAuth } from './context/AuthContext';
 
 function LandingPage({ onOpenLogin, onOpenSignup }) {
-  const { startWizard, createProject, loading } = useWizard();
+  const { startWizard, createProject, loading, draftAvailable, resumeDraft, discardDraft } = useWizard();
   const { user, loading: authLoading } = useAuth();
-  const { setPage } = useWizard();
 
   return (
     <div className="page">
       <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
       <main>
-        <Hero onStart={user ? createProject : startWizard} loading={loading || authLoading} />
+        {draftAvailable && (
+          <DraftResumeBanner onResume={resumeDraft} onDiscard={discardDraft} />
+        )}
+        <Hero
+          onStart={() => (user ? createProject() : startWizard())}
+          loading={loading || authLoading}
+        />
         <FeatureCards />
         <InfoSection />
       </main>

@@ -67,13 +67,19 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
         <div className="dashboard-container">
           <h1 className="dashboard-welcome">Welcome to GamiDoc!</h1>
           <p className="dashboard-subtitle">Start a new gamification project or continue working on an existing one.</p>
+          {/* R6 — the project / document distinction was reported as unclear. */}
+          <p className="dashboard-hierarchy-note">
+            A <strong>project</strong> is one gamified system you are evaluating. Each project
+            holds its own <strong>documents</strong> — the evaluation plans you generate for it
+            as the system evolves.
+          </p>
 
           <div className="dashboard-grid">
             {/* My Projects */}
             <div className="dashboard-card dashboard-card--projects">
               <h2>My Projects</h2>
 
-              <button className="dashboard-new-project-btn" onClick={user ? createProject : startWizard}>
+              <button className="dashboard-new-project-btn" onClick={() => (user ? createProject() : startWizard())}>
                 + Create New Project
               </button>
 

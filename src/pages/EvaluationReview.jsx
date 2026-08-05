@@ -13,6 +13,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
     step1Data, step2Data, step3Data, step4Data,
     sessionId, editingProjectId, setEditingProjectId,
     generatePDF, setPage, setCurrentProjectId,
+    pendingAuthProject, editStepFromReview, clearDraft,
   } = useWizard();
   const { user } = useAuth();
 
@@ -43,6 +44,37 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
       setShowNameInput(true);
     }
   }, [user]);
+
+  // R1 — a logged-in user who started a new plan gets it filed as a project here,
+  // at the end of the flow, instead of being blocked by registration at step 1.
+  const autoSavedRef = useRef(false);
+  useEffect(() => {
+    if (!user || !pendingAuthProject || editingProjectId || saved || autoSavedRef.current) return;
+    autoSavedRef.current = true;
+    (async () => {
+      setSaving(true);
+      setSaveError(null);
+      try {
+        const name = step1Data.projectName || step1Data.projectType || 'My Evaluation Project';
+        const project = await sessionApi.convertToProject(sessionId, name, step1Data.projectType || '');
+        if (project?.projectId) {
+          setEditingProjectId(project.projectId);
+          setCurrentProjectId(project.projectId);
+        }
+        setSaved(true);
+        clearDraft();
+      } catch (e) {
+        if (e.status === 409 || e.code === 'PROJECT_ALREADY_EXISTS') {
+          setSaved(true);
+          clearDraft();
+        } else {
+          setSaveError(e.message || 'Failed to save project.');
+        }
+      } finally {
+        setSaving(false);
+      }
+    })();
+  }, [user, pendingAuthProject, editingProjectId, saved]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Rename state (editingProjectId flow)
   const [showRename, setShowRename] = useState(false);
@@ -84,10 +116,12 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
       }
       setSaved(true);
       setShowNameInput(false);
+      clearDraft();
     } catch (e) {
       if (e.status === 409 || e.code === 'PROJECT_ALREADY_EXISTS') {
         setSaved(true);
         setShowNameInput(false);
+        clearDraft();
       } else {
         setSaveError(e.message || 'Failed to save project.');
       }
@@ -153,6 +187,9 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
             </div>
             <div className="eval-summary-content">
               <p className="eval-summary-group-label">Overview</p>
+              <p className="eval-summary-hint">
+                Need to change something? Edit the step directly — you come straight back here.
+              </p>
 
               <div className="eval-summary-row">
                 <span className="eval-summary-icon">◎</span>
@@ -162,18 +199,27 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                     <span key={g} className="summary-tag">{g}</span>
                   ))}
                 </div>
+                <button className="eval-summary-edit" onClick={() => editStepFromReview(1)}>
+                  <Icon name="edit" size={13} /> Edit
+                </button>
               </div>
 
               <div className="eval-summary-row">
                 <span className="eval-summary-icon"><Icon name="hexagon" size={16} /></span>
                 <span className="eval-summary-key">Methods:</span>
                 <span>{step2Data.selectedMethods.join(', ') || '—'}</span>
+                <button className="eval-summary-edit" onClick={() => editStepFromReview(2)}>
+                  <Icon name="edit" size={13} /> Edit
+                </button>
               </div>
 
               <div className="eval-summary-row">
                 <span className="eval-summary-icon"><Icon name="clipboard" size={16} /></span>
                 <span className="eval-summary-key">Instruments:</span>
                 <span>{step3Data.selectedInstruments.join(', ') || '—'}</span>
+                <button className="eval-summary-edit" onClick={() => editStepFromReview(3)}>
+                  <Icon name="edit" size={13} /> Edit
+                </button>
               </div>
 
               <p className="eval-summary-group-label" style={{ marginTop: '1rem' }}>
@@ -184,6 +230,9 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                 <div className="eval-summary-row">
                   <span className="eval-summary-icon"><Icon name="users" size={16} /></span>
                   <span>{step1Data.participants} participants</span>
+                  <button className="eval-summary-edit" onClick={() => editStepFromReview(1)}>
+                    <Icon name="edit" size={13} /> Edit
+                  </button>
                 </div>
               )}
 

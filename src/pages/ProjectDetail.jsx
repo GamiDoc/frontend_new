@@ -5,6 +5,7 @@ import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
 import { useWizard } from '../context/WizardContext';
 import { activityApi } from '../api/activity';
+import ConstructionButton from '../components/ConstructionButton';
 
 function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
   const { setPage, startWizard, loadProject } = useWizard();
@@ -138,7 +139,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
               <button className="btn btn-primary" onClick={() => loadProject(project, STEP_TO_PAGE[project.wizardStatus?.currentStep] || 'setup')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                 <Icon name="edit" size={16} /> Edit Evaluation Plan
               </button>
-              <button className="btn btn-secondary" onClick={startWizard}>+ New Documents</button>
+              <ConstructionButton className="btn btn-secondary">+ New Documents</ConstructionButton>
               <button className="btn btn-secondary" onClick={handleDelete} disabled={deleting} style={{ color: '#c00', borderColor: '#c00', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                 {deleting ? 'Deleting…' : <><Icon name="trash" size={16} /> Delete</>}
               </button>
@@ -149,6 +150,10 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             {/* Documents */}
             <div className="project-detail-docs">
               <h2>Project Documents</h2>
+              <p className="project-docs-note">
+                Documents belong to this project. The evaluation plan is generated from the
+                wizard steps — edit the plan to change it, then regenerate the document.
+              </p>
 
               {project.pdfUrl ? (
                 <div className="project-doc-card">

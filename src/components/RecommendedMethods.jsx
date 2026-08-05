@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MethodCard from "./MethodCard";
 import ALL_METHODS from "../data/methods";
+import { matchChips, fallbackRationale } from "../data/rationale";
 
 const COLLAPSED_COUNT = 3;
 
@@ -10,7 +11,7 @@ function resolveIcon(method) {
   return match?.icon || 'clipboard';
 }
 
-function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod, hasError }) {
+function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod, hasError, step1Data = {} }) {
   const [expanded, setExpanded] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -32,22 +33,29 @@ function RecommendedMethods({ methods, selectedMethods = [], onToggleMethod, has
           <>
             <p>
               These methods are suggested based on your selected goals, development
-              stage, and constraints.
+              stage, and constraints. Each card states which of your inputs it matches.
             </p>
 
             <div className="methods-list">
-              {visible.map((method) => (
-                <MethodCard
-                  key={method.id}
-                  title={method.name || method.title}
-                  description={method.description}
-                  tags={method.tags || (method.priority ? [method.priority] : [])}
-                  tagClass={method.priority === 'Added' ? 'method-tag--added' : ''}
-                  icon={resolveIcon(method)}
-                  selected={selectedMethods.includes(method.name || method.title)}
-                  onToggle={onToggleMethod}
-                />
-              ))}
+              {visible.map((method) => {
+                const name = method.name || method.title;
+                const catalogEntry = ALL_METHODS.find((m) => m.name === name);
+                const chips = matchChips(method, step1Data, [], catalogEntry);
+                return (
+                  <MethodCard
+                    key={method.id || name}
+                    title={name}
+                    description={method.description}
+                    tags={method.tags || (method.priority ? [method.priority] : [])}
+                    tagClass={method.priority === 'Added' ? 'method-tag--added' : ''}
+                    icon={resolveIcon(method)}
+                    selected={selectedMethods.includes(name)}
+                    onToggle={onToggleMethod}
+                    rationale={method.rationale || catalogEntry?.rationale || fallbackRationale(chips)}
+                    matchChips={chips}
+                  />
+                );
+              })}
             </div>
 
             {hiddenCount > 0 && (
