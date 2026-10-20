@@ -1,0 +1,35 @@
+/* =====================================================
+   CUSTOM CONSTRUCT — pages/CustomConstruct.jsx
+   Page shell comes from pages/browse.css (.browse-page).
+   ===================================================== */
+.custom-construct-form {
+  max-width: 700px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.custom-construct-section { display: flex; flex-direction: column; gap: 8px; }
+.custom-construct-label   { font-weight: 600; font-size: 15px; }
+.custom-construct-info-box {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: #fff9e6; border: 1px solid #f0d060;
+  border-radius: 8px; padding: 12px 14px;
+}
+.custom-construct-info-icon { font-size: 18px; flex-shrink: 0; }
+.custom-construct-info-box p { font-size: 14px; color: #555; line-height: 1.5; margin: 0; }
+.custom-construct-textarea {
+  width: 100%; padding: 10px 12px; border-radius: 8px;
+  border: 1.5px solid #ccc; font-size: 15px; font-family: inherit; resize: vertical;
+}
+.custom-construct-textarea:focus { outline: none; border-color: #111; }
+.custom-construct-hint { font-size: 12px; color: #888; }
+.custom-construct-goals {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.custom-construct-actions {
+  display: flex; justify-content: flex-end; gap: 12px;
+  padding-top: 8px; border-top: 1px solid #e5e5e5;
+}
+
+@media (max-width: 640px) {
+  .custom-construct-goals   { grid-template-columns: 1fr; }
+  .custom-construct-actions { flex-direction: column; gap: 8px; }
+}

@@ -1,0 +1,29 @@
+/* =====================================================
+   RESET & GLOBAL ELEMENTS
+   ===================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-x: clip;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f2f2;
+  color: #111;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Root wrapper of every page (App.jsx, pages/*) */
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+}

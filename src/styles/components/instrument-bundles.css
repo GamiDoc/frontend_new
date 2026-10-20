@@ -1,0 +1,196 @@
+/* =====================================================
+   INSTRUMENT SUITES & GOAL COVERAGE (R4, wizard step 3)
+   components/InstrumentBundles.jsx, GoalCoverage.jsx
+   ===================================================== */
+.bundles-section,
+.coverage-section {
+  padding: 8px 0 24px;
+}
+
+.bundles-box,
+.coverage-box {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.bundles-box > p,
+.coverage-box > p {
+  font-size: 16px;
+  color: #222;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* ── Instrument suites (bundles) ──────────────────── */
+.bundles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.bundle-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid #d9dde3;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.bundle-card--applied {
+  border-color: #4a8c3f;
+  background: #f6fbf5;
+}
+
+.bundle-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.bundle-card-head h4 {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.bundle-applied-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4a8c3f;
+  white-space: nowrap;
+}
+
+.bundle-card-desc {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.45;
+}
+
+.bundle-card-goals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bundle-card-instruments {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: #333;
+}
+
+.bundle-inst--in {
+  color: #4a8c3f;
+  font-weight: 600;
+}
+
+.bundle-card-burden {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #777;
+}
+
+.bundle-card-btn {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* ── Goal coverage checklist ──────────────────────── */
+.coverage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.coverage-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.coverage-score {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fdf1e0;
+  color: #8a5b15;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.coverage-score--full {
+  background: #e6f2e6;
+  color: #2f6b2f;
+}
+
+.coverage-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #d9dde3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.coverage-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eceff3;
+  font-size: 15px;
+}
+
+.coverage-row:last-child {
+  border-bottom: none;
+}
+
+.coverage-mark {
+  width: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.coverage-row--ok .coverage-mark { color: #4a8c3f; }
+.coverage-row--gap .coverage-mark { color: #c07a1e; }
+.coverage-row--gap { background: #fffaf2; }
+
+.coverage-goal {
+  font-weight: 600;
+  color: #111;
+  min-width: 220px;
+}
+
+.coverage-detail {
+  color: #555;
+}
+
+.coverage-add-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1f5f9e;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .coverage-row { flex-direction: column; gap: 4px; }
+  .coverage-goal { min-width: 0; }
+}
+
+@media (max-width: 640px) {
+  .bundles-box,
+  .coverage-box { margin-left: 16px; margin-right: 16px; }
+  .bundles-grid { grid-template-columns: 1fr; }
+}

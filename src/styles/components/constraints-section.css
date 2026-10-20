@@ -1,0 +1,67 @@
+/* =====================================================
+   CONSTRAINTS — components/ConstraintsSection.jsx
+   (wizard step 1)
+   ===================================================== */
+.constraints-section {
+  padding: 0 0 24px;
+  background: #ffffff;
+}
+
+.constraints-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
+.constraints-box h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.constraint-group {
+  margin-top: 28px;
+}
+
+.constraint-group h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.constraint-options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 30px;
+}
+
+.constraint-options-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+  border-top: 1px solid #eee;
+}
+
+.constraint-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #111;
+  padding-top: 8px;
+}
+
+.constraint-option input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #e7c74f;
+}
+
+@media (max-width: 640px) {
+  .constraints-box { margin-left: 16px; margin-right: 16px; }
+  .constraint-option input { width: 20px; height: 20px; }
+}

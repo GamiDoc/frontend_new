@@ -1,0 +1,139 @@
+/* =====================================================
+   NOTICE BARS
+   Informational strips shown at the top of a page:
+   - DraftResumeBanner.jsx   (R1 — resume local draft)
+   - WizardAccountNotice.jsx (R1 — deferred account creation)
+   - EditReturnBar.jsx       (R6 — editing from review page)
+   ===================================================== */
+
+/* ── Draft resume banner (landing) ────────────────── */
+.draft-banner-section {
+  padding: 20px 0 0;
+}
+
+.draft-banner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid #e7c74f;
+  border-radius: 10px;
+  background: #fdf8e6;
+}
+
+.draft-banner-icon {
+  display: flex;
+  color: #8a6d15;
+}
+
+.draft-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+}
+
+.draft-banner-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Wizard account notice ────────────────────────── */
+.wizard-notice-section {
+  padding: 16px 0 0;
+}
+
+.wizard-notice {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 1px solid #d9dde3;
+  border-radius: 10px;
+  background: #f7f9fb;
+  font-size: 15px;
+  color: #333;
+}
+
+.wizard-notice-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e6f2e6;
+  color: #2f6b2f;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.wizard-notice-text {
+  flex: 1;
+  min-width: 240px;
+  line-height: 1.45;
+}
+
+.wizard-notice-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1f5f9e;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Edit-return bar ──────────────────────────────── */
+.edit-return-section {
+  padding: 14px 0 0;
+}
+
+.edit-return-bar {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 1px solid #e7c74f;
+  border-radius: 10px;
+  background: #fdf8e6;
+  font-size: 15px;
+  color: #333;
+}
+
+.edit-return-text {
+  flex: 1;
+  min-width: 240px;
+  line-height: 1.45;
+}
+
+.edit-return-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #1f5f9e;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .draft-banner,
+  .edit-return-bar { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 640px) {
+  .draft-banner,
+  .wizard-notice,
+  .edit-return-bar { margin-left: 16px; margin-right: 16px; }
+}

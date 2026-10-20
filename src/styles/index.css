@@ -1,0 +1,73 @@
+/* =====================================================
+   GAMIDOC STYLES — entry point (imported by main.jsx,
+   after bootstrap.css)
+
+   base/        global reset and root elements
+   ui/          reusable building blocks, not tied to one
+                component (buttons, form controls, tags,
+                tooltip, modal base, error feedback…)
+   layout/      app chrome: navbar, footer, wizard stepper,
+                wizard page shell
+   components/  one file per React component (or small
+                family of related components) in
+                src/components/
+   pages/       page-specific styles for src/pages/ and the
+                landing page
+
+   Each file keeps its own responsive rules at the bottom
+   (@media max-width: 900 / 768 / 640 px).
+   Order matters: generic first, specific last.
+   ===================================================== */
+
+/* ── Base ─────────────────────────────────────────── */
+@import './base/reset.css';
+
+/* ── UI building blocks ───────────────────────────── */
+@import './ui/buttons.css';
+@import './ui/forms.css';
+@import './ui/tags.css';
+@import './ui/tooltip.css';
+@import './ui/collapsible.css';
+@import './ui/modal.css';
+@import './ui/feedback.css';
+
+/* ── Layout ───────────────────────────────────────── */
+@import './layout/navbar.css';
+@import './layout/footer.css';
+@import './layout/stepper.css';
+@import './layout/wizard-page.css';
+
+/* ── Components ───────────────────────────────────── */
+/* step 1 — evaluation setup */
+@import './components/evaluation-goals.css';
+@import './components/development-stage.css';
+@import './components/constraints-section.css';
+@import './components/research-specification.css';
+/* step 2/3 — method & instrument selection */
+@import './components/selection-summary.css';
+@import './components/method-card.css';
+@import './components/alternative-methods.css';
+@import './components/instrument-card.css';
+@import './components/instrument-bundles.css';
+@import './components/match-rationale.css';
+/* shared across steps */
+@import './components/navigation-buttons.css';
+@import './components/notice-bars.css';
+
+/* ── Pages ────────────────────────────────────────── */
+@import './pages/landing.css';
+@import './pages/browse.css';
+@import './pages/custom-construct.css';
+@import './pages/evaluation-review.css';
+@import './pages/dashboard.css';
+@import './pages/project-detail.css';
+
+/* ── Modals ───────────────────────────────────────────
+   Kept last on purpose: some modals render inside page
+   elements (e.g. ConstructionModal inside .feature-card),
+   so their rules must win over page rules like
+   ".feature-card p". */
+@import './components/auth-modal.css';
+@import './components/all-methods-modal.css';
+@import './components/learn-more-modal.css';
+@import './components/construction-modal.css';

@@ -1,0 +1,95 @@
+/* =====================================================
+   WIZARD NAVIGATION BUTTONS — components/NavigationButtons.jsx
+   "Back" / "Next →" row at the bottom of each wizard step.
+   ===================================================== */
+.nav-buttons {
+  max-width: 1100px;
+  margin: 32px auto 48px;
+  padding: 0 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-buttons .btn-secondary {
+  min-width: 72px;
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid #9aa4b2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-buttons .btn-secondary:hover {
+  background: #f7f7f7;
+  border-color: #7f8a99;
+}
+
+.nav-buttons .btn-primary {
+  min-width: 220px;
+  height: 44px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 8px;
+  background: #f4d35e;
+  color: #111;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.nav-buttons .btn-primary:hover {
+  background: #e7c74f;
+}
+
+.nav-buttons .btn-primary::after {
+  content: "→";
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ── Validation message shown above the buttons ───── */
+.nav-error {
+  color: #c0392b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-error::before {
+  content: "⚠";
+}
+
+@media (max-width: 640px) {
+  .nav-buttons {
+    padding: 0 16px;
+    justify-content: space-between;
+  }
+  .nav-buttons .btn-primary {
+    min-width: 0;
+    flex: 1;
+    max-width: 72%;
+    font-size: 14px;
+  }
+}
+
+/* Right-aligned variant, same centering as .nav-buttons */
+.nav-error--right {
+  max-width: 1100px;
+  margin: -32px auto 32px;
+  padding: 0 8px;
+  justify-content: flex-end;
+}

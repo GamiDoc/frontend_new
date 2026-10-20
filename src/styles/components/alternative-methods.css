@@ -1,0 +1,52 @@
+/* =====================================================
+   ALTERNATIVE METHODS BOX — components/AlternativeMethodsBox.jsx
+   (also used by InstrumentSelection for alternative instruments)
+   ===================================================== */
+.alternative-methods-section {
+  padding: 8px 0 4px;
+}
+
+.alternative-methods-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #d9dde3;
+  border-radius: 10px;
+  padding: 18px 22px;
+  background: #fff;
+}
+
+.alternative-methods-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 12px;
+}
+
+.alternative-methods-arrow {
+  font-size: 20px;
+  line-height: 1;
+  color: #111;
+  transition: transform 0.2s;
+}
+
+.alternative-methods-arrow--open {
+  transform: rotate(90deg);
+}
+
+.alternative-methods-link {
+  color: #384250;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.alternative-methods-link:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 640px) {
+  .alternative-methods-box { margin: 0 16px; }
+}

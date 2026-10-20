@@ -1,0 +1,128 @@
+/* =====================================================
+   FORM CONTROLS
+   Reusable inputs: text fields, toggle switch,
+   dynamic (add/remove) input lists.
+   ===================================================== */
+
+/* ── Text inputs ──────────────────────────────────── */
+.text-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid #d9dde3;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+/* Compact input with dark focus border (project name/description, …) */
+.project-type-input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.project-type-input:focus {
+  outline: none;
+  border-color: #111;
+}
+
+/* ── Toggle switch ────────────────────────────────── */
+/* <label class="toggle-switch"><input type="checkbox"><span class="slider"></span></label> */
+.toggle-switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+}
+
+.toggle-switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background: #ccc;
+  border-radius: 999px;
+  width: 100%;
+  height: 100%;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  left: 2px;
+  top: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-switch input:checked + .slider {
+  background: #e7c74f;
+}
+
+.toggle-switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* ── Checkbox + label on one row ──────────────────── */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+}
+
+/* ── Dynamic input list (text field + ✕ remove) ───── */
+.dynamic-inputs {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dynamic-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dynamic-input-row .text-input {
+  flex: 1;
+}
+
+.dynamic-input-remove {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 6px;
+  background: none;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.dynamic-input-remove:hover {
+  border-color: #e05555;
+  color: #e05555;
+  background: #fff5f5;
+}
+
+/* "(optional)" hint next to a label */
+.optional {
+  color: #777;
+  font-size: 14px;
+}

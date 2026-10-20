@@ -1,0 +1,112 @@
+/* =====================================================
+   WIZARD STEPPER — components/Stepper.jsx
+   Sticky progress bar shown on top of every wizard step.
+   ===================================================== */
+.stepper-simple {
+  background: #f3f3f3;
+  padding: 14px 0 18px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.stepper-box {
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.stepper-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #777;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5e9ef;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.step-item.active .step-number {
+  background: #e7c74f;
+  color: #111;
+}
+
+.step-item.active .step-text {
+  color: #111;
+  font-weight: 700;
+}
+
+.stepper-line {
+  width: 100%;
+  height: 6px;
+  background: #d9dde3;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.stepper-progress {
+  width: 25%;
+  height: 100%;
+  background: #e7c74f;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.step-item--clickable:hover {
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+/* ── Step states (R6 — forward-facing navigation) ───── */
+.stepper-caption {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.step-item--done .step-number {
+  background: #4a8c3f;
+  color: #fff;
+}
+
+.step-item--done .step-text {
+  color: #444;
+}
+
+.step-item--upcoming .step-number {
+  background: #eceff3;
+  color: #9aa1aa;
+}
+
+.step-item--upcoming .step-text {
+  color: #9aa1aa;
+}
+
+@media (max-width: 640px) {
+  .stepper-box { padding: 0 12px; }
+  .stepper-labels { gap: 4px; }
+  .step-item  { font-size: 13px; gap: 5px; }
+  .step-item:not(.active) .step-text { display: none; }
+}

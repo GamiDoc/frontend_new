@@ -1,0 +1,36 @@
+/* =====================================================
+   TAGS & CHIPS
+   Small yellow labels used in summaries and cards.
+   ===================================================== */
+.summary-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #FBECBB;
+  font-size: 14px;
+  color: #111;
+}
+
+/* Wrapper for a row of .method-tag */
+.method-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.method-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #FBECBB;
+  font-size: 14px;
+  color: #111;
+}
+
+/* Variant: item manually added by the user (green) */
+.method-tag--added {
+  background: #e8f4e8;
+  color: #2a6b2a;
+}

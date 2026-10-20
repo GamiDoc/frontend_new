@@ -1,0 +1,51 @@
+/* =====================================================
+   RESEARCH SPECIFICATION — components/ResearchSpecification.jsx
+   (wizard step 1). Toggle, text inputs and dynamic input
+   lists live in ui/forms.css.
+   ===================================================== */
+.research-section {
+  padding: 0 0 40px;
+}
+
+.research-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
+.research-box h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.research-box h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.research-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.research-objective,
+.research-questions,
+.hypotheses {
+  margin-top: 28px;
+}
+
+.question-label {
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .research-box { margin-left: 16px; margin-right: 16px; }
+}

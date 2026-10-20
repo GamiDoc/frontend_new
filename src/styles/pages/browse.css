@@ -1,0 +1,129 @@
+/* =====================================================
+   BROWSE PAGES — pages/BrowseInstruments.jsx,
+   pages/BrowseMethods.jsx
+   (.browse-page / title / breadcrumb also used by
+   pages/CustomConstruct.jsx)
+   ===================================================== */
+.browse-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 60px;
+}
+.browse-breadcrumb {
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+.browse-breadcrumb:hover { color: #111; text-decoration: underline; }
+.browse-title    { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.browse-subtitle { font-size: 15px; color: #555; margin-bottom: 28px; }
+
+.browse-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* ── Filters sidebar ──────────────────────────────── */
+.browse-filters { display: flex; flex-direction: column; gap: 20px; }
+.browse-filter-group { display: flex; flex-direction: column; gap: 8px; }
+.browse-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.browse-clear {
+  background: none; border: none; font-size: 12px;
+  color: #777; cursor: pointer; text-decoration: underline;
+}
+.browse-clear:hover { color: #111; }
+.browse-clear-all {
+  margin-top: 8px; padding: 8px 0;
+  background: none; border: 1px solid #ccc;
+  border-radius: 6px; font-size: 13px; cursor: pointer; color: #555;
+}
+.browse-clear-all:hover { background: #f5f5f5; }
+.browse-filter-option {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: #333; cursor: pointer;
+}
+.browse-filter-option input { accent-color: #e7c74f; cursor: pointer; }
+
+/* ── Results list ─────────────────────────────────── */
+.browse-results { display: flex; flex-direction: column; gap: 14px; }
+
+.browse-instrument-card {
+  border: 1.5px solid #d9dde3;
+  border-radius: 10px;
+  padding: 18px 20px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.browse-instrument-card:hover    { border-color: #e7c74f; }
+.browse-instrument-card--selected { border-color: #e7c74f; background: #fffdf0; }
+
+.browse-instrument-main {
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.browse-instrument-icon {
+  width: 44px; height: 44px; border-radius: 10px; background: #f7f7f7;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.browse-instrument-content { flex: 1; }
+.browse-instrument-top {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 4px;
+}
+.browse-instrument-content h4 { font-size: 16px; font-weight: 700; }
+.browse-instrument-content p  { font-size: 14px; color: #444; line-height: 1.4; margin-bottom: 8px; }
+.browse-instrument-type-tag,
+.browse-method-type-tag {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px;
+  background: #f0f0f0; color: #555; white-space: nowrap; flex-shrink: 0;
+}
+.browse-method-rationale { font-size: 13px; color: #666; font-style: italic; margin-bottom: 6px; }
+.browse-attributes { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
+.browse-attribute  { font-size: 12px; color: #777; }
+.browse-instrument-check { padding-top: 4px; flex-shrink: 0; }
+.browse-instrument-check input { width: 18px; height: 18px; accent-color: #e7c74f; cursor: pointer; }
+
+/* ── Footer actions (also CustomConstruct's actions) ─ */
+.browse-footer {
+  display: flex; justify-content: flex-end; gap: 12px;
+  margin-top: 32px; padding-top: 20px; border-top: 1px solid #e5e5e5;
+}
+.browse-footer .btn-secondary,
+.custom-construct-actions .btn-secondary {
+  min-width: 72px;
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid #9aa4b2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.browse-footer .btn-secondary:hover,
+.custom-construct-actions .btn-secondary:hover {
+  background: #f7f7f7;
+  border-color: #7f8a99;
+}
+
+@media (max-width: 768px) {
+  /* Sidebar collapses early on small tablets */
+  .browse-layout { grid-template-columns: 1fr; gap: 20px; }
+}
+
+@media (max-width: 640px) {
+  .browse-page { padding: 16px 16px 40px; }
+}

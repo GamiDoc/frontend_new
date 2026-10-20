@@ -1,0 +1,52 @@
+/* =====================================================
+   DEVELOPMENT STAGE — components/DevelopmentStage.jsx
+   (wizard step 1)
+   ===================================================== */
+.development-stage-section {
+  padding: 0 0 24px;
+  background: #ffffff;
+}
+
+.development-stage-box {
+  max-width: 1100px;
+  margin: 0 auto;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
+.development-stage-box h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.development-stage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 40px;
+  margin-top: 16px;
+}
+
+.development-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #111;
+  border-bottom: 1px solid #eee;
+}
+
+.development-option input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #e7c74f;
+}
+
+@media (max-width: 640px) {
+  .development-stage-box { margin-left: 16px; margin-right: 16px; }
+  .development-stage-grid { grid-template-columns: 1fr; gap: 0; }
+  .development-option input { width: 20px; height: 20px; }
+}

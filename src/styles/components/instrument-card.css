@@ -1,0 +1,25 @@
+/* =====================================================
+   INSTRUMENT CARD (wizard step 3)
+   .instrument-attribute / .instrument-uncovered are used by
+   pages/InstrumentSelection.jsx inside .method-card.
+   ===================================================== */
+.instrument-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 20px 22px;
+  border: 1.5px solid #d9dde3;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 14px;
+}
+.instrument-card--selected {
+  border-color: #e7c74f;
+  background: #fffdf0;
+}
+.instrument-card-content h4 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.instrument-card-content p  { font-size: 15px; color: #333; line-height: 1.45; margin-bottom: 8px; }
+.instrument-card-left { display: flex; align-items: flex-start; gap: 16px; flex: 1; }
+.instrument-attribute { font-size: 13px; color: #666; margin-top: 5px !important; }
+.instrument-uncovered { font-size: 12px; color: #b05e00; background: #fff8ee; border: 1px solid #f5d89a; border-radius: 5px; padding: 3px 8px; margin-top: 8px !important; display: inline-block; }
