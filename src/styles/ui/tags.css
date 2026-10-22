@@ -2,14 +2,15 @@
    TAGS & CHIPS
    Small yellow labels used in summaries and cards.
    ===================================================== */
-.summary-tag {
+.summary-tag,
+.method-tag {
   display: inline-flex;
   align-items: center;
   padding: 6px 10px;
   border-radius: 8px;
-  background: #FBECBB;
+  background: var(--gd-yellow-tag);
   font-size: 14px;
-  color: #111;
+  color: var(--gd-text);
 }
 
 /* Wrapper for a row of .method-tag */
@@ -17,16 +18,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.method-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: #FBECBB;
-  font-size: 14px;
-  color: #111;
 }
 
 /* Variant: item manually added by the user (green) */

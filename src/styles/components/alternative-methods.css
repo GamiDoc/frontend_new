@@ -7,9 +7,9 @@
 }
 
 .alternative-methods-box {
-  max-width: 1100px;
+  max-width: var(--gd-content-width);
   margin: 0 auto;
-  border: 1px solid #d9dde3;
+  border: 1px solid var(--gd-border);
   border-radius: 10px;
   padding: 18px 22px;
   background: #fff;
@@ -21,14 +21,14 @@
   gap: 10px;
   font-size: 16px;
   font-weight: 600;
-  color: #111;
+  color: var(--gd-text);
   margin-bottom: 12px;
 }
 
 .alternative-methods-arrow {
   font-size: 20px;
   line-height: 1;
-  color: #111;
+  color: var(--gd-text);
   transition: transform 0.2s;
 }
 

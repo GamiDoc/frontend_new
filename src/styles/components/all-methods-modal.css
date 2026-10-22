@@ -57,12 +57,12 @@
 }
 
 .all-methods-modal-item:hover {
-  border-color: #e7c74f;
-  background: #fffdf5;
+  border-color: var(--gd-yellow-accent);
+  background: var(--gd-yellow-bg-hover);
 }
 
 .all-methods-modal-item--selected {
-  border-color: #e7c74f;
+  border-color: var(--gd-yellow-accent);
   background: #fff9e6;
 }
 
@@ -101,7 +101,7 @@
 .all-methods-rationale {
   font-size: 0.82rem;
   color: #777;
-  margin-top: 6px !important;
+  margin-top: 6px;
 }
 
 .all-methods-modal-check {
@@ -113,7 +113,7 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #e7c74f;
+  accent-color: var(--gd-yellow-accent);
 }
 
 .all-methods-modal-footer {
@@ -128,7 +128,7 @@
 
 .all-methods-modal-count {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--gd-text-muted);
   font-weight: 500;
 }
 

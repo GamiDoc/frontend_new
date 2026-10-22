@@ -8,9 +8,9 @@
 }
 
 .selection-summary-box {
-  max-width: 1100px;
+  max-width: var(--gd-content-width);
   margin: 0 auto;
-  border: 1px solid #d9dde3;
+  border: 1px solid var(--gd-border);
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
@@ -22,7 +22,7 @@
   gap: 12px;
   background: #f3f1f5;
   padding: 14px 18px;
-  border-bottom: 1px solid #d9dde3;
+  border-bottom: 1px solid var(--gd-border);
 }
 
 .selection-summary-header h3 {
@@ -33,7 +33,7 @@
 
 .selection-summary-arrow {
   font-size: 18px;
-  color: #111;
+  color: var(--gd-text);
 }
 
 .selection-summary-content {
@@ -60,7 +60,7 @@
   gap: 12px;
   font-weight: 600;
   font-size: 15px;
-  color: #111;
+  color: var(--gd-text);
   flex-shrink: 0;
 }
 

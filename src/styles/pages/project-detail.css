@@ -2,11 +2,11 @@
    PROJECT DETAIL — pages/ProjectDetail.jsx
    ===================================================== */
 .project-detail-main      { background: #f5f5f5; min-height: 80vh; padding: 40px 0; }
-.project-detail-container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.project-detail-container { max-width: var(--gd-content-width); margin: 0 auto; padding: 0 24px; }
 .project-detail-breadcrumb {
-  font-size: 14px; color: #555; cursor: pointer; margin-bottom: 20px;
+  font-size: 14px; color: var(--gd-text-muted); cursor: pointer; margin-bottom: 20px;
 }
-.project-detail-breadcrumb:hover { color: #111; text-decoration: underline; }
+.project-detail-breadcrumb:hover { color: var(--gd-text); text-decoration: underline; }
 
 /* ── Header (title, description, actions) ─────────── */
 .project-detail-header {
@@ -66,7 +66,7 @@
   padding: 10px 0; border-bottom: 1px solid #ececec; font-size: 14px;
 }
 .project-info-row:last-child { border-bottom: none; }
-.project-info-label { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; }
+.project-info-label { font-weight: 600; color: var(--gd-text-muted); font-size: 12px; text-transform: uppercase; }
 
 @media (max-width: 640px) {
   .project-detail-main      { padding: 24px 0; }

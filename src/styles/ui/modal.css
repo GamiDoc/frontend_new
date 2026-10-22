@@ -22,5 +22,5 @@
   border: none;
   font-size: 1.1rem;
   cursor: pointer;
-  color: #555;
+  color: var(--gd-text-muted);
 }

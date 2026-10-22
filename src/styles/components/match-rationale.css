@@ -6,7 +6,7 @@
 .match-rationale {
   margin-top: 14px;
   padding: 12px 14px;
-  border-left: 3px solid #e7c74f;
+  border-left: 3px solid var(--gd-yellow-accent);
   border-radius: 0 8px 8px 0;
   background: #fbfaf5;
 }
@@ -21,11 +21,12 @@
   margin-bottom: 6px;
 }
 
-.match-rationale-text {
-  font-size: 15px !important;
-  color: #333 !important;
+/* Two classes so it wins over ".method-card-content p" */
+.match-rationale .match-rationale-text {
+  font-size: 15px;
+  color: #333;
   line-height: 1.5;
-  margin-bottom: 8px !important;
+  margin-bottom: 8px;
 }
 
 .match-rationale-chips {
@@ -39,7 +40,7 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  border: 1px solid #d9dde3;
+  border: 1px solid var(--gd-border);
   border-radius: 999px;
   background: #fff;
   font-size: 13px;

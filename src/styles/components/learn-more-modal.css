@@ -37,7 +37,7 @@
   font-size: 1.15rem;
   font-weight: 700;
   margin: 0;
-  color: #111;
+  color: var(--gd-text);
 }
 
 .lm-close {
@@ -80,20 +80,20 @@
   padding: 14px 16px;
   background: #f8f9fb;
   border-radius: 10px;
-  border-left: 3px solid #e7c74f;
+  border-left: 3px solid var(--gd-yellow-accent);
 }
 
 .lm-item-name {
   display: block;
   font-size: 13px;
   font-weight: 700;
-  color: #111;
+  color: var(--gd-text);
   margin-bottom: 5px;
 }
 
 .lm-item-desc {
   font-size: 13px;
-  color: #555;
+  color: var(--gd-text-muted);
   line-height: 1.55;
   margin: 0;
 }

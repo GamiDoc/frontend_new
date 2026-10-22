@@ -41,7 +41,7 @@
 
 .auth-form input:focus {
   outline: none;
-  border-color: #111;
+  border-color: var(--gd-text);
 }
 
 .auth-form .btn {
@@ -52,13 +52,13 @@
   text-align: center;
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--gd-text-muted);
 }
 
 .auth-link {
   background: none;
   border: none;
-  color: #111;
+  color: var(--gd-text);
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
@@ -99,7 +99,7 @@
 
 /* ── Per-field errors ─────────────────────────────── */
 .auth-field-error {
-  color: #c0392b;
+  color: var(--gd-error);
   font-size: 0.8rem;
   margin-top: 4px;
   display: flex;

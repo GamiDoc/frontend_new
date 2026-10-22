@@ -7,15 +7,6 @@
   background: #ffffff;
 }
 
-.evaluation-goals-box {
-  max-width: 1100px;
-  margin: 0 auto;
-  border: 1px solid #e1e1e1;
-  border-radius: 10px;
-  padding: 24px;
-  background: #fff;
-}
-
 .evaluation-goals-box h2 {
   margin-bottom: 6px;
   font-size: 26px;
@@ -68,11 +59,7 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: #e7c74f;
-}
-
-.goal-option input:checked + span {
-  color: #111;
+  accent-color: var(--gd-yellow-accent);
 }
 
 @media (hover: hover) {
@@ -83,7 +70,6 @@
 }
 
 @media (max-width: 640px) {
-  .evaluation-goals-box { margin-left: 16px; margin-right: 16px; }
   .goals-grid { grid-template-columns: 1fr; gap: 16px; }
   .goal-option input { width: 20px; height: 20px; }
 }

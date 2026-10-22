@@ -3,7 +3,7 @@
    "Back" / "Next →" row at the bottom of each wizard step.
    ===================================================== */
 .nav-buttons {
-  max-width: 1100px;
+  max-width: var(--gd-content-width);
   margin: 32px auto 48px;
   padding: 0 8px;
   display: flex;
@@ -12,33 +12,14 @@
   gap: 16px;
 }
 
-.nav-buttons .btn-secondary {
-  min-width: 72px;
-  height: 40px;
-  padding: 0 18px;
-  border: 1px solid #9aa4b2;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #111;
-  font-size: 14px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.nav-buttons .btn-secondary:hover {
-  background: #f7f7f7;
-  border-color: #7f8a99;
-}
-
 .nav-buttons .btn-primary {
   min-width: 220px;
   height: 44px;
   padding: 0 22px;
   border: none;
   border-radius: 8px;
-  background: #f4d35e;
-  color: #111;
+  background: var(--gd-yellow-soft);
+  color: var(--gd-text);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -50,7 +31,7 @@
 }
 
 .nav-buttons .btn-primary:hover {
-  background: #e7c74f;
+  background: var(--gd-yellow-accent);
 }
 
 .nav-buttons .btn-primary::after {
@@ -61,7 +42,7 @@
 
 /* ── Validation message shown above the buttons ───── */
 .nav-error {
-  color: #c0392b;
+  color: var(--gd-error);
   font-size: 0.875rem;
   font-weight: 500;
   display: flex;
@@ -88,7 +69,7 @@
 
 /* Right-aligned variant, same centering as .nav-buttons */
 .nav-error--right {
-  max-width: 1100px;
+  max-width: var(--gd-content-width);
   margin: -32px auto 32px;
   padding: 0 8px;
   justify-content: flex-end;

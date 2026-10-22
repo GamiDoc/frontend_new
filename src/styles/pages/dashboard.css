@@ -2,9 +2,9 @@
    DASHBOARD — pages/Dashboard.jsx
    ===================================================== */
 .dashboard-main { background: #f5f5f5; min-height: 80vh; padding: 40px 0; }
-.dashboard-container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.dashboard-container { max-width: var(--gd-content-width); margin: 0 auto; padding: 0 24px; }
 .dashboard-welcome  { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
-.dashboard-subtitle { font-size: 16px; color: #555; margin-bottom: 28px; }
+.dashboard-subtitle { font-size: 16px; color: var(--gd-text-muted); margin-bottom: 28px; }
 
 .dashboard-hierarchy-note {
   font-size: 15px;
@@ -32,7 +32,7 @@
   background: none; font-size: 15px; font-weight: 600; cursor: pointer; color: #333;
   margin-bottom: 16px; text-align: center;
 }
-.dashboard-new-project-btn:hover { border-color: #e7c74f; background: #fffdf5; }
+.dashboard-new-project-btn:hover { border-color: var(--gd-yellow-accent); background: var(--gd-yellow-bg-hover); }
 
 /* ── Project list ─────────────────────────────────── */
 .dashboard-project-list { display: flex; flex-direction: column; gap: 10px; }
@@ -47,11 +47,9 @@
 
 /* Status modifiers: dashboard-project-card--${status} */
 .dashboard-project-card--complete {
-  border-left-color: #FCDD70;
+  border-left-color: var(--gd-yellow);
 }
-.dashboard-project-card--in-progress {
-  border-left-color: #ccc;
-}
+.dashboard-project-card--in-progress,
 .dashboard-project-card--not-started {
   border-left-color: #ccc;
 }
@@ -84,9 +82,9 @@
 .dashboard-search-input {
   width: 100%; padding: 0.55rem 0.75rem 0.55rem 2.1rem;
   border: 1.5px solid #ccc; border-radius: 8px; font-size: 0.9rem;
-  box-sizing: border-box; background: #fafafa; color: #333;
+  background: #fafafa; color: #333;
 }
-.dashboard-search-input:focus { outline: none; border-color: #111; background: #fff; }
+.dashboard-search-input:focus { outline: none; border-color: var(--gd-text); background: #fff; }
 .dashboard-search-input::placeholder { color: #bbb; }
 
 /* ── Pagination ───────────────────────────────────── */
@@ -95,7 +93,7 @@
 }
 .dashboard-pagination-btn {
   background: none; border: 1px solid #ddd; border-radius: 6px; padding: 4px 12px;
-  font-size: 13px; color: #555; cursor: pointer;
+  font-size: 13px; color: var(--gd-text-muted); cursor: pointer;
 }
 .dashboard-pagination-btn:disabled { color: #bbb; border-color: #eee; cursor: default; }
 .dashboard-pagination-btn:not(:disabled):hover { background: #f5f5f5; }
@@ -106,9 +104,9 @@
 .dashboard-card--info {
   display: flex; flex-direction: column; gap: 12px;
 }
-.dashboard-card-icon { color: #555; }
+.dashboard-card-icon { color: var(--gd-text-muted); }
 .dashboard-card--info h3 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
-.dashboard-card--info p  { font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 10px; }
+.dashboard-card--info p  { font-size: 14px; color: var(--gd-text-muted); line-height: 1.5; margin-bottom: 10px; }
 .dashboard-card-btn { font-size: 14px; padding: 8px 16px; }
 
 .dashboard-unauthenticated {

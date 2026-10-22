@@ -22,7 +22,7 @@
   height: 18px;
   border-radius: 50%;
   background: #e5e9ef;
-  color: #555;
+  color: var(--gd-text-muted);
   font-size: 12px;
   font-weight: 600;
   display: inline-flex;
@@ -75,7 +75,7 @@
 .tooltip-link {
   display: inline-block;
   margin-left: 4px;
-  color: #f4d35e;
+  color: var(--gd-yellow-soft);
   text-decoration: underline;
   font-weight: 500;
 }

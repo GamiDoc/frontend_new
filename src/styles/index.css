@@ -2,7 +2,7 @@
    GAMIDOC STYLES — entry point (imported by main.jsx,
    after bootstrap.css)
 
-   base/        global reset and root elements
+   base/        design tokens (colour variables) and global reset
    ui/          reusable building blocks, not tied to one
                 component (buttons, form controls, tags,
                 tooltip, modal base, error feedback…)
@@ -20,6 +20,7 @@
    ===================================================== */
 
 /* ── Base ─────────────────────────────────────────── */
+@import './base/tokens.css';
 @import './base/reset.css';
 
 /* ── UI building blocks ───────────────────────────── */

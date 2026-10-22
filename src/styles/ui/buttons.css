@@ -2,6 +2,14 @@
    BUTTONS
    Global button variants. They extend/override Bootstrap's
    .btn, so keep this file imported after bootstrap.css.
+
+   Colours are set ONLY through Bootstrap's --bs-btn-*
+   variables: Bootstrap's own .btn rules then apply them to
+   every state (normal, :hover, :active, :focus-visible,
+   :disabled). Don't re-declare background/color/border-color
+   in :hover rules here — set the matching variable instead.
+   A variant must define every state's variables, otherwise
+   Bootstrap's defaults (grey, blue) show through.
    ===================================================== */
 .btn {
   border: none;
@@ -11,69 +19,112 @@
   cursor: pointer;
 }
 
-/* ── Primary (yellow) ─────────────────────────────── */
-.btn-primary {
-  background: #FCDD70;
-  border-color: #FCDD70;
-  color: #111;
-
-  --bs-btn-bg: #FCDD70;
-  --bs-btn-border-color: #FCDD70;
-  --bs-btn-color: #111;
-
-  --bs-btn-hover-bg: #f0c94f;
-  --bs-btn-hover-border-color: #f0c94f;
-  --bs-btn-hover-color: #111;
-
-  --bs-btn-active-bg: #f0c94f;
-  --bs-btn-active-border-color: #f0c94f;
-  --bs-btn-active-color: #111;
-
-  --bs-btn-focus-shadow-rgb: 240, 201, 79;
-}
-
-.btn-primary:hover {
-  background-color: #f0c94f;
-  border-color: #f0c94f;
-  color: #111;
-}
-
+/* Our buttons have no focus ring */
 .btn-primary:focus,
 .btn-primary:active,
-.btn-primary:focus-visible {
-  background-color: #f0c94f;
-  border-color: #f0c94f;
-  color: #111;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* ── Outline (white, for dark backgrounds e.g. navbar) */
-.btn-outline {
-  background: transparent;
-  color: #fff;
-  border: 1px solid #fff;
-}
-
-.btn-outline:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
+.btn-primary:focus-visible,
 .btn-outline:focus,
 .btn-outline:active,
 .btn-outline:focus-visible {
   outline: none !important;
   box-shadow: none !important;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border-color: #fff;
+}
+
+/* ── Primary (yellow) ─────────────────────────────── */
+.btn-primary {
+  --bs-btn-color: var(--gd-text);
+  --bs-btn-bg: var(--gd-yellow);
+  --bs-btn-border-color: var(--gd-yellow);
+
+  --bs-btn-hover-color: var(--gd-text);
+  --bs-btn-hover-bg: var(--gd-yellow-hover);
+  --bs-btn-hover-border-color: var(--gd-yellow-hover);
+
+  --bs-btn-active-color: var(--gd-text);
+  --bs-btn-active-bg: var(--gd-yellow-hover);
+  --bs-btn-active-border-color: var(--gd-yellow-hover);
+
+  --bs-btn-disabled-color: var(--gd-text);
+  --bs-btn-disabled-bg: var(--gd-yellow);
+  --bs-btn-disabled-border-color: var(--gd-yellow);
+
+  --bs-btn-focus-shadow-rgb: 240, 201, 79;
+}
+
+/* Keep the hover colour while the button stays focused after a click */
+.btn-primary:focus {
+  background-color: var(--bs-btn-hover-bg);
+  border-color: var(--bs-btn-hover-border-color);
+}
+
+/* ── Outline (white, for dark backgrounds e.g. navbar) */
+.btn-outline {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: #fff;
+
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: rgba(255, 255, 255, 0.08);
+  --bs-btn-hover-border-color: #fff;
+
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: rgba(255, 255, 255, 0.08);
+  --bs-btn-active-border-color: #fff;
+
+  border: 1px solid var(--bs-btn-border-color);
+}
+
+.btn-outline:focus {
+  background-color: var(--bs-btn-hover-bg);
 }
 
 /* ── Secondary (light blue) ───────────────────────── */
 .btn-secondary {
-  background: #dce7f6;
-  border: 1px solid #8aa6c8;
-  color: #111;
+  --bs-btn-color: var(--gd-text);
+  --bs-btn-bg: #dce7f6;
+  --bs-btn-border-color: #8aa6c8;
+
+  --bs-btn-hover-color: var(--gd-text);
+  --bs-btn-hover-bg: #cbdcf2;
+  --bs-btn-hover-border-color: #8aa6c8;
+
+  --bs-btn-active-color: var(--gd-text);
+  --bs-btn-active-bg: #cbdcf2;
+  --bs-btn-active-border-color: #8aa6c8;
+
+  --bs-btn-disabled-color: var(--gd-text);
+  --bs-btn-disabled-bg: #dce7f6;
+  --bs-btn-disabled-border-color: #8aa6c8;
+
+  --bs-btn-focus-shadow-rgb: 138, 166, 200;
+
+  border: 1px solid var(--bs-btn-border-color);
+}
+
+/* ── White outlined button in action bars ─────────────
+   "Back" / "Cancel" next to a primary action
+   (NavigationButtons, browse pages, CustomConstruct) */
+.nav-buttons .btn-secondary,
+.browse-footer .btn-secondary,
+.custom-construct-actions .btn-secondary {
+  min-width: 72px;
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid #9aa4b2;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--gd-text);
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-buttons .btn-secondary:hover,
+.browse-footer .btn-secondary:hover,
+.custom-construct-actions .btn-secondary:hover {
+  background: #f7f7f7;
+  border-color: #7f8a99;
 }
 
 /* ── Small outlined button (e.g. "+ Add question") ── */
@@ -89,6 +140,41 @@
 
 .secondary-btn:hover {
   background: #f5f7fa;
+}
+
+/* ── Underlined blue text button ──────────────────── */
+.wizard-notice-link,
+.coverage-add-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--gd-link);
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Square ✕ remove button ───────────────────────── */
+.dynamic-input-remove,
+.selected-method-remove {
+  border: 1.5px solid #d0d0d0;
+  border-radius: 6px;
+  background: none;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.dynamic-input-remove:hover,
+.selected-method-remove:hover {
+  border-color: var(--gd-danger-hover);
+  color: var(--gd-danger-hover);
+  background: #fff5f5;
 }
 
 @media (max-width: 640px) {

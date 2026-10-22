@@ -27,13 +27,13 @@
   line-height: 1.5;
 }
 .construction-ok {
-  background: #f4d35e;
+  background: var(--gd-yellow-soft);
   border: none;
   border-radius: 8px;
   padding: 10px 32px;
   font-size: 15px;
   font-weight: 600;
-  color: #111;
+  color: var(--gd-text);
   cursor: pointer;
 }
 .construction-ok:hover {

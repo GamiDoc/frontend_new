@@ -40,7 +40,7 @@
 }
 
 .method-selection-container {
-  max-width: 1100px;
+  max-width: var(--gd-content-width);
   margin: 0 auto;
 }
 
@@ -56,13 +56,33 @@
   line-height: 1.5;
 }
 
+/* ── Bordered box around each step-1 section ─────── */
+/* EvaluationGoals, DevelopmentStage, ConstraintsSection,
+   ResearchSpecification */
+.evaluation-goals-box,
+.development-stage-box,
+.constraints-box,
+.research-box {
+  max-width: var(--gd-content-width);
+  margin: 0 auto;
+  border: 1px solid var(--gd-border-section);
+  border-radius: 10px;
+  padding: 24px;
+  background: #fff;
+}
+
 /* Description paragraph under each wizard section title */
 .section-description {
-  color: #555;
+  color: var(--gd-text-muted);
   margin-bottom: 24px;
 }
 
 @media (max-width: 640px) {
+  .evaluation-goals-box,
+  .development-stage-box,
+  .constraints-box,
+  .research-box { margin-left: 16px; margin-right: 16px; }
+
   .evaluation-header-inner { padding: 0 16px; }
   .evaluation-header h1    { font-size: 20px; }
 
