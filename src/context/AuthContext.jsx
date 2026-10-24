@@ -5,6 +5,14 @@ import { activityApi } from '../api/activity';
 
 const AuthContext = createContext(null);
 
+// One bootstrap refresh per page load. StrictMode mounts effects twice; a second
+// refresh would send the already-rotated cookie and get a 401, logging the user out.
+let bootstrapPromise = null;
+function bootstrapSession() {
+  if (!bootstrapPromise) bootstrapPromise = authApi.refresh();
+  return bootstrapPromise;
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -87,7 +95,7 @@ export function AuthProvider({ children }) {
     let cancelled = false;
     (async () => {
       try {
-        const result = await authApi.refresh();
+        const result = await bootstrapSession();
         if (!cancelled && result) {
           applyAuthResult(result);
         }

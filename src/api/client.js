@@ -17,7 +17,7 @@ function getHeaders() {
   return headers;
 }
 
-async function refreshAccessToken() {
+export async function refreshAccessToken() {
   // Deduplicate concurrent refresh calls
   if (refreshPromise) return refreshPromise;
 
