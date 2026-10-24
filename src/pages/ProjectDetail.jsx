@@ -4,11 +4,13 @@ import Footer from '../components/Footer';
 import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
 import { useWizard } from '../context/WizardContext';
+import { useDesign } from '../context/DesignContext';
 import { activityApi } from '../api/activity';
 import ConstructionButton from '../components/ConstructionButton';
 
 function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
   const { setPage, startWizard, loadProject } = useWizard();
+  const { openDesignProject } = useDesign();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -138,6 +140,9 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             <div className="project-detail-actions">
               <button className="btn btn-primary" onClick={() => loadProject(project, STEP_TO_PAGE[project.wizardStatus?.currentStep] || 'setup')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                 <Icon name="edit" size={16} /> Edit Evaluation Plan
+              </button>
+              <button className="btn btn-secondary" onClick={() => openDesignProject(project.projectId)}>
+                Open Design System
               </button>
               <ConstructionButton className="btn btn-secondary">+ New Documents</ConstructionButton>
               <button className="btn btn-secondary" onClick={handleDelete} disabled={deleting} style={{ color: '#c00', borderColor: '#c00', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>

@@ -5,12 +5,15 @@ import './styles/index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { WizardProvider } from './context/WizardContext.jsx'
+import { DesignProvider } from './context/DesignContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <WizardProvider>
-        <App />
+        <DesignProvider>
+          <App />
+        </DesignProvider>
       </WizardProvider>
     </AuthProvider>
   </StrictMode>,

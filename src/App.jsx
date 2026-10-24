@@ -13,6 +13,10 @@ import CustomConstruct from './pages/CustomConstruct';
 import EvaluationReview from './pages/EvaluationReview';
 import Dashboard from './pages/Dashboard';
 import ProjectDetail from './pages/ProjectDetail';
+import DesignSpark from './pages/design/DesignSpark';
+import DesignSection from './pages/design/DesignSection';
+import DesignPathChoice from './pages/design/DesignPathChoice';
+import DesignDashboard from './pages/design/DesignDashboard';
 import AuthModal from './components/AuthModal';
 import DraftResumeBanner from './components/DraftResumeBanner';
 import { useWizard } from './context/WizardContext';
@@ -81,6 +85,10 @@ function App() {
       {page === 'evaluation'         && <EvaluationReview {...wizardProps} />}
       {page === 'dashboard'          && <Dashboard {...navProps} />}
       {page === 'project-detail'     && <ProjectDetailWrapper {...navProps} />}
+      {page === 'ds-spark'           && <DesignSpark {...wizardProps} />}
+      {page === 'ds-section'         && <DesignSection {...wizardProps} />}
+      {page === 'ds-path'            && <DesignPathChoice {...wizardProps} />}
+      {page === 'ds-dashboard'       && <DesignDashboard {...wizardProps} />}
     </div>
   );
 }
