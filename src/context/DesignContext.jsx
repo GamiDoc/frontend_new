@@ -14,7 +14,6 @@ import { useWizard } from './WizardContext';
 import { useAuth } from './AuthContext';
 import {
     DESIGN_SECTIONS,
-    PATHS,
     getSection,
     contentToValues,
     valuesToContent,
@@ -31,10 +30,10 @@ import {
    grafica non ha bisogno di modificare questo file.
 
    Regole del flusso (le impone il backend, internal/design; qui vengono rispecchiate):
-   - Step 0 "The Spark" facoltativo, poi la sezione 1 (Context).
-   - Dopo Context l'utente sceglie il percorso: A = 1,2,3,4,5,6,7 · B = 1,4,5,2,3,6,7.
-   - Primo passaggio obbligato: le sezioni si aprono solo nell'ordine del percorso
+   - Step 0 "The Spark" facoltativo, poi le 6 sezioni in ordine (1 → 6).
+   - Primo passaggio obbligato: le sezioni si aprono solo in ordine
      (si possono compilare o saltare). Finito il giro, navigazione libera.
+   - "Riprendi" riapre l'ultima pagina visitata (salvata per progetto/sessione).
    - La dashboard si sblocca dopo il primo passaggio, se almeno una sezione ha contenuto.
 
    Due "scope" (dove vengono salvati i dati):
@@ -45,7 +44,7 @@ import {
    Cosa espone useDesign() (l'API usata da pagine e componenti)
    ───────────────────────────────────────────────────────────────────────────
    Stato
-     status            ultimo stato ricevuto dal backend (spark, path, cursor, sezioni…)
+     status            ultimo stato ricevuto dal backend (spark, cursor, sezioni…)
      drafts            valori dei form, per sezione: drafts[n][chiaveCampo]
      currentSection    numero della sezione aperta in `ds-section`
      loading           true mentre si avvia/apre un design
@@ -65,14 +64,14 @@ import {
 
    Helper di navigazione
      canOpenSection(n)  la sezione n si può aprire adesso?
-     stepNumberOf(n)    posizione per "STEP x OF 8" (la Spark è lo step 1)
-     previousOf(n)      sezione precedente nel percorso (null = si torna alla Spark)
+     stepNumberOf(n)    posizione per "STEP x OF 6" (la Spark non è contata)
+     previousOf(n)      sezione precedente (null = si torna alla Spark)
+     nextOf(n)          sezione successiva (null = dopo l'ultima si va all'Overview)
 
    Azioni
      startDesign() · openDesignProject(id) · resumeDesign()
      submitSpark(testo, { navigate }) · skipSpark()
      updateField(n, chiave, valore) · goToSection(n) · continueFrom(n, { skip }) · goBackFrom(n)
-     loadBranchRecommendation() · choosePath('A' | 'B')
      loadDashboard() · goToDashboard() · continueWhereLeftOff()
      generateReports() · loadReportHistory()
      saveAsDraft()  → 'needs-auth' | true | false
@@ -89,18 +88,16 @@ const AUTOSAVE_DELAY = 1000;
 // Il Design System non ha (ancora) un campo per il nome del progetto.
 const DEFAULT_PROJECT_NAME = 'Untitled design project';
 // Codici d'errore del backend che indicano uno stato locale non allineato: si ricarica lo stato.
-const FLOW_ERRORS = [
-    'SECTION_LOCKED',
-    'PATH_NOT_CHOSEN',
-    'PATH_ALREADY_CHOSEN',
-    'DASHBOARD_LOCKED',
-];
+const FLOW_ERRORS = ['SECTION_LOCKED', 'DASHBOARD_LOCKED'];
+// localStorage: ultima pagina visitata di ogni design, per "riprendi" (chiave + scope).
+const LAST_PAGE_KEY = 'gamidoc.designLastPage';
+// Ordine delle sezioni nel primo passaggio (lo stesso del backend, internal/design).
+const ORDER = DESIGN_SECTIONS.map((s) => s.number);
 
 // Nome logico della schermata → valore di `page` registrato in App.jsx.
 const PAGE_FOR = {
     spark: 'ds-spark',
     section: 'ds-section',
-    path: 'ds-path',
     dashboard: 'ds-dashboard',
 };
 
@@ -124,6 +121,32 @@ function storeScope(scope) {
             sessionStorage.setItem(GUEST_SCOPE_KEY, scope.id);
         if (scope?.kind === 'project')
             localStorage.setItem(PROJECT_SCOPE_KEY, scope.id);
+    } catch {
+        /* storage disabilitato */
+    }
+}
+
+function lastPageKey(scope) {
+    return `${LAST_PAGE_KEY}.${scope.kind}.${scope.id}`;
+}
+
+// Ultima pagina visitata: { target: 'spark' | 'section' | 'dashboard', section? }.
+function readLastPage(scope) {
+    if (!scope) return null;
+    try {
+        return JSON.parse(localStorage.getItem(lastPageKey(scope)));
+    } catch {
+        return null;
+    }
+}
+
+function storeLastPage(scope, target, section) {
+    if (!scope) return;
+    try {
+        localStorage.setItem(
+            lastPageKey(scope),
+            JSON.stringify({ target, section }),
+        );
     } catch {
         /* storage disabilitato */
     }
@@ -249,53 +272,38 @@ export function DesignProvider({ children }) {
     );
 
     // ── Stato derivato del flusso ────────────────────────────────────────────
-    const path = status?.path || null;
     const firstPassDone = Boolean(status?.firstPassDone);
-    // Prima della scelta del percorso si conosce solo la posizione della sezione 1.
-    const order = useMemo(() => (path ? PATHS[path] : [1]), [path]);
 
     const isVisited = useCallback(
         (n) => Boolean(status?.sections?.[String(n)]?.visited),
         [status],
     );
 
-    // Prossima sezione accettata dal backend nel primo passaggio; null dopo il primo
-    // passaggio o finché il percorso non è stato scelto.
+    // Prossima sezione accettata dal backend nel primo passaggio; null dopo il primo passaggio.
     const frontier = useMemo(() => {
         if (!status || firstPassDone) return null;
-        if (!status.cursor) return 1;
-        if (!path) return null;
-        return PATHS[path][status.cursor] ?? null;
-    }, [status, firstPassDone, path]);
+        return ORDER[status.cursor || 0] ?? null;
+    }, [status, firstPassDone]);
 
     const canOpenSection = useCallback(
         (n) => firstPassDone || isVisited(n) || n === frontier,
         [firstPassDone, frontier, isVisited],
     );
 
-    const stepNumberOf = useCallback(
-        (n) => {
-            const index = order.indexOf(n);
-            return index === -1 ? null : index + 2; // +1 perché parte da 0, +1 per la Spark
-        },
-        [order],
-    );
+    const stepNumberOf = useCallback((n) => {
+        const index = ORDER.indexOf(n);
+        return index === -1 ? null : index + 1;
+    }, []);
 
-    const previousOf = useCallback(
-        (n) => {
-            const index = order.indexOf(n);
-            return index <= 0 ? null : order[index - 1];
-        },
-        [order],
-    );
+    const previousOf = useCallback((n) => {
+        const index = ORDER.indexOf(n);
+        return index <= 0 ? null : ORDER[index - 1];
+    }, []);
 
-    const nextOf = useCallback(
-        (n) => {
-            const index = order.indexOf(n);
-            return index === -1 ? null : (order[index + 1] ?? null);
-        },
-        [order],
-    );
+    const nextOf = useCallback((n) => {
+        const index = ORDER.indexOf(n);
+        return index === -1 ? null : (ORDER[index + 1] ?? null);
+    }, []);
 
     const progress = useMemo(() => {
         const bySection = {};
@@ -313,22 +321,37 @@ export function DesignProvider({ children }) {
         DESIGN_SECTIONS.some((s) => hasAnyValue(s, drafts[s.number]));
 
     // ── Navigazione ──────────────────────────────────────────────────────────
+    // Ogni cambio di pagina viene ricordato, così "riprendi" torna esattamente lì.
     const go = useCallback(
         (target, sectionNumber) => {
             if (sectionNumber) setCurrentSection(sectionNumber);
+            storeLastPage(scopeRef.current, target, sectionNumber);
             setPage(PAGE_FOR[target]);
         },
         [setPage],
     );
 
-    // Dove aprire un design appena caricato: dashboard se sbloccata, altrimenti il prossimo passo.
+    // Dove aprire un design appena caricato: l'ultima pagina visitata, se si può ancora
+    // aprire; altrimenti dashboard (se il primo passaggio è finito) o il prossimo passo.
     const openLanding = useCallback(
         (next) => {
             const s = next || statusRef.current;
+            const last = readLastPage(scopeRef.current);
+            if (s && last) {
+                const n = last.section;
+                const sectionOpen =
+                    s.firstPassDone ||
+                    s.sections?.[String(n)]?.visited ||
+                    n === ORDER[s.cursor || 0];
+                if (last.target === 'spark') return go('spark');
+                if (last.target === 'section' && getSection(n) && sectionOpen)
+                    return go('section', n);
+                if (last.target === 'dashboard' && s.firstPassDone)
+                    return go('dashboard');
+            }
             if (!s || (!s.cursor && !s.spark)) return go('spark');
             if (s.firstPassDone) return go('dashboard');
-            if (s.cursor >= 1 && !s.path) return go('path');
-            return go('section', s.cursor ? PATHS[s.path][s.cursor] : 1);
+            return go('section', ORDER[s.cursor || 0] ?? 1);
         },
         [go],
     );
@@ -505,8 +528,7 @@ export function DesignProvider({ children }) {
             setSaving(true);
             setError(null);
             try {
-                const next = await persistSection(n, { skip });
-                if (n === 1 && !next.path) return go('path');
+                await persistSection(n, { skip });
                 const following = nextOf(n);
                 return following ? go('section', following) : go('dashboard');
             } catch (e) {
@@ -545,35 +567,6 @@ export function DesignProvider({ children }) {
         return () => clearTimeout(timer);
     }, [drafts, needsAutosave, persistSection, handleError]);
 
-    // ── Scelta del percorso ("Where to next?") ───────────────────────────────
-    // Risposta: { recommendedPath: 'A' | 'B', basis: 'spark' | 'default' }.
-    // basis 'default' = nessuna Spark, il suggerimento non viene dall'AI.
-    const loadBranchRecommendation = useCallback(async () => {
-        try {
-            return await designApi.branch(scopeRef.current);
-        } catch {
-            return { recommendedPath: 'A', basis: 'default' };
-        }
-    }, []);
-
-    const choosePath = useCallback(
-        async (chosen) => {
-            setSaving(true);
-            setError(null);
-            try {
-                applyStatus(
-                    await designApi.choosePath(scopeRef.current, chosen),
-                );
-                go('section', PATHS[chosen][1]); // la sezione dopo Context nel percorso scelto
-            } catch (e) {
-                await handleError(e, 'Unable to save your choice.');
-            } finally {
-                setSaving(false);
-            }
-        },
-        [applyStatus, go, handleError],
-    );
-
     // ── Dashboard ────────────────────────────────────────────────────────────
     // Stati e percentuali sono calcolati qui dallo schema dei campi: il backend dà solo
     // 0/50/100 %, il mockup mostra valori intermedi. 'current' = sezione aperta per ultima.
@@ -588,7 +581,7 @@ export function DesignProvider({ children }) {
                     state = 'in_progress';
                 return {
                     number: section.number,
-                    title: section.title,
+                    title: section.navName,
                     summary: section.summary,
                     status: state,
                     percent: p.percent,
@@ -619,12 +612,12 @@ export function DesignProvider({ children }) {
         }
     }, [handleError]);
 
-    // "Continue where I left off": prima sezione del percorso non ancora completa.
+    // "Continue where I left off": prima sezione non ancora completa.
     const continueWhereLeftOff = useCallback(() => {
         const target =
-            order.find((n) => !progress[n].complete) ?? order[order.length - 1];
+            ORDER.find((n) => !progress[n].complete) ?? ORDER[ORDER.length - 1];
         go('section', target);
-    }, [order, progress, go]);
+    }, [progress, go]);
 
     // ── Report PDF (FR-22…FR-27) ─────────────────────────────────────────────
     // Una richiesta genera entrambe le versioni: { standard: { url, … }, enhanced: { url, … } }.
@@ -733,6 +726,7 @@ export function DesignProvider({ children }) {
                 canOpenSection,
                 stepNumberOf,
                 previousOf,
+                nextOf,
                 // azioni
                 startDesign,
                 openDesignProject,
@@ -743,8 +737,6 @@ export function DesignProvider({ children }) {
                 goToSection,
                 continueFrom,
                 goBackFrom,
-                loadBranchRecommendation,
-                choosePath,
                 loadDashboard,
                 goToDashboard,
                 continueWhereLeftOff,

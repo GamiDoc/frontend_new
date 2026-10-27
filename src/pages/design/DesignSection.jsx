@@ -1,22 +1,25 @@
 import Navbar from '../../components/Navbar';
 import DesignStepHeader from '../../components/design/DesignStepHeader';
 import DesignSectionForm from '../../components/design/DesignSectionForm';
-import SaveDraftButton from '../../components/design/SaveDraftButton';
 import LoginReminder from '../../components/design/LoginReminder';
 import { useDesign } from '../../context/DesignContext';
-import { getSection, SPARK_STEP } from '../../data/designSections';
+import {
+    getSection,
+    SPARK_STEP,
+    OVERVIEW_STEP,
+} from '../../data/designSections';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * `ds-section` Page — one of the main sections to fill (Context, Experience Timeline, …)
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * Components in the page:
- * * "Go back to …"
- * * "Continue": saves & proceeds
- * * "Skip this section": only for Spark (FR-7)
- * Modifications to already seen sections are automatically saved(auto-save).
+ * * Title and introduction of the section (`.ds-intro`)
+ * * "Back to the …": previous section (or the Spark)
+ * * "Go to the …": saves & proceeds to the next section (or the Overview after the last one)
+ * Modifications to already seen sections are automatically saved (auto-save).
  * */
 function DesignSection({ onOpenLogin, onOpenSignup }) {
     const {
@@ -25,9 +28,9 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
         updateField,
         canOpenSection,
         frontier,
-        firstPassDone,
         stepNumberOf,
         previousOf,
+        nextOf,
         continueFrom,
         goBackFrom,
         goToSection,
@@ -37,7 +40,7 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
 
     const section = getSection(currentSection);
 
-    // Blocked Section 
+    // Blocked Section
     if (!section || !canOpenSection(currentSection)) {
         return (
             <div className="ds-page ds-page--locked">
@@ -59,10 +62,11 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
     }
 
     const previous = previousOf(currentSection);
+    const next = nextOf(currentSection);
     const backLabel = previous
-        ? getSection(previous).title
-        : SPARK_STEP.navLabel;
-    const canSkip = !firstPassDone && currentSection === frontier;
+        ? getSection(previous).navName
+        : SPARK_STEP.navName;
+    const nextLabel = next ? getSection(next).navName : OVERVIEW_STEP.navName;
 
     return (
         <div className={`ds-page ds-page--section ds-page--${section.id}`}>
@@ -75,6 +79,9 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
 
             <main className="ds-main">
                 <h1>{section.title}</h1>
+                {section.description && (
+                    <p className="ds-intro">{section.description}</p>
+                )}
 
                 <DesignSectionForm
                     section={section}
@@ -97,7 +104,7 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
                         onClick={() => goBackFrom(currentSection)}
                         disabled={saving}
                     >
-                        Go back to {backLabel}
+                        {'‹  '}Back to the {backLabel}
                     </button>
                     <button
                         type="button"
@@ -105,7 +112,7 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
                         onClick={() => continueFrom(currentSection)}
                         disabled={saving}
                     >
-                        {saving ? 'Saving…' : 'Continue\u00A0\u00A0›'}
+                        {saving ? 'Saving…' : `Go to the ${nextLabel}`}
                     </button>
                 </div>
             </main>

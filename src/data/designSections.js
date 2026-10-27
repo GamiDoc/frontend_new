@@ -1,99 +1,121 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Schema delle sezioni del Design System
+   Design System — section schema (Flow 2.0)
    ═══════════════════════════════════════════════════════════════════════════
-   Unica fonte per le 7 sezioni: titoli, gruppi (le card), campi, opzioni e quali campi
-   contano per il completamento. Pagine e componenti si costruiscono da qui: per
-   aggiungere/togliere una domanda o un'opzione basta modificare questo file.
+   Single source for the 6 sections: titles, groups (the cards), fields, options and
+   which fields count towards completion. Pages and components are built from this
+   file: to add/remove a question or an option, edit it here.
+   Mockups: Figma "GamiDoc Framework 2.0", page Flow 2.0.
 
-   Struttura
-     sezione  { number, id, title, navLabel, summary, groups[], fields[], loops? }
-     gruppo   { id, title, question?, description?, tab?, phase? }   → una card nella pagina
-     campo    { key, label, group, type, display, options?, required, placeholder?, provisional? }
-       type     'single' | 'multi' | 'text'
-       display  'chips' | 'cards' | 'radio' | 'segmented' | 'select' | 'slider'
-       required se true conta per la percentuale e per lo stato "Complete"
-     opzione  stringa, oppure { value, description }
+   Structure
+     section  { number, id, title, navLabel, navName, description, summary, groups[], fields[] }
+                navLabel → stepper / overview label · navName → "Back to the …" / "Go to the …"
+     group    { id, title, description?, collapsible?, provisional? }   → one card in the page
+     field    { key, label?, group, type, display?, options?, required, … }
+       type     'single' | 'multi' | 'text' | 'list'
+       display  options: 'chips' | 'cards' | 'checklist' | 'checks' | 'select' | 'slider'
+                text:    'textarea' (default) | 'input' | 'loop'
+       title / hint   sub-heading shown above the field (e.g. "Metrics / signals")
+       other          adds an "Other" option; its free text is saved under `<key> · Other`
+       columns        checklist laid out on N columns
+       half           input or select shown at half width (two side by side)
+       showIf         { key, includes } → field shown only if that multi field contains the value
+       badge / description   ('loop' display) label and explanation of a game loop
+       itemLabel / itemFields   ('list') repeatable block, e.g. feedback components
+       required       counts for the section percentage and the "Complete" state
+       provisional    not (fully) defined by the mockups yet: to be confirmed
+     option   string, or { value, description?, info? }   info = tooltip text (ⓘ)
 
-   Contratto con il backend (PUT .../design/section/{n})
-   - `content` è JSON libero; il backend lo stampa nel PDF come "chiave: valore" nell'ordine
-     di inserimento. Per questo le `key` sono etichette leggibili e il valore di
-     un'opzione è il testo mostrato all'utente.
-   - single → stringa, multi → array di stringhe, text → stringa. I campi vuoti non si inviano.
-   - Le chiavi sconosciute allo schema (es. una bozza precompilata dall'AI) vengono conservate.
-   - Attenzione: cambiare una `key` rende illeggibili i dati già salvati con la vecchia chiave.
+   Backend contract (PUT …/design/section/{n})
+   - `content` is free JSON; the backend prints it in the PDF as "key: value" in insertion
+     order. That is why `key`s are readable labels and an option's value is its visible text.
+   - single → string, multi → array of strings, text → string. Empty fields are not sent.
+   - list → flattened as "<key> <n> · <item field key>" (e.g. "Feedback component 1 · Timing"),
+     so the PDF stays readable.
+   - Keys unknown to the schema (e.g. an AI-prefilled draft) are kept.
+   - Careful: renaming a `key` makes data saved with the old key unreadable. */
 
-   I campi con `provisional: true` non hanno ancora un mockup (sezioni 5–7 e alcune liste
-   di opzioni che i mockup lasciano vuote) e vanno confermati. */
-
-const PERCENT = [
-    '0%',
-    '10%',
-    '20%',
-    '30%',
-    '40%',
-    '50%',
-    '60%',
-    '70%',
-    '80%',
-    '90%',
-    '100%',
-];
-const INTENSITY = ['Min', 'Low', 'Med', 'High'];
+const INTENSITY = ['Min', 'Low', 'Medium', 'High', 'Max'];
 
 export const SPARK_STEP = {
     title: 'The Spark',
     navLabel: 'Ideation',
+    navName: 'Spark',
     description:
         'Describe your raw idea freely. AI will use this to pre-fill the following steps — you can always review and adjust.',
 };
 
+export const OVERVIEW_STEP = { navName: 'Overview' };
+
+/* Game element taxonomy used by "Gamification & Mechanics" (Toda et al.). */
+const GAME_ELEMENTS = {
+    Performance: ['Acknowledgement', 'Level', 'Progression', 'Points', 'Stats'],
+    Social: ['Competition', 'Cooperation', 'Reputation', 'Social pressure'],
+    Personal: ['Novelty', 'Objectives', 'Puzzles', 'Renovation', 'Sensation'],
+    Fictional: ['Narrative', 'Storytelling'],
+    Ecological: [
+        'Chance',
+        'Imposed choice',
+        'Economy',
+        'Rarity',
+        'Time pressure',
+    ],
+};
+
 export const DESIGN_SECTIONS = [
+    /* ── 1 · Context ─────────────────────────────────────────────────────── */
     {
         number: 1,
         id: 'context',
-        title: 'The Context',
+        title: 'The context',
         navLabel: 'Context',
-        summary: 'Domain, user profile, objectives',
+        navName: 'Context',
+        summary: 'Domain, User profile, Constraints',
+        description:
+            'Set the foundation for your project: your domain, your users, your goals, and the constraints that shape them. Everything that follows builds on what you define here.',
         groups: [
             {
                 id: 'domain',
                 title: 'Domain',
-                question: 'What sector is your application in?',
                 description:
-                    'Choose the primary domain. This shapes the tone, mechanics, and expectations of your users.',
+                    'Select one or more domains that describe your project. This sets the tone and mechanics for everything that follows.',
             },
             {
                 id: 'users',
-                title: 'User profile',
-                question: 'Who are your users?',
+                title: 'User Profile',
                 description:
-                    'Demographics and psychographics — who they are, what motivates them, and their prior experience with games.',
+                    'Describe your user — who they are, what motivates them, and their prior experience with games.',
             },
             {
-                id: 'objectives',
-                title: 'Objectives',
-                question: 'What should the gamified system achieve?',
-                provisional: true,
+                id: 'constraints',
+                title: 'Constraints',
+                description:
+                    'Select the constraints your users or project may face, then add details on any you select.',
             },
         ],
         fields: [
             {
                 key: 'Domain',
-                label: 'Domain',
                 group: 'domain',
-                type: 'single',
+                type: 'multi',
                 display: 'chips',
+                other: true,
                 required: true,
                 options: [
                     'Education',
-                    'Health & fitness',
-                    'Corporate training',
+                    'Health',
+                    'Professional training',
                     'Entertainment',
                     'Sustainability',
-                    'Finance',
-                    'Social impact',
-                    'Other',
+                    'Software',
+                    'Crowdsourcing',
                 ],
+            },
+            {
+                key: 'Aim of the software',
+                label: 'Describe shortly the aim of your software:',
+                group: 'domain',
+                type: 'text',
+                required: true,
             },
             {
                 key: 'Age range',
@@ -101,8 +123,8 @@ export const DESIGN_SECTIONS = [
                 group: 'users',
                 type: 'single',
                 display: 'select',
+                half: true,
                 required: true,
-                provisional: true,
                 options: [
                     'Under 13',
                     '13–17',
@@ -116,528 +138,854 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Game experience',
-                label: 'Game experience',
+                label: 'Gaming experience',
                 group: 'users',
                 type: 'single',
                 display: 'select',
+                half: true,
                 required: true,
-                provisional: true,
                 options: ['None', 'Casual', 'Regular', 'Experienced gamer'],
             },
             {
-                key: 'Primary motivations',
-                label: 'Primary motivations',
+                key: 'Occupation',
+                label: 'Occupation',
                 group: 'users',
-                type: 'multi',
-                display: 'chips',
+                type: 'text',
                 required: true,
+            },
+            {
+                key: 'Encouraged behavior',
+                label: 'Encouraged behavior',
+                group: 'users',
+                type: 'text',
+                required: true,
+            },
+            {
+                key: 'User profile · Additional information',
+                label: '*Additional information',
+                group: 'users',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'Constraints',
+                group: 'constraints',
+                type: 'multi',
+                display: 'checklist',
+                columns: 2,
+                required: false,
                 options: [
-                    'Achievement',
-                    'Social connection',
-                    'Exploration',
-                    'Self-improvement',
-                    'Competition',
-                    'Creativity',
-                    'Escapism',
+                    'Lack of autonomy',
+                    'Lack of competence',
+                    'Lack of relatedness',
+                    'Lack of immersion',
+                    'Linguistic / Cultural differences',
+                    'Technical difficulties',
+                    'People with special needs',
+                    'Ethical responsibility regarding to data',
                 ],
             },
             {
-                key: 'Objectives',
-                label: 'Objectives',
-                group: 'objectives',
+                key: 'Constraints · Additional information',
+                label: '*Additional information',
+                group: 'constraints',
                 type: 'text',
                 required: false,
-                provisional: true,
-                placeholder:
-                    'e.g. Increase weekly active learners and course completion…',
             },
         ],
     },
+
+    /* ── 2 · Experience Timeline ─────────────────────────────────────────── */
     {
         number: 2,
         id: 'timeline',
         title: 'The Experience Timeline',
-        navLabel: 'Experience',
-        summary: 'Onboarding, engagement, mastery',
+        navLabel: 'Experience timeline',
+        navName: 'Experience Timeline',
+        summary: 'Onboarding, Updates, Retention anchors',
+        description:
+            "Map out how your users' experience evolves over time — from their first interaction to what keeps them coming back. This helps identify where engagement might drop and what should sustain it.",
         groups: [
             {
                 id: 'onboarding',
-                title: 'Onboarding — discovery',
-                tab: 'Onboarding',
-                phase: 1,
+                title: 'Onboarding',
                 description:
-                    "The user's first experience. They need to feel capable immediately and understand the core loop within minutes.",
+                    "Describe how new users are introduced to your system for the first time — what they need to learn, and how you'll teach it to them.",
             },
             {
-                id: 'engagement',
-                title: 'Engagement — habit formation',
-                tab: 'Engagement',
-                phase: 2,
-                description:
-                    "Turn early curiosity into a routine. The game needs to earn a regular slot in the user's life.",
+                id: 're-onboarding',
+                title: 'Re-onboarding',
+                collapsible: true,
+                provisional: true,
             },
             {
-                id: 'mastering',
-                title: 'Mastering — proficiency',
-                tab: 'Mastering',
-                phase: 3,
+                id: 'updates',
+                title: 'Updates',
                 description:
-                    'The user wants to feel genuinely skilled. Challenge must scale with ability — too easy is boring, too hard is frustrating.',
+                    "Define how your system evolves after launch — how frequently you'll release something new, and what that will actually be.",
             },
             {
-                id: 'fidelity',
-                title: 'Fidelity — long-term retention',
-                tab: 'Fidelity',
-                phase: 4,
+                id: 'retention',
+                title: 'Retention anchors',
                 description:
-                    'Novelty has faded. Identity and community are what keep users invested. The game must mean something to them.',
+                    'Select the mechanisms that keep users emotionally or practically tied to your system, and describe how each one shows up in your design.',
+            },
+            {
+                id: 'dropout',
+                title: 'Drop-out and desistance risks',
+                description:
+                    'Check any risks that are relevant to your design, so the system can flag where your mechanics may need safeguards.',
+            },
+            {
+                id: 'goals',
+                title: 'Taxonomy of gamification goals',
+                description: 'Check the goal types your system uses.',
+            },
+            {
+                id: 'emotions',
+                title: 'Emotional dynamics',
+                description:
+                    'Rate the expected intensity of each dynamic. High = primary driver. Low = side effect.',
             },
         ],
         fields: [
             {
-                key: 'Onboarding · Target completion',
-                label: 'Target completion',
-                group: 'onboarding',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: PERCENT,
-            },
-            {
-                key: 'Onboarding · Time to first win',
-                label: 'Time to first win',
-                group: 'onboarding',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                provisional: true,
-                options: [
-                    '< 30 sec',
-                    '30 sec–1 min',
-                    '1–2 min',
-                    '2–5 min',
-                    '5+ min',
-                ],
-            },
-            {
-                key: 'Onboarding · Key mechanics',
-                label: 'Key mechanics for this phase',
+                key: 'Onboarding methods',
                 group: 'onboarding',
                 type: 'multi',
                 display: 'chips',
+                other: true,
                 required: true,
                 options: [
-                    'Tutorial overlay',
-                    'Guided first task',
-                    'Progress indicator',
-                    'Welcome reward',
+                    'Video',
+                    'Chat Bot',
+                    'Interactive tutorials',
+                    'In-app tooltips',
+                    'Text-based instructions',
+                    'Learn-by-doing',
                 ],
             },
             {
-                key: 'Onboarding · Main drop-off risk',
-                label: 'Main drop-off risk',
+                key: 'Onboarding steps and goals',
+                label: 'Outline the main steps and goals of your onboarding:',
                 group: 'onboarding',
                 type: 'text',
-                required: false,
-                placeholder:
-                    "e.g. Users abandon if they don't understand the value within 2 minutes…",
-            },
-
-            {
-                key: 'Engagement · Target session frequency',
-                label: 'Target session freq.',
-                group: 'engagement',
-                type: 'single',
-                display: 'slider',
                 required: true,
+                placeholder:
+                    'e.g., First 30 seconds: safe tutorial room to practice movement. Tooltips pop up only on first interaction…',
+            },
+            // The mockup shows "Re-onboarding" collapsed: its content is not defined yet.
+            {
+                key: 'Re-onboarding',
+                label: 'How are returning users re-introduced to the system?',
+                group: 're-onboarding',
+                type: 'text',
+                required: false,
                 provisional: true,
+            },
+            {
+                key: 'Update frequency',
+                group: 'updates',
+                type: 'single',
+                display: 'chips',
+                required: true,
                 options: [
-                    'Occasionally',
-                    'Weekly',
-                    'A few times a week',
+                    'Never',
                     'Daily',
-                    'Several times a day',
+                    'Weekly',
+                    'Monthly',
+                    'Seasonal (6–12 weeks)',
+                    'Expansion (6+ months)',
+                    "I don't know yet",
                 ],
             },
             {
-                key: 'Engagement · Average session length',
-                label: 'Avg. session length',
-                group: 'engagement',
+                key: 'Content type',
+                title: 'Content type',
+                hint: "Define how your system evolves after launch — how frequently you'll release something new, and what that will actually be.",
+                group: 'updates',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: true,
+                options: [
+                    'Narrative/story beats',
+                    'New modes & mechanics',
+                    'Content drops',
+                    'Live events',
+                ],
+            },
+            {
+                key: 'Updates · Additional information',
+                label: '*Additional information',
+                group: 'updates',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'Retention anchors',
+                group: 'retention',
+                type: 'multi',
+                display: 'checklist',
+                required: true,
+                options: [
+                    {
+                        value: 'Social anchors',
+                        description:
+                            'Guilds, clans, or alliances that require coordination with others to progress.',
+                    },
+                    {
+                        value: 'Relationship anchors',
+                        description:
+                            'Friends, duos, or peer-to-peer obligations — a raid team, a co-op progress bar shared with someone specific.',
+                    },
+                    {
+                        value: 'Ritual anchors',
+                        description:
+                            'Habitual touchpoints — daily login, weekly reset, streaks.',
+                    },
+                    {
+                        value: 'Investment anchors',
+                        description:
+                            'Sunk costs — collections, reputation, or progress that feels too painful to abandon.',
+                    },
+                    {
+                        value: 'Identity anchors',
+                        description:
+                            'Public status — cosmetics, leaderboards, titles, avatar personalization.',
+                    },
+                    {
+                        value: 'Rarity and chance',
+                        description:
+                            'Unpredictable rewards — loot, drops, or pulls — that keep users coming back for the chance of a rare outcome.',
+                    },
+                ],
+            },
+            {
+                key: 'Drop-out risks',
+                group: 'dropout',
+                type: 'multi',
+                display: 'checklist',
+                required: false,
+                options: [
+                    {
+                        value: 'Skill-challenge imbalance',
+                        description:
+                            "If tasks were to exceed a user's current ability, they could feel overwhelmed and might give up.",
+                    },
+                    {
+                        value: 'Commitment collapse',
+                        description:
+                            "If your users hit a wall they can't cross, they lose interest completely — even in goals that matter to them.",
+                    },
+                    {
+                        value: 'Excessive difficulty',
+                        description:
+                            'If challenges were poorly balanced or overly harsh, users might walk away prematurely.',
+                    },
+                    {
+                        value: 'Over-reliance on extrinsic incentives',
+                        description:
+                            'Relying only on badges and points makes users focus on the rewards instead of the actual goal.',
+                    },
+                    {
+                        value: 'Lack of progress feedback',
+                        description:
+                            "If users can't see how they are doing, they lose direction and drop off.",
+                    },
+                    {
+                        value: 'Absence of a "glowing choice"',
+                        description:
+                            "If a user is stuck too long without hints or boosters, they're much more likely to stop participating.",
+                    },
+                ],
+            },
+            {
+                key: 'Drop-out risks · Additional information',
+                label: '*Additional information',
+                group: 'dropout',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'Goal types',
+                group: 'goals',
+                type: 'multi',
+                display: 'checklist',
+                required: true,
+                options: [
+                    {
+                        value: 'Outcome goals',
+                        description:
+                            'Completing a specific result or task — finishing a quest or an exploratory mission.',
+                    },
+                    {
+                        value: 'Performance goals',
+                        description:
+                            'Meeting a standard — earning a set number of points, reaching a level, hitting a leaderboard rank.',
+                    },
+                    {
+                        value: 'Process (learning) goals',
+                        description:
+                            'Aimed at acquiring new skills or knowledge. In gamification.',
+                    },
+                    {
+                        value: 'Stretch goals',
+                        description:
+                            'These are highly difficult or even potentially impossible goals used to stimulate creative thinking (e.g., achieving 100% completion in a game).',
+                    },
+                    {
+                        value: 'Proximal and distal goals',
+                        description:
+                            'Distal goals are long-term or distant achievements (like completing a whole chapter), while proximal goals are immediate tasks that serve as stepping stones toward the distal objective.',
+                    },
+                    {
+                        value: 'SMART goals',
+                        description:
+                            'Specific, measurable, attainable, realistic, and time-bound.',
+                    },
+                ],
+            },
+            {
+                key: 'Expectations from the system',
+                label: 'What do you expect from the system?',
+                group: 'goals',
+                type: 'text',
+                required: false,
+            },
+            ...[
+                'Competition',
+                'Cooperation',
+                'Curiosity',
+                'Achievement',
+                'Social status',
+                'Anxiety / pressure',
+            ].map((name) => ({
+                key: `Emotional dynamics · ${name}`,
+                label: name,
+                group: 'emotions',
                 type: 'single',
                 display: 'slider',
                 required: true,
-                provisional: true,
-                options: [
-                    '< 2 min',
-                    '2–5 min',
-                    '5–15 min',
-                    '15–30 min',
-                    '30+ min',
-                ],
-            },
+                options: INTENSITY,
+            })),
             {
-                key: 'Engagement · Key mechanics',
-                label: 'Key mechanics for this phase',
-                group: 'engagement',
-                type: 'multi',
-                display: 'chips',
-                required: true,
-                options: [
-                    'Streak / daily challenge',
-                    'Notifications',
-                    'Leaderboard',
-                    'Unlockables',
-                ],
-            },
-            {
-                key: 'Engagement · Main drop-off risk',
-                label: 'Main drop-off risk',
-                group: 'engagement',
+                key: 'Emotional dynamics · Context',
+                label: "Add context the sliders can't capture — what's driving the high ratings, and how you're managing the low ones.",
+                group: 'emotions',
                 type: 'text',
                 required: false,
-                placeholder:
-                    'e.g. Users churn if rewards feel predictable or sessions feel like a chore…',
-            },
-
-            {
-                key: 'Mastering · Difficulty scaling',
-                label: 'Difficulty scaling approach',
-                group: 'mastering',
-                type: 'single',
-                display: 'chips',
-                required: true,
-                options: [
-                    'Adaptive (AI-driven)',
-                    'Manual levels',
-                    'Player-chosen',
-                    'Peer-matched',
-                ],
-            },
-            {
-                key: 'Mastering · Mastery signals',
-                label: 'Mastery signals',
-                group: 'mastering',
-                type: 'multi',
-                display: 'chips',
-                required: true,
-                options: [
-                    'Rank / level badge',
-                    'Skill tree unlock',
-                    'Performance stats',
-                ],
-            },
-            {
-                key: 'Mastering · Notes',
-                label: 'Notes on mastery design',
-                group: 'mastering',
-                type: 'text',
-                required: false,
-                placeholder:
-                    'e.g. Provide clear skill trees so users always know what to work toward…',
-            },
-
-            {
-                key: 'Fidelity · Retention anchors',
-                label: 'Retention anchors',
-                group: 'fidelity',
-                type: 'multi',
-                display: 'chips',
-                required: true,
-                options: [
-                    'Community / guilds',
-                    'Seasonal content',
-                    'User-generated content',
-                    'Mentorship roles',
-                ],
-            },
-            {
-                key: 'Fidelity · Target retention (D30)',
-                label: 'Target retention (D30)',
-                group: 'fidelity',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: PERCENT,
-            },
-            {
-                key: 'Fidelity · Long-term meaning',
-                label: 'What gives this game long-term meaning?',
-                group: 'fidelity',
-                type: 'text',
-                required: false,
-                placeholder:
-                    'e.g. Players become part of a ranked community and contribute to a shared story…',
             },
         ],
     },
+
+    /* ── 3 · Personalization and dynamics ────────────────────────────────── */
     {
         number: 3,
-        id: 'personification',
-        title: 'Personification and Dynamics',
-        navLabel: 'Personification',
-        summary: 'Adaptivity, personalization',
+        id: 'personalization',
+        title: 'Personalization and dynamics',
+        navLabel: 'Personalization and dynamics',
+        navName: 'Personalization and dynamics',
+        summary: 'User types, Personalization, Dynamics',
+        description:
+            'Define your user types and how your system adapts to their different motives and goals. Describe what they can shape themselves, what the game adjusts automatically, and what you infer from their behavior.',
         groups: [
             {
-                id: 'adaptivity',
-                title: 'Adaptivity level',
-                question: 'How does the system respond to user behavior?',
+                id: 'user-types',
+                title: 'User types',
                 description:
-                    "Choose the level that matches your team's capacity to build and maintain it — higher adaptivity means more data and more risk.",
+                    'Think about your users and what drives them. Understanding their primary motives and matching them to your design mechanics will help you build a system they actually want to use.',
             },
+            { id: 'personalization', title: 'Personalization' },
             {
-                id: 'personalization',
-                title: 'Personalization',
-                question: 'What can be customized to the individual?',
+                id: 'dynamics',
+                title: 'Dynamics',
                 description:
-                    'Select everything the system can tailor. More dimensions = more powerful, but also more data and complexity to manage.',
-            },
-            {
-                id: 'timeline',
-                title: 'Importance of timeline',
-                question:
-                    'How strictly does the system enforce phase progression?',
-                description:
-                    'Some users will naturally skip phases. Decide whether your design allows that — or whether the arc is a core part of the experience.',
+                    'Define how difficulty adapts over time: what signals trigger a change, what actually gets adjusted, and how that adjustment behaves.',
             },
         ],
         fields: [
             {
-                key: 'Adaptivity level',
-                label: 'Adaptivity level',
-                group: 'adaptivity',
-                type: 'single',
-                display: 'radio',
-                required: true,
-                options: [
-                    {
-                        value: 'Fixed — same for everyone',
-                        description:
-                            'No adaptation. Every user follows the exact same path and sees the same content.',
-                    },
-                    {
-                        value: 'Rule-based — if/then logic',
-                        description:
-                            'Predefined rules trigger changes. E.g. "If user fails 3 times, lower difficulty."',
-                    },
-                    {
-                        value: 'Profile-driven — segments and types',
-                        description:
-                            'Users are grouped by behavior or preference. Each group gets a tailored experience.',
-                    },
-                    {
-                        value: 'AI-driven — fully dynamic',
-                        description:
-                            'A model continuously adjusts content, pacing, and challenge per individual in real time.',
-                    },
-                ],
-            },
-            {
-                key: 'Adaptation signals',
-                label: 'What signals will the system use to adapt?',
-                group: 'adaptivity',
+                key: 'User types',
+                group: 'user-types',
                 type: 'multi',
-                display: 'chips',
-                required: false,
-                options: [
-                    'Session frequency',
-                    'Task completion rate',
-                    'Error patterns',
-                    'Time on task',
-                    'Explicit preferences',
-                    'Social behavior',
-                    'Device / context',
-                ],
-            },
-            {
-                key: 'Personalized content and experience',
-                label: 'Content and experience',
-                group: 'personalization',
-                type: 'multi',
-                display: 'chips',
-                required: true,
-                options: [
-                    'Difficulty curve',
-                    'Content topics',
-                    'Narrative path',
-                    'Challenge type',
-                ],
-            },
-            {
-                key: 'Personalized interface and identity',
-                label: 'Interface and identity',
-                group: 'personalization',
-                type: 'multi',
-                display: 'chips',
-                required: false,
-                options: [
-                    'Avatar / character',
-                    'Language and tone',
-                    'Visual theme',
-                    'Notification timing',
-                ],
-            },
-            {
-                key: 'Data privacy approach',
-                label: 'Data privacy approach',
-                group: 'personalization',
-                type: 'single',
-                display: 'chips',
-                required: true,
-                options: [
-                    'Minimal — anonymised only',
-                    'Standard — behavioural data',
-                    'Rich — full profile + consent',
-                ],
-            },
-            {
-                key: 'Timeline enforcement',
-                label: 'Timeline enforcement',
-                group: 'timeline',
-                type: 'single',
-                display: 'segmented',
+                display: 'checklist',
                 required: true,
                 options: [
                     {
-                        value: 'Freeform',
+                        value: 'Philanthropist',
                         description:
-                            'Phases are a loose guide; users move however they like.',
-                        provisional: true,
+                            'Motivated by purpose — enjoys helping others and sharing knowledge with no expectation of reward.',
                     },
                     {
-                        value: 'Guided',
+                        value: 'Socialiser',
                         description:
-                            'Users are nudged towards the next phase but nothing is blocked.',
-                        provisional: true,
+                            'Motivated by relatedness — focused on interacting with others and building social connections.',
                     },
                     {
-                        value: 'Structured',
+                        value: 'Free Spirit',
                         description:
-                            'Users are gently guided through phases but can skip or revisit freely. Progression is suggested, not enforced.',
+                            'Motivated by autonomy — values the freedom to explore, create, and act without external control.',
                     },
                     {
-                        value: 'Strict',
+                        value: 'Achiever',
                         description:
-                            'Phases unlock in order; users cannot skip ahead.',
-                        provisional: true,
+                            'Motivated by competence — seeks progress by mastering difficult tasks and overcoming challenges.',
+                    },
+                    {
+                        value: 'Player',
+                        description:
+                            'Motivated by extrinsic rewards — driven to complete activities to collect points, badges, and prizes.',
+                    },
+                    {
+                        value: 'Disruptor',
+                        description:
+                            "Motivated by change — tests the system's boundaries to force improvements or modifications.",
                     },
                 ],
             },
             {
-                key: 'Timeline enforcement notes',
-                label: 'Notes on timeline enforcement',
-                group: 'timeline',
+                key: 'User types · Additional information',
+                label: '*Additional information',
+                group: 'user-types',
                 type: 'text',
                 required: false,
-                placeholder:
-                    'e.g. We want casual users to feel no friction, but power users should unlock…',
+            },
+            {
+                key: 'Player-driven customization',
+                title: 'Player-driven / customization',
+                hint: 'Select what players can shape directly, from how they look to how they play.',
+                group: 'personalization',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    'Character creation & appearance',
+                    'Loadouts, builds, skill trees',
+                    'Base/home decoration',
+                    'Explicit difficulty settings',
+                ],
+            },
+            {
+                key: 'Player-driven customization · Additional information',
+                label: '*Additional information',
+                group: 'personalization',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'Game-driven adaptive systems',
+                title: 'Game-driven adaptive systems',
+                hint: "Systems that react to a player's current session — adjusting in real time based on how they're playing right now, with no history required.",
+                group: 'personalization',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    {
+                        value: 'Dynamic difficulty adjustment (DDA)',
+                        info: 'The game raises or lowers the challenge in real time based on how the player is performing.',
+                    },
+                    {
+                        value: 'Procedural content generation',
+                        info: 'Levels, items or events are generated by algorithms instead of being hand-made, so each session can differ.',
+                    },
+                    {
+                        value: 'Narrative branching',
+                        info: "The story changes direction depending on the player's choices or actions.",
+                    },
+                ],
+            },
+            {
+                key: 'Game-driven adaptive systems · Additional information',
+                label: '*Additional information',
+                group: 'personalization',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'Data-driven personalization',
+                title: 'Data-driven / algorithmic personalization',
+                hint: 'Systems that use accumulated player data (across sessions or players) to shape what an individual sees, is offered, or is matched with.',
+                group: 'personalization',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    {
+                        value: 'Recommendation systems',
+                        info: 'Suggest content, quests or items based on what the player and similar players did before.',
+                    },
+                    {
+                        value: 'Behavioral segmentation',
+                        info: 'Group players by how they behave and give each group a different experience.',
+                    },
+                    {
+                        value: 'Live-ops targeting',
+                        info: 'Offer events, rewards or messages to specific player groups after launch.',
+                    },
+                    {
+                        value: 'Personalized matchmaking',
+                        info: 'Match players with others based on skill, behavior or preferences.',
+                    },
+                ],
+            },
+            {
+                key: 'Data-driven personalization · Additional information',
+                label: '*Additional information',
+                group: 'personalization',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'Metrics / signals',
+                title: 'Metrics / signals',
+                hint: "Select and describe how does the system know it's time to change the difficulty.",
+                group: 'dynamics',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: true,
+                options: [
+                    'Performance',
+                    'Telemetry',
+                    'Emotions',
+                    'Preferences',
+                ],
+            },
+            {
+                key: 'How metrics change the dynamics',
+                label: 'Describe how metrics change the dynamics:',
+                group: 'dynamics',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'Control variables',
+                title: 'Control variables',
+                hint: 'Select and describe what moves when the system adapts.',
+                group: 'dynamics',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: true,
+                options: [
+                    'Spawn rate',
+                    'Frequency',
+                    'Starting level',
+                    'AI tactics',
+                    'Pacing',
+                    'Hinting',
+                    'Difficulty curve',
+                ],
+            },
+            {
+                key: 'How control variables change the dynamics',
+                label: 'Describe how control variables change the dynamics:',
+                group: 'dynamics',
+                type: 'text',
+                required: false,
+            },
+            {
+                key: 'What should change',
+                title: 'What should change',
+                hint: 'Once triggered, select and describe how does the adjustment itself behave?',
+                group: 'dynamics',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: true,
+                options: [
+                    'Update frequency',
+                    'Latency',
+                    'Magnitude of change',
+                    'Smoothness',
+                    'Persistence',
+                    'Reversibility',
+                    'Player visibility',
+                ],
+            },
+            {
+                key: 'How adjustments change the dynamics',
+                label: 'Describe how adjustments change the dynamics:',
+                group: 'dynamics',
+                type: 'text',
+                required: false,
             },
         ],
     },
+
+    /* ── 4 · Gameful Core ────────────────────────────────────────────────── */
     {
         number: 4,
         id: 'gameful-core',
         title: 'Gameful Core',
-        navLabel: 'Gameful core',
-        summary: 'Mechanics, dynamics, game loop',
+        navLabel: 'Gameful Core',
+        navName: 'Gameful Core',
+        summary: 'Game rules and loops, Mechanics, Progression',
+        description:
+            'This is where the actual game lives — the loops that repeat, the mechanics that drive them, and how players move forward over time.',
         groups: [
             {
-                id: 'mechanics',
-                title: 'Mechanics — rules and actions',
-                question: 'What can users do in your game?',
+                id: 'rules',
+                title: 'Game rules',
                 description:
-                    'Select the core mechanics. Each produces dynamics — intended and unintended. Choose deliberately.',
+                    'Lay out the core rules of your system — the constraints and logic that make everything else possible.',
+            },
+            {
+                id: 'mechanics',
+                title: 'Gamification & Mechanics',
+                description:
+                    "Pick a category, select the game elements you're using within it, and describe the mechanics behind each element.",
+            },
+            {
+                id: 'progression',
+                title: 'Progression',
+                description:
+                    'Define how the player advances and grows over time',
             },
             {
                 id: 'modality',
                 title: 'Modality',
-                question: 'How do users play — alone or together?',
                 description:
-                    "Modality determines which social mechanics above are feasible and which feedback loops you'll need to design.",
+                    'Choose how players interact with each other during play.',
             },
             {
-                id: 'dynamics',
-                title: 'Dynamics — runtime behaviors',
-                question: 'What behaviors will your mechanics produce?',
+                id: 'timing',
+                title: 'Timing',
                 description:
-                    'Rate the expected intensity of each dynamic. High = primary driver. Low = side effect.',
-            },
-            {
-                id: 'loops',
-                title: 'Game loop — feedback loops',
-                question: 'How does the system respond to users?',
-                description:
-                    'Design at least one short loop and one long loop. Expand each to configure triggers and responses.',
+                    'Choose whether players need to be active at the same time, or can participate independently, on their own schedule.',
             },
         ],
         fields: [
             {
-                key: 'Mechanics',
-                label: 'Mechanics',
+                key: 'Game rules',
+                group: 'rules',
+                type: 'text',
+                required: true,
+                placeholder:
+                    "e.g. Players earn 1 point per completed task, lose points if a task is skipped 3 days in a row, and can't advance to the next level until they've completed all core tasks in the current one.",
+            },
+            // "Game loops" sits in the Game rules card in the mockup. What opens on click is
+            // not defined yet: each loop is a free-text description.
+            {
+                key: 'Core loop',
+                title: 'Game loops',
+                hint: 'Configure how each time-scale loop works.',
+                group: 'rules',
+                type: 'text',
+                display: 'loop',
+                badge: 'Core loop',
+                description:
+                    "The basic action a player repeats every few seconds to a couple of minutes. It's the fundamental verb of the game.",
+                required: true,
+                provisional: true,
+            },
+            {
+                key: 'Long loop',
+                group: 'rules',
+                type: 'text',
+                display: 'loop',
+                badge: 'Long loop',
+                description:
+                    "The larger structure that gives the short loop purpose over minutes, hours, or the whole game. It's built from many repetitions of the short loop and typically involves progression, rewards, or strategic decisions.",
+                required: true,
+                provisional: true,
+            },
+            // "*Attach a sketch or diagram of your loop" (PNG/JPEG upload) is not implemented:
+            // the design API has no file upload yet.
+            {
+                key: 'Game element categories',
                 group: 'mechanics',
                 type: 'multi',
-                display: 'cards',
+                display: 'chips',
                 required: true,
                 options: [
                     {
-                        value: 'Points',
-                        description:
-                            'Numeric score for actions. Flexible, universal.',
+                        value: 'Performance',
+                        info: 'Elements that give the player feedback on how they are doing: acknowledgement, levels, progression, points, stats.',
                     },
                     {
-                        value: 'Badges',
-                        description: 'Symbolic rewards for milestones.',
+                        value: 'Social',
+                        info: 'Elements based on interaction between players: competition, cooperation, reputation, social pressure.',
                     },
                     {
-                        value: 'Leaderboards',
-                        description:
-                            'Public ranking. Motivates top performers.',
+                        value: 'Personal',
+                        info: 'Elements about the player as an individual: novelty, objectives, puzzles, renovation, sensation.',
                     },
                     {
-                        value: 'Quests / missions',
-                        description:
-                            'Structured goals with clear start and end.',
+                        value: 'Fictional',
+                        info: 'Elements that tie the experience to a story or context: narrative, storytelling.',
                     },
                     {
-                        value: 'Challenges',
-                        description: 'Time-limited events with rewards.',
+                        value: 'Ecological',
+                        info: 'Elements tied to the environment the game creates: chance, imposed choice, economy, rarity, time pressure.',
                     },
-                    {
-                        value: 'Collaboration',
-                        description: 'Shared goals requiring multiple users.',
+                ],
+            },
+            // The game elements of each category are not in the mockup: they follow the
+            // taxonomy by Toda et al., the same the categories come from.
+            ...Object.entries(GAME_ELEMENTS).flatMap(([category, elements]) => [
+                {
+                    key: `${category} elements`,
+                    title: `${category} elements`,
+                    group: 'mechanics',
+                    type: 'multi',
+                    display: 'chips',
+                    required: false,
+                    provisional: true,
+                    showIf: {
+                        key: 'Game element categories',
+                        includes: category,
                     },
-                    {
-                        value: 'Levels',
-                        description:
-                            'Tiered progression gating content or status.',
+                    options: elements,
+                },
+                {
+                    key: `${category} mechanics`,
+                    label: 'Describe the mechanics behind each element:',
+                    group: 'mechanics',
+                    type: 'text',
+                    required: false,
+                    provisional: true,
+                    showIf: {
+                        key: 'Game element categories',
+                        includes: category,
                     },
+                },
+            ]),
+            {
+                key: 'Primary progression type',
+                title: 'Primary progression type',
+                group: 'progression',
+                type: 'multi',
+                display: 'checks',
+                required: true,
+                options: [
+                    'Character power',
+                    'Player skill',
+                    'Content unlocks',
+                    'Rule knowledge',
+                    'Narrative progression',
+                    'Collection',
                     {
-                        value: 'Unlockables',
-                        description:
-                            'Content revealed through play or achievement.',
-                    },
-                    {
-                        value: 'Gifting / trading',
-                        description: 'Social exchange of items or rewards.',
-                    },
-                    {
-                        value: 'Narrative choices',
-                        description:
-                            'Branching decisions that shape the outcome.',
+                        value: 'Meta-progression',
+                        info: 'Progress that persists between runs or sessions, even when a single attempt ends.',
                     },
                 ],
             },
             {
-                key: 'Custom mechanics',
-                label: 'Custom mechanics',
-                group: 'mechanics',
+                key: 'Progression structure',
+                title: 'Progression structure',
+                group: 'progression',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: [
+                    'Linear',
+                    {
+                        value: 'Branching',
+                        info: 'The player chooses between different paths, each leading to different content.',
+                    },
+                    {
+                        value: 'Open-ended',
+                        info: 'No fixed end point: players set their own goals and keep progressing.',
+                    },
+                    {
+                        value: 'Hub-and-spoke',
+                        info: 'A central hub from which the player reaches separate areas or missions and then returns.',
+                    },
+                    {
+                        value: 'Procedural',
+                        info: 'The progression path is generated by the system instead of being fixed in advance.',
+                    },
+                    {
+                        value: 'Cyclical',
+                        info: 'Progress happens in repeating cycles, such as seasons or runs, that reset and start again.',
+                    },
+                ],
+            },
+            {
+                key: 'Main source of progression',
+                title: 'Main source of progression',
+                group: 'progression',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: [
+                    'Core gameplay loop',
+                    'Side activities',
+                    'Exploration',
+                    'Story progression',
+                    'Defeating enemies',
+                    'Crafting',
+                    'Social actions',
+                ],
+            },
+            {
+                key: 'Reward type',
+                title: 'Reward type',
+                group: 'progression',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: [
+                    'Power reward',
+                    'Utility reward',
+                    'Content access',
+                    'Information reward',
+                    'Narrative reward',
+                    'Cosmetic reward',
+                    'Resource reward',
+                ],
+            },
+            {
+                key: 'Difficulty growth',
+                title: 'Difficulty growth',
+                group: 'progression',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: [
+                    'Linear',
+                    {
+                        value: 'Stepped',
+                        info: 'Difficulty stays flat for a while and then jumps up, for example at the start of a new level.',
+                    },
+                    {
+                        value: 'Branching',
+                        info: 'Different paths have different difficulty, and the player picks one.',
+                    },
+                    'Adaptive',
+                    'Player-selected',
+                ],
+            },
+            {
+                key: 'Role of failure',
+                title: 'Role of failure',
+                group: 'progression',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: [
+                    'Full reset',
+                    'Partial reset',
+                    'Progress preserved',
+                    'Failure enables growth',
+                    'Failure does not affect progression',
+                ],
+            },
+            {
+                key: 'Progression structure in the project',
+                label: 'Describe the structure of progression in your project:',
+                group: 'progression',
                 type: 'text',
                 required: false,
-                placeholder:
-                    'e.g. Users earn "impact tokens" for real life actions…',
             },
             {
                 key: 'Modality',
-                label: 'Modality',
                 group: 'modality',
                 type: 'single',
                 display: 'cards',
@@ -649,344 +997,306 @@ export const DESIGN_SECTIONS = [
                             'Solo experience. Simpler infrastructure, personal focus.',
                     },
                     {
-                        value: 'Asynchronous social',
-                        description:
-                            'Users interact via scores, gifts, or challenges — not live.',
-                    },
-                    {
-                        value: 'Cooperative (live)',
+                        value: 'Cooperative',
                         description:
                             'Real-time collaboration toward shared goals.',
                     },
                     {
-                        value: 'Competitive (live)',
+                        value: 'Competitive / Cooperative',
+                        description:
+                            'Teams cooperate internally, but the teams compete against each other.',
+                    },
+                    {
+                        value: 'Competitive',
                         description:
                             'Real-time competition. Requires matchmaking.',
                     },
                 ],
             },
             {
-                key: 'Dynamics · Competition',
-                label: 'Competition',
-                group: 'dynamics',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: INTENSITY,
-            },
-            {
-                key: 'Dynamics · Cooperation',
-                label: 'Cooperation',
-                group: 'dynamics',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: INTENSITY,
-            },
-            {
-                key: 'Dynamics · Curiosity',
-                label: 'Curiosity',
-                group: 'dynamics',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: INTENSITY,
-            },
-            {
-                key: 'Dynamics · Achievement',
-                label: 'Achievement',
-                group: 'dynamics',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: INTENSITY,
-            },
-            {
-                key: 'Dynamics · Social status',
-                label: 'Social status',
-                group: 'dynamics',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: INTENSITY,
-            },
-            {
-                key: 'Dynamics · Anxiety / pressure',
-                label: 'Anxiety / pressure',
-                group: 'dynamics',
-                type: 'single',
-                display: 'slider',
-                required: true,
-                options: INTENSITY,
-            },
-            {
-                key: 'Unintended dynamics',
-                label: 'Unintended dynamics to watch for',
-                group: 'dynamics',
+                key: 'Modality · Additional information',
+                label: '*Additional information',
+                group: 'modality',
                 type: 'text',
                 required: false,
-                placeholder: 'e.g. Leaderboards may discourage mid-tier users…',
             },
-            // Game loop: il mockup mostra righe apribili senza contenuto; "Trigger"/"Response" è un'ipotesi.
             {
-                key: 'Short loop (immediate feedback) · Trigger',
-                label: 'Trigger',
-                group: 'loops',
-                loop: 'short',
-                type: 'text',
+                key: 'Timing',
+                group: 'timing',
+                type: 'single',
+                display: 'cards',
                 required: true,
-                provisional: true,
+                options: [
+                    {
+                        value: 'Asynchronous',
+                        description:
+                            'Players do not need to act at the same time; interaction happens across different time frames or turns.',
+                    },
+                    {
+                        value: 'Synchronous timing',
+                        description:
+                            'Players act at the same time, so the interaction depends on real-time coordination.',
+                    },
+                ],
             },
             {
-                key: 'Short loop (immediate feedback) · Response',
-                label: 'Response',
-                group: 'loops',
-                loop: 'short',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-            {
-                key: 'Long loop (sustained progression) · Trigger',
-                label: 'Trigger',
-                group: 'loops',
-                loop: 'long',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-            {
-                key: 'Long loop (sustained progression) · Response',
-                label: 'Response',
-                group: 'loops',
-                loop: 'long',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-            {
-                key: 'Social loop (peer-driven engagement) · Trigger',
-                label: 'Trigger',
-                group: 'loops',
-                loop: 'social',
+                key: 'Timing · Additional information',
+                label: '*Additional information',
+                group: 'timing',
                 type: 'text',
                 required: false,
-                provisional: true,
-            },
-            {
-                key: 'Social loop (peer-driven engagement) · Response',
-                label: 'Response',
-                group: 'loops',
-                loop: 'social',
-                type: 'text',
-                required: false,
-                provisional: true,
-            },
-        ],
-        loops: [
-            { id: 'short', badge: 'Short loop', title: 'Immediate feedback' },
-            { id: 'long', badge: 'Long loop', title: 'Sustained progression' },
-            {
-                id: 'social',
-                badge: 'Social loop',
-                title: 'Peer-driven engagement',
             },
         ],
     },
-    // Sezioni 5–7: nessun mockup, i campi seguono le descrizioni delle card della dashboard.
+
+    /* ── 5 · Feedback and Evaluation ─────────────────────────────────────── */
     {
         number: 5,
-        id: 'technology',
-        title: 'Technology',
-        navLabel: 'Technology',
-        summary: 'Resources, visual, UX/UI',
-        provisional: true,
+        id: 'feedback',
+        title: 'Feedback and Evaluation',
+        navLabel: 'Evaluation and Feedback loop',
+        navName: 'Feedback and Evaluation',
+        summary: 'Feedback components, Evaluation',
+        description:
+            "Close the loop: define how the system communicates with players, then how you'll know if it's working. Work through these in order — each answer builds on the last.",
         groups: [
+            { id: 'feedback', title: 'Feedback components' },
+            // The mockup shows only the feedback components: the evaluation part
+            // mentioned in the section description is not defined yet.
             {
-                id: 'resources',
-                title: 'Resources',
-                question:
-                    'What platforms, devices and team resources are available?',
-            },
-            {
-                id: 'visual',
-                title: 'Visual',
-                question: 'What is the visual and aesthetic direction?',
-            },
-            {
-                id: 'uxui',
-                title: 'UX/UI',
-                question: 'Which interface patterns will carry the experience?',
+                id: 'evaluation',
+                title: 'Evaluation',
+                provisional: true,
             },
         ],
         fields: [
             {
-                key: 'Resources',
-                label: 'Resources',
-                group: 'resources',
-                type: 'text',
+                key: 'Feedback component',
+                group: 'feedback',
+                type: 'list',
+                itemLabel: 'New feedback component',
                 required: true,
-                provisional: true,
+                itemFields: [
+                    {
+                        key: 'Process stage',
+                        title: 'In which part of the process do you want to provide feedback?',
+                        type: 'multi',
+                        display: 'chips',
+                        other: true,
+                        options: [
+                            'Onboarding',
+                            'Core loop / mid-action',
+                            'After failure',
+                            'After success',
+                            'Long loop / Milestone',
+                        ],
+                    },
+                    {
+                        key: 'Message',
+                        title: 'What do you prefer to communicate to the user?',
+                        type: 'text',
+                        placeholder:
+                            'e.g. You were spotted because you ran across a noisy surface…',
+                    },
+                    {
+                        key: 'Typology',
+                        title: 'What is the feedback typology?',
+                        type: 'multi',
+                        display: 'chips',
+                        other: true,
+                        options: [
+                            'Praise / Encouragement',
+                            'Correction',
+                            'Status updates',
+                            'Alerts / Risks',
+                            'Warning',
+                            'Comparisons with others',
+                        ],
+                    },
+                    {
+                        key: 'Content',
+                        title: 'What is the feedback content?',
+                        type: 'text',
+                        placeholder:
+                            "e.g. A red detection icon fills above the enemy's head, with a short alert stinger",
+                    },
+                    {
+                        key: 'Timing',
+                        title: 'What is the most suitable timing?',
+                        type: 'multi',
+                        display: 'chips',
+                        other: true,
+                        options: [
+                            'Immediate',
+                            'Delayed',
+                            'Periodic',
+                            'Milestone-based',
+                        ],
+                    },
+                    {
+                        key: 'Timing details',
+                        label: '*Specify your feedback timings:',
+                        type: 'text',
+                    },
+                    {
+                        key: 'Modality',
+                        title: 'What is the best modality?',
+                        type: 'multi',
+                        display: 'chips',
+                        options: ['Visual', 'Audio', 'Haptic', 'Textual'],
+                    },
+                    // "Link with specific game element" opens a picker that is not in the
+                    // mockups yet: for now the element is written as text.
+                    {
+                        key: 'Game element',
+                        title: 'What is the best game element that can support feedback?',
+                        type: 'text',
+                        display: 'input',
+                        provisional: true,
+                    },
+                    {
+                        key: 'Presentation',
+                        title: 'Feedback presentation:',
+                        type: 'text',
+                        placeholder:
+                            'e.g. Top-right corner, 400ms fade-in, holds 2s, fades before HUD returns to idle state',
+                    },
+                    {
+                        key: 'Implementation',
+                        title: 'Feedback implementation:',
+                        type: 'text',
+                        placeholder:
+                            'e.g. Fires from DetectionSystem.onSpotted(); suppress if player is already in combat state',
+                    },
+                ],
             },
             {
-                key: 'Visual',
-                label: 'Visual',
-                group: 'visual',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-            {
-                key: 'UX/UI',
-                label: 'UX/UI',
-                group: 'uxui',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-        ],
-    },
-    {
-        number: 6,
-        id: 'impacts',
-        title: 'Impacts & Benefits',
-        navLabel: 'Impacts',
-        summary: 'Performance, social, ecological',
-        provisional: true,
-        groups: [
-            {
-                id: 'performance',
-                title: 'Performance',
-                question:
-                    'What behavioural, learning or business outcomes do you expect?',
-            },
-            {
-                id: 'social',
-                title: 'Social',
-                question:
-                    'What effect should the system have on people and communities?',
-            },
-            {
-                id: 'ecological',
-                title: 'Ecological',
-                question:
-                    'Does the system have an environmental impact or benefit?',
-            },
-        ],
-        fields: [
-            {
-                key: 'Performance impact',
-                label: 'Performance',
-                group: 'performance',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-            {
-                key: 'Social impact',
-                label: 'Social',
-                group: 'social',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-            {
-                key: 'Ecological impact',
-                label: 'Ecological',
-                group: 'ecological',
+                key: 'Evaluation',
+                label: 'How will you know if the system is working?',
+                group: 'evaluation',
                 type: 'text',
                 required: false,
                 provisional: true,
             },
         ],
     },
+
+    /* ── 6 · Technical requirements ──────────────────────────────────────── */
+    // The mockup shows the nine panels collapsed: their content is not defined yet,
+    // so each one holds a single free-text field.
     {
-        number: 7,
-        id: 'evaluation',
-        title: 'Evaluation & Feedback',
-        navLabel: 'Evaluation',
-        summary: 'Impact assessment, adjustment',
-        provisional: true,
+        number: 6,
+        id: 'technical',
+        title: 'Technical requirements',
+        navLabel: 'Technical Requirements',
+        navName: 'Technical requirements',
+        summary: 'Platforms, Engine, Performance, Data',
+        description:
+            "Ground your design in what's actually feasible to build — the platforms, engine, and constraints your team is working within.",
         groups: [
-            {
-                id: 'assessment',
-                title: 'Impact assessment',
-                question: "How will you measure the system's effect?",
-            },
-            {
-                id: 'adjustment',
-                title: 'Adjustment',
-                question: 'How will results feed back into the design?',
-            },
-        ],
+            ['platforms', 'Platforms'],
+            ['engine', 'Engine and technology stack'],
+            ['runtime', 'Runtime and controls'],
+            ['display', 'Display, audio, haptics'],
+            ['performance', 'Performance budgets'],
+            ['data', 'Data, save and online'],
+            ['sdks', 'External SDKs and integrations'],
+            ['pipeline', 'Content pipeline'],
+            ['risks', 'Technical risks'],
+        ].map(([id, title]) => ({
+            id,
+            title,
+            collapsible: true,
+            provisional: true,
+        })),
         fields: [
-            {
-                key: 'Impact assessment',
-                label: 'Impact assessment',
-                group: 'assessment',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-            {
-                key: 'Adjustment',
-                label: 'Adjustment',
-                group: 'adjustment',
-                type: 'text',
-                required: true,
-                provisional: true,
-            },
-        ],
+            ['platforms', 'Platforms'],
+            ['engine', 'Engine and technology stack'],
+            ['runtime', 'Runtime and controls'],
+            ['display', 'Display, audio, haptics'],
+            ['performance', 'Performance budgets'],
+            ['data', 'Data, save and online'],
+            ['sdks', 'External SDKs and integrations'],
+            ['pipeline', 'Content pipeline'],
+            ['risks', 'Technical risks'],
+        ].map(([group, key]) => ({
+            key,
+            group,
+            type: 'text',
+            required: false,
+            provisional: true,
+        })),
     },
 ];
 
-/* Ordine del primo passaggio per ciascun percorso (uguale al backend, internal/design/domain.go). */
-export const PATHS = {
-    A: [1, 2, 3, 4, 5, 6, 7],
-    B: [1, 4, 5, 2, 3, 6, 7],
-};
+/* Number of steps in "STEP n OF N": the sections (the Spark is not counted). */
+export const TOTAL_STEPS = DESIGN_SECTIONS.length;
 
-/* Testi della scelta "Where to next?" dopo Context. */
-export const PATH_INFO = {
-    A: {
-        title: 'Experience Timeline & Personification',
-        blurb: 'Start with the user journey.',
-        tags: ['Onboarding', 'Engagement', 'Mastery', 'Adaptivity'],
-    },
-    B: {
-        title: 'Gameful Core & Technology',
-        blurb: 'Define the mechanics early.',
-        tags: [
-            'Mechanics',
-            'Modality',
-            'Game Loop',
-            'Aesthetic',
-            'Dynamics',
-            'Technology',
-        ],
-    },
-};
-
-/* Step totali di "STEP n OF 8": la Spark + 7 sezioni. */
-export const TOTAL_STEPS = DESIGN_SECTIONS.length + 1;
-
-/* Sezione dato il numero (1–7), o null. */
+/* Section by number (1–6), or null. */
 export function getSection(number) {
     return DESIGN_SECTIONS.find((s) => s.number === number) || null;
 }
 
-/* Le opzioni possono essere stringhe o { value, description }: le porta tutte alla seconda forma. */
+/* Options can be strings or { value, description, info }: turns them all into the latter. */
 export function normalizeOptions(options = []) {
     return options.map((o) => (typeof o === 'string' ? { value: o } : o));
 }
 
-/* true se il campo ha un valore (array non vuoto, stringa non vuota). */
+/* Key under which the "Other" free text of a field is saved. */
+export function otherKey(field) {
+    return `${field.key} · Other`;
+}
+
+/* Key of a field of the n-th item (0-based) of a list field, as saved on the backend. */
+function itemKey(field, index, sub) {
+    return `${field.key} ${index + 1} · ${sub.key}`;
+}
+
+/* true if the field is shown with the current values (see `showIf`). */
+export function isFieldVisible(field, values) {
+    if (!field.showIf) return true;
+    const source = values?.[field.showIf.key];
+    return Array.isArray(source) && source.includes(field.showIf.includes);
+}
+
+/* true if the field has a value (non-empty array, non-empty string, list with content). */
 export function isFilled(field, value) {
+    if (field.type === 'list')
+        return (
+            Array.isArray(value) &&
+            value.some((item) =>
+                field.itemFields.some((sub) => isFilled(sub, item?.[sub.key])),
+            )
+        );
     if (field.type === 'multi') return Array.isArray(value) && value.length > 0;
     return typeof value === 'string' && value.trim() !== '';
 }
 
-/* `content` del backend → valori del form (ogni campo dello schema presente, chiavi extra mantenute). */
+function emptyValue(field) {
+    return field.type === 'multi' || field.type === 'list' ? [] : '';
+}
+
+function readValue(field, raw) {
+    if (field.type === 'multi') return Array.isArray(raw) ? raw : [];
+    return typeof raw === 'string' ? raw : '';
+}
+
+/* Fields of a list item, including its name (shown on the item's tab). */
+function itemFieldsOf(field) {
+    return [{ key: 'Name', type: 'text' }, ...field.itemFields];
+}
+
+/* Empty item of a list field. */
+export function emptyItem(field) {
+    const item = {};
+    for (const sub of itemFieldsOf(field)) {
+        item[sub.key] = emptyValue(sub);
+        if (sub.other) item[otherKey(sub)] = '';
+    }
+    return item;
+}
+
+/* Backend `content` → form values (every schema field present, extra keys kept). */
 export function contentToValues(section, content) {
     const source =
         content && typeof content === 'object' && !Array.isArray(content)
@@ -994,24 +1304,68 @@ export function contentToValues(section, content) {
             : {};
     const values = { ...source };
     for (const field of section.fields) {
-        const raw = source[field.key];
-        if (field.type === 'multi')
-            values[field.key] = Array.isArray(raw) ? raw : [];
-        else values[field.key] = typeof raw === 'string' ? raw : '';
+        if (field.type !== 'list') {
+            values[field.key] = readValue(field, source[field.key]);
+            continue;
+        }
+        // Items are rebuilt from the flattened keys "<key> <n> · <item field>".
+        const items = [];
+        const prefix = new RegExp(
+            `^${field.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} (\\d+) · (.+)$`,
+        );
+        for (const [key, raw] of Object.entries(source)) {
+            const match = key.match(prefix);
+            if (!match) continue;
+            delete values[key];
+            const index = Number(match[1]) - 1;
+            items[index] = items[index] || emptyItem(field);
+            const sub = itemFieldsOf(field).find(
+                (f) => f.key === match[2] || otherKey(f) === match[2],
+            );
+            if (!sub) continue;
+            if (sub.key === match[2])
+                items[index][sub.key] = readValue(sub, raw);
+            else items[index][otherKey(sub)] = readValue({ type: 'text' }, raw);
+        }
+        values[field.key] = items.filter(Boolean);
     }
     return values;
 }
 
-/* Valori del form → `content` per il backend: prima i campi dello schema nel loro ordine
-   (quelli vuoti vengono omessi), poi le chiavi sconosciute, così non si perde nulla. */
+/* Form values → `content` for the backend: schema fields first in their order (empty ones
+   are left out, an "Other" text right after its field), then the unknown keys, so nothing
+   is lost. Hidden fields (`showIf`) are not sent. */
 export function valuesToContent(section, values) {
     const content = {};
-    const known = new Set(section.fields.map((f) => f.key));
-    for (const field of section.fields) {
-        const value = values[field.key];
+    const known = new Set();
+    const put = (key, field, value) => {
         if (isFilled(field, value))
-            content[field.key] =
-                field.type === 'multi' ? [...value] : value.trim();
+            content[key] = field.type === 'multi' ? [...value] : value.trim();
+    };
+    for (const field of section.fields) {
+        known.add(field.key);
+        if (field.other) known.add(otherKey(field));
+        if (!isFieldVisible(field, values)) continue;
+        if (field.type === 'list') {
+            const items = (values[field.key] || []).filter((item) =>
+                isFilled(field, [item]),
+            );
+            items.forEach((item, i) => {
+                for (const sub of itemFieldsOf(field)) {
+                    put(itemKey(field, i, sub), sub, item[sub.key]);
+                    if (sub.other)
+                        put(
+                            itemKey(field, i, { key: otherKey(sub) }),
+                            { type: 'text' },
+                            item[otherKey(sub)],
+                        );
+                }
+            });
+            continue;
+        }
+        put(field.key, field, values[field.key]);
+        if (field.other)
+            put(otherKey(field), { type: 'text' }, values[otherKey(field)]);
     }
     for (const [key, value] of Object.entries(values)) {
         if (!known.has(key) && value !== undefined && value !== '')
@@ -1020,10 +1374,12 @@ export function valuesToContent(section, values) {
     return content;
 }
 
-/* Completamento calcolato sui campi obbligatori (se una sezione non ne ha, su tutti i campi). */
+/* Completion computed on the required fields (if a section has none, on all fields).
+   Hidden fields (`showIf`) are not counted. */
 export function sectionProgress(section, values) {
-    const required = section.fields.filter((f) => f.required);
-    const counted = required.length > 0 ? required : section.fields;
+    const visible = section.fields.filter((f) => isFieldVisible(f, values));
+    const required = visible.filter((f) => f.required);
+    const counted = required.length > 0 ? required : visible;
     const filled = counted.filter((f) => isFilled(f, values[f.key])).length;
     const percent =
         counted.length === 0 ? 0 : Math.round((filled / counted.length) * 100);
@@ -1035,7 +1391,7 @@ export function sectionProgress(section, values) {
     };
 }
 
-/* true se almeno un campo della sezione ha un valore. */
+/* true if at least one field of the section has a value. */
 export function hasAnyValue(section, values) {
     return section.fields.some((f) => isFilled(f, values[f.key]));
 }

@@ -1,0 +1,149 @@
+/* =====================================================
+   DESIGN CONTEXT — pages/DesignSection.jsx, section 1
+   Styling for "The context" (mockup Flow 2.0). Every rule is
+   scoped to `.ds-page--context`, so the other sections are not
+   affected. Card, chip and button base styles are in
+   layout/ds-page.css and ui/buttons.css.
+   ===================================================== */
+
+/* -- Introduction under the title ------------------------------------------------- */
+.ds-page--context .ds-intro {
+    font-size: 17px;
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* -- Card header (title + description) -------------------------------------------- */
+.ds-page--context .ds-group-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ds-page--context .ds-group-description {
+    margin: 0;
+    font-size: 17px;
+}
+
+/* -- Fields ----------------------------------------------------------------------- */
+/* Fields flow on two columns so that `--half` inputs can sit side by side. */
+.ds-page--context .ds-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+}
+
+.ds-page--context .ds-group > * {
+    grid-column: 1 / -1;
+}
+
+.ds-page--context .ds-group > .ds-field--half {
+    grid-column: auto;
+}
+
+.ds-page--context .ds-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ds-page--context .ds-field-label {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* "*Additional information" labels are smaller */
+.ds-page--context .ds-field-label[for$='additional-information'] {
+    font-size: 13px;
+    color: var(--gd-text-muted);
+}
+
+.ds-page--context .ds-textarea {
+    min-height: 80px;
+    padding: 12px 18px;
+    resize: vertical;
+}
+
+.ds-page--context .ds-input,
+.ds-page--context .ds-select {
+    width: 100%;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 8px;
+    padding: 10px 18px;
+}
+
+.ds-page--context .ds-textarea::placeholder,
+.ds-page--context .ds-input::placeholder {
+    color: var(--gd-blue-text-disabled);
+}
+
+/* -- "Other" chip and its text box ----------------------------------------------- */
+.ds-page--context .ds-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ds-page--context .ds-option-plus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid currentColor;
+    border-radius: 3px;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.ds-page--context .ds-other-input {
+    margin-top: 4px;
+}
+
+/* -- Constraints checklist (two columns) -----------------------------------------
+   Items fill the first column top to bottom, then the second (4 + 4, as in the mockup).
+   Columns are minmax(0, 1fr), so they shrink with the card and long labels wrap. */
+.ds-page--context .ds-checks {
+    display: grid;
+    gap: 16px 40px;
+    padding: 8px 14px;
+}
+
+.ds-page--context .ds-checks--cols-2 {
+    grid-auto-flow: column;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+}
+
+.ds-page--context .ds-check {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+}
+
+.ds-page--context .ds-check-input {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: var(--gd-blue);
+}
+
+/* -- Small screens --------------------------------------------------------------- */
+@media (max-width: 640px) {
+    .ds-page--context .ds-group {
+        padding: 24px 20px;
+    }
+
+    .ds-page--context .ds-group > .ds-field--half {
+        grid-column: 1 / -1;
+    }
+
+    .ds-page--context .ds-checks--cols-2 {
+        grid-auto-flow: row;
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+    }
+}

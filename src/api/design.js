@@ -11,8 +11,6 @@ const base = ({ kind, id }) =>
 export const designApi = {
     get: (scope) => api.get(base(scope)),
     saveSpark: (scope, spark) => api.put(`${base(scope)}/spark`, { spark }),
-    branch: (scope) => api.get(`${base(scope)}/branch`),
-    choosePath: (scope, path) => api.post(`${base(scope)}/path`, { path }),
     // body: { content?, complete?, skip? }
     saveSection: (scope, sectionNumber, body) =>
         api.put(`${base(scope)}/section/${sectionNumber}`, body),

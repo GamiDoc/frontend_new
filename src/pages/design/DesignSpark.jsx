@@ -7,10 +7,10 @@ import { SPARK_STEP } from '../../data/designSections';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * `ds-spark` Page — Step 0 "The Spark" (FR-1…FR-3)
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * Free optional text:
  * * "Skip this step": go to Context without saving anything
  * * "Let AI analyze & continue": save text & go to Context. (Pre-compile next fields). If nothing is typed, then it works as if the skip button was pressed
@@ -30,7 +30,7 @@ function DesignSpark({ onOpenLogin, onOpenSignup }) {
     return (
         <div className="ds-page ds-page--spark">
             <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
-            <DesignStepHeader stepNumber={1} label={SPARK_STEP.navLabel} />
+            <DesignStepHeader stepNumber={null} label={SPARK_STEP.navLabel} />
 
             <main className="ds-main">
                 <h1>{SPARK_STEP.title}</h1>

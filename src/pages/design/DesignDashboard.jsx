@@ -83,7 +83,7 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                 <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
                 <main className="ds-main">
                     <p>
-                        The overview opens after a first pass through all seven
+                        The overview opens after a first pass through all six
                         sections, with at least one section filled in.
                     </p>
                     <button

@@ -15,7 +15,6 @@ import Dashboard from './pages/Dashboard';
 import ProjectDetail from './pages/ProjectDetail';
 import DesignSpark from './pages/design/DesignSpark';
 import DesignSection from './pages/design/DesignSection';
-import DesignPathChoice from './pages/design/DesignPathChoice';
 import DesignDashboard from './pages/design/DesignDashboard';
 import AuthModal from './components/AuthModal';
 import DraftResumeBanner from './components/DraftResumeBanner';
@@ -133,7 +132,6 @@ function App() {
             )}
             {page === 'ds-spark' && <DesignSpark {...wizardProps} />}
             {page === 'ds-section' && <DesignSection {...wizardProps} />}
-            {page === 'ds-path' && <DesignPathChoice {...wizardProps} />}
             {page === 'ds-dashboard' && <DesignDashboard {...wizardProps} />}
         </div>
     );

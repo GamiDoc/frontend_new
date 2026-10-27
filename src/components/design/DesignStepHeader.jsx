@@ -5,13 +5,13 @@ import { useState } from 'react';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * DesignStepHeader — Step Bar at the top of all main Design System pages
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * Shows step bars, label "STEP X OUT OF Y", and current bar title (i.e Ideation for The Spark).
- * 
- * * "stepNumber" is computed by the context.
+ *
+ * * "stepNumber" is computed by the context (null on the Spark, which is not counted).
  * * "Overview" goes to dashboard and is initially disabled until it is not unlocked (FR-11)
  * * ChatBot button (function is not implemented, only the graphic is present)
  * */
@@ -44,7 +44,9 @@ function DesignStepHeader({ stepNumber, label }) {
                 </div>
                 <div className="ds-progress-bar-labels">
                     <span className="ds-step-count">
-                        STEP {stepNumber ?? '–'} OF {TOTAL_STEPS}
+                        {stepNumber
+                            ? `STEP ${stepNumber} OF ${TOTAL_STEPS}`
+                            : ''}
                     </span>
                     <span className="ds-step-label">{label}</span>
                 </div>

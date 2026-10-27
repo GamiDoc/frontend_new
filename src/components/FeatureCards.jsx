@@ -43,7 +43,7 @@ function FeatureCards() {
                 <FeatureCard
                     icon={projectIcon}
                     title="Design your gamification"
-                    description="Go from a raw idea to a structured gamification model in seven sections."
+                    description="Go from a raw idea to a structured gamification model in six sections."
                     buttonText={
                         designLoading
                             ? 'Starting…'
