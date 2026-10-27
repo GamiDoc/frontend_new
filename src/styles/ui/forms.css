@@ -6,107 +6,123 @@
 
 /* ── Text inputs ──────────────────────────────────── */
 .text-input {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--gd-border);
-  margin-top: 10px;
-  font-size: 15px;
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--gd-border);
+    margin-top: 10px;
+    font-size: 15px;
 }
 
 /* Compact input with dark focus border (project name/description, …) */
 .project-type-input {
-  width: 100%;
-  padding: 0.65rem 0.9rem;
-  border: 1.5px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-top: 0.5rem;
 }
 
 .project-type-input:focus {
-  outline: none;
-  border-color: var(--gd-text);
+    outline: none;
+    border-color: var(--gd-text);
 }
 
 /* ── Toggle switch ────────────────────────────────── */
 /* <label class="toggle-switch"><input type="checkbox"><span class="slider"></span></label> */
 .toggle-switch {
-  position: relative;
-  width: 42px;
-  height: 22px;
+    position: relative;
+    width: 42px;
+    height: 22px;
 }
 
 .toggle-switch input {
-  display: none;
+    display: none;
 }
 
 .slider {
-  position: absolute;
-  cursor: pointer;
-  background: #ccc;
-  border-radius: 999px;
-  width: 100%;
-  height: 100%;
-  transition: 0.3s;
+    position: absolute;
+    cursor: pointer;
+    background: #ccc;
+    border-radius: 999px;
+    width: 100%;
+    height: 100%;
+    transition: 0.3s;
 }
 
 .slider::before {
-  content: "";
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  left: 2px;
-  top: 2px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 2px;
+    top: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
 }
 
 .toggle-switch input:checked + .slider {
-  background: var(--gd-yellow-accent);
+    background: var(--gd-yellow-accent);
 }
 
 .toggle-switch input:checked + .slider::before {
-  transform: translateX(20px);
+    transform: translateX(20px);
 }
 
 /* ── Checkbox + label on one row ──────────────────── */
 .checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    margin-bottom: 14px;
 }
 
 /* ── Dynamic input list (text field + ✕ remove) ───── */
 .dynamic-inputs {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .dynamic-input-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .dynamic-input-row .text-input {
-  flex: 1;
+    flex: 1;
 }
 
 /* Look of the ✕ button is in ui/buttons.css */
 .dynamic-input-remove {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
 }
 
 /* "(optional)" hint next to a label */
 .optional {
-  color: #777;
-  font-size: 14px;
+    color: #777;
+    font-size: 14px;
+}
+
+/* =====================================================
+   FORM CONTROLS (SPECIFICALLY FOR DESIGN SYSTEM PAGES)
+   ===================================================== */
+
+/* ── Text area styling ───── */
+.ds-textarea {
+    min-width: 100%;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 8px;
+    padding: 10px 5px 5px 15px;
+}
+
+.ds-textarea:invalid {
+    color: var(--gd-text-muted);
 }

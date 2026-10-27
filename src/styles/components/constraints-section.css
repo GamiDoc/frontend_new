@@ -3,55 +3,58 @@
    (wizard step 1)
    ===================================================== */
 .constraints-section {
-  padding: 0 0 24px;
-  background: #ffffff;
+    padding: 0 0 24px;
+    background: #ffffff;
 }
 
 .constraints-box h2 {
-  font-size: 24px;
-  margin-bottom: 8px;
+    font-size: 24px;
+    margin-bottom: 8px;
 }
 
 .constraint-group {
-  margin-top: 28px;
+    margin-top: 28px;
 }
 
 .constraint-group h3 {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 14px;
 }
 
 .constraint-options-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 30px;
 }
 
 .constraint-options-column {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 6px;
-  border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+    border-top: 1px solid #eee;
 }
 
 .constraint-option {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-  color: var(--gd-text);
-  padding-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: var(--gd-text);
+    padding-top: 8px;
 }
 
 .constraint-option input {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: var(--gd-yellow-accent);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--gd-yellow-accent);
 }
 
 @media (max-width: 640px) {
-  .constraint-option input { width: 20px; height: 20px; }
+    .constraint-option input {
+        width: 20px;
+        height: 20px;
+    }
 }

@@ -1,177 +1,228 @@
-import InfoTooltip from "./InfoTooltip";
+import InfoTooltip from './InfoTooltip';
 
 const RESEARCH_INFO = {
-  title: "Research Specification",
-  intro: "Enable this section when your evaluation is intended for academic research or publication — a peer-reviewed paper, thesis, or conference submission — and requires formal methodology.",
-  items: [
-    { name: "Research Objective", desc: "A clear, concise statement of what the study aims to demonstrate or discover. It aligns all design decisions: method selection, instrument choice, and sample size." },
-    { name: "Research Questions (RQ)", desc: "Specific, answerable questions that frame the inquiry. Good RQs are focused and directly testable with the chosen methods." },
-    { name: "Hypotheses", desc: "Formal predictions about expected outcomes, typically formulated as H0 (null) and H1 (alternative) pairs. Required for confirmatory studies that use inferential statistics." },
-    { name: "Sample size considerations", desc: "For academic work, sample size should be justified via power analysis (e.g., G*Power). Standard targets: power ≥ 0.80, significance level α = 0.05. Effect size estimates from prior literature guide the required number of participants." },
-  ],
+    title: 'Research Specification',
+    intro: 'Enable this section when your evaluation is intended for academic research or publication — a peer-reviewed paper, thesis, or conference submission — and requires formal methodology.',
+    items: [
+        {
+            name: 'Research Objective',
+            desc: 'A clear, concise statement of what the study aims to demonstrate or discover. It aligns all design decisions: method selection, instrument choice, and sample size.',
+        },
+        {
+            name: 'Research Questions (RQ)',
+            desc: 'Specific, answerable questions that frame the inquiry. Good RQs are focused and directly testable with the chosen methods.',
+        },
+        {
+            name: 'Hypotheses',
+            desc: 'Formal predictions about expected outcomes, typically formulated as H0 (null) and H1 (alternative) pairs. Required for confirmatory studies that use inferential statistics.',
+        },
+        {
+            name: 'Sample size considerations',
+            desc: 'For academic work, sample size should be justified via power analysis (e.g., G*Power). Standard targets: power ≥ 0.80, significance level α = 0.05. Effect size estimates from prior literature guide the required number of participants.',
+        },
+    ],
 };
 
 function ResearchSpecification({
-  enabled = false,
-  onEnabledChange,
-  objective = '',
-  onObjectiveChange,
-  researchQuestions = [],
-  onResearchQuestionsChange,
-  hypotheses = [],
-  onHypothesesChange,
+    enabled = false,
+    onEnabledChange,
+    objective = '',
+    onObjectiveChange,
+    researchQuestions = [],
+    onResearchQuestionsChange,
+    hypotheses = [],
+    onHypothesesChange,
 }) {
-  const defineHypothesis = hypotheses.length > 0;
+    const defineHypothesis = hypotheses.length > 0;
 
-  function addResearchQuestion() {
-    onResearchQuestionsChange && onResearchQuestionsChange([...researchQuestions, '']);
-  }
-
-  function updateResearchQuestion(index, value) {
-    const updated = [...researchQuestions];
-    updated[index] = value;
-    onResearchQuestionsChange && onResearchQuestionsChange(updated);
-  }
-
-  function removeResearchQuestion(index) {
-    onResearchQuestionsChange && onResearchQuestionsChange(researchQuestions.filter((_, i) => i !== index));
-  }
-
-  function toggleHypotheses() {
-    if (defineHypothesis) {
-      onHypothesesChange && onHypothesesChange([]);
-    } else {
-      onHypothesesChange && onHypothesesChange(['']);
+    function addResearchQuestion() {
+        onResearchQuestionsChange &&
+            onResearchQuestionsChange([...researchQuestions, '']);
     }
-  }
 
-  function addHypothesis() {
-    onHypothesesChange && onHypothesesChange([...hypotheses, '']);
-  }
+    function updateResearchQuestion(index, value) {
+        const updated = [...researchQuestions];
+        updated[index] = value;
+        onResearchQuestionsChange && onResearchQuestionsChange(updated);
+    }
 
-  function updateHypothesis(index, value) {
-    const updated = [...hypotheses];
-    updated[index] = value;
-    onHypothesesChange && onHypothesesChange(updated);
-  }
+    function removeResearchQuestion(index) {
+        onResearchQuestionsChange &&
+            onResearchQuestionsChange(
+                researchQuestions.filter((_, i) => i !== index),
+            );
+    }
 
-  function removeHypothesis(index) {
-    onHypothesesChange && onHypothesesChange(hypotheses.filter((_, i) => i !== index));
-  }
+    function toggleHypotheses() {
+        if (defineHypothesis) {
+            onHypothesesChange && onHypothesesChange([]);
+        } else {
+            onHypothesesChange && onHypothesesChange(['']);
+        }
+    }
 
-  return (
-    <section className="research-section">
-      <div className="research-box">
-        <div className="research-header">
-          <h2>
-            Research specification
-            <InfoTooltip
-              text="Enable this when your evaluation is intended for academic research or publication. Define objectives, research questions, and hypotheses."
-              learnMore={RESEARCH_INFO}
-            />
-          </h2>
+    function addHypothesis() {
+        onHypothesesChange && onHypothesesChange([...hypotheses, '']);
+    }
 
-          <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={enabled}
-              onChange={() => onEnabledChange && onEnabledChange(!enabled)}
-            />
-            <span className="slider"></span>
-          </label>
-        </div>
+    function updateHypothesis(index, value) {
+        const updated = [...hypotheses];
+        updated[index] = value;
+        onHypothesesChange && onHypothesesChange(updated);
+    }
 
-        {enabled && (
-          <>
-            <div className="research-objective">
-              <h3>Research Objective</h3>
-              <p className="section-description">
-                Enter specific details if your evaluation is for research publication.
-              </p>
-              <p className="question-label">
-                What is the main research objective of this evaluation?
-              </p>
-              <input
-                type="text"
-                className="text-input"
-                placeholder="e.g. to test whether competitive gamification increases intrinsic motivation in students."
-                value={objective}
-                onChange={(e) => onObjectiveChange && onObjectiveChange(e.target.value)}
-              />
-            </div>
+    function removeHypothesis(index) {
+        onHypothesesChange &&
+            onHypothesesChange(hypotheses.filter((_, i) => i !== index));
+    }
 
-            <div className="research-questions">
-              <h3>Research Question (RQ)</h3>
-              <button className="secondary-btn" onClick={addResearchQuestion}>
-                + Add Research question
-              </button>
-              <div className="dynamic-inputs">
-                {researchQuestions.map((question, index) => (
-                  <div key={index} className="dynamic-input-row">
-                    <input
-                      type="text"
-                      className="text-input"
-                      placeholder={`Research question ${index + 1}`}
-                      value={question}
-                      onChange={(e) => updateResearchQuestion(index, e.target.value)}
-                    />
-                    <button
-                      className="dynamic-input-remove"
-                      onClick={() => removeResearchQuestion(index)}
-                      title="Remove"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="hypotheses">
-              <h3>
-                Hypotheses <span className="optional">(optional)</span>
-              </h3>
-              <label className="checkbox-row">
-                <input
-                  type="checkbox"
-                  checked={defineHypothesis}
-                  onChange={toggleHypotheses}
-                />
-                <span>Define Hypothesis</span>
-              </label>
-              {defineHypothesis && (
-                <>
-                  <button className="secondary-btn" onClick={addHypothesis}>
-                    + Add hypotheses
-                  </button>
-                  <div className="dynamic-inputs">
-                    {hypotheses.map((hypothesis, index) => (
-                      <div key={index} className="dynamic-input-row">
-                        <input
-                          type="text"
-                          className="text-input"
-                          placeholder={`Hypothesis ${index + 1}`}
-                          value={hypothesis}
-                          onChange={(e) => updateHypothesis(index, e.target.value)}
+    return (
+        <section className="research-section">
+            <div className="research-box">
+                <div className="research-header">
+                    <h2>
+                        Research specification
+                        <InfoTooltip
+                            text="Enable this when your evaluation is intended for academic research or publication. Define objectives, research questions, and hypotheses."
+                            learnMore={RESEARCH_INFO}
                         />
-                        <button
-                          className="dynamic-input-remove"
-                          onClick={() => removeHypothesis(index)}
-                          title="Remove"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
+                    </h2>
+
+                    <label className="toggle-switch">
+                        <input
+                            type="checkbox"
+                            checked={enabled}
+                            onChange={() =>
+                                onEnabledChange && onEnabledChange(!enabled)
+                            }
+                        />
+                        <span className="slider"></span>
+                    </label>
+                </div>
+
+                {enabled && (
+                    <>
+                        <div className="research-objective">
+                            <h3>Research Objective</h3>
+                            <p className="section-description">
+                                Enter specific details if your evaluation is for
+                                research publication.
+                            </p>
+                            <p className="question-label">
+                                What is the main research objective of this
+                                evaluation?
+                            </p>
+                            <input
+                                type="text"
+                                className="text-input"
+                                placeholder="e.g. to test whether competitive gamification increases intrinsic motivation in students."
+                                value={objective}
+                                onChange={(e) =>
+                                    onObjectiveChange &&
+                                    onObjectiveChange(e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <div className="research-questions">
+                            <h3>Research Question (RQ)</h3>
+                            <button
+                                className="secondary-btn"
+                                onClick={addResearchQuestion}
+                            >
+                                + Add Research question
+                            </button>
+                            <div className="dynamic-inputs">
+                                {researchQuestions.map((question, index) => (
+                                    <div
+                                        key={index}
+                                        className="dynamic-input-row"
+                                    >
+                                        <input
+                                            type="text"
+                                            className="text-input"
+                                            placeholder={`Research question ${index + 1}`}
+                                            value={question}
+                                            onChange={(e) =>
+                                                updateResearchQuestion(
+                                                    index,
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                        <button
+                                            className="dynamic-input-remove"
+                                            onClick={() =>
+                                                removeResearchQuestion(index)
+                                            }
+                                            title="Remove"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="hypotheses">
+                            <h3>
+                                Hypotheses{' '}
+                                <span className="optional">(optional)</span>
+                            </h3>
+                            <label className="checkbox-row">
+                                <input
+                                    type="checkbox"
+                                    checked={defineHypothesis}
+                                    onChange={toggleHypotheses}
+                                />
+                                <span>Define Hypothesis</span>
+                            </label>
+                            {defineHypothesis && (
+                                <>
+                                    <button
+                                        className="secondary-btn"
+                                        onClick={addHypothesis}
+                                    >
+                                        + Add hypotheses
+                                    </button>
+                                    <div className="dynamic-inputs">
+                                        {hypotheses.map((hypothesis, index) => (
+                                            <div
+                                                key={index}
+                                                className="dynamic-input-row"
+                                            >
+                                                <input
+                                                    type="text"
+                                                    className="text-input"
+                                                    placeholder={`Hypothesis ${index + 1}`}
+                                                    value={hypothesis}
+                                                    onChange={(e) =>
+                                                        updateHypothesis(
+                                                            index,
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                />
+                                                <button
+                                                    className="dynamic-input-remove"
+                                                    onClick={() =>
+                                                        removeHypothesis(index)
+                                                    }
+                                                    title="Remove"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
-          </>
-        )}
-      </div>
-    </section>
-  );
+        </section>
+    );
 }
 
 export default ResearchSpecification;

@@ -1,0 +1,78 @@
+/* =====================================================
+   DESIGN SYSTEM STEPPER
+   =====================================================
+   - `.ds-step-header` contains the whole stepper graphic
+   - `.ds-step-count` contains the text "STEP X OUT OF Y"
+   - `.ds-step-segments` contains the list of segment/bars
+   - `.ds-step-segment` can be `--done` (steps before the current one) or `--current` (current step)
+   - `.ds-step-label` label of the step (i.e Ideation for The Spark section) 
+   - `.ds-overview-btn` (can have state :disabled)
+*/
+.ds-step-header {
+    background: #eeede8;
+    display: flex;
+    gap: 10px;
+    min-width: 60vw;
+    font-size: 12px;
+    color: var(--gd-blue-text-disabled);
+    padding: 14px 0 18px;
+    margin-top: 20px;
+}
+
+.ds-step-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 20px;
+    min-width: 60vw;
+}
+
+.ds-progress-bar-labels {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* -- Step Bars on top ---------------------------------------------------*/
+.ds-step-segments {
+    display: flex;
+    gap: 15px;
+}
+
+.ds-step-segment {
+    min-height: 3px;
+    max-height: 3px;
+    min-width: 137px;
+    background-color: var(--gd-inputs-border);
+    border-radius: 3px;
+}
+
+/* Style bars on top of the page (i.e change all bar siblings before & including current) */
+.ds-step-segment--done {
+    background: var(--gd-blue);
+    transition: background 0.5s ease;
+    border-radius: 3px;
+}
+
+/* Animate current progress bar filling/decreasing */
+.ds-progress-bar-animation {
+    display: block;
+    height: 100%;
+    background-color: var(--gd-blue);
+    transition: width 0.5s ease;
+}
+/* Simple animation for current step */
+.ds-progress-bar-animation {
+    display: block;
+    height: 100%;
+    background-color: var(--gd-blue);
+    animation: fillBar 0.5s;
+}
+
+@keyframes fillBar {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}

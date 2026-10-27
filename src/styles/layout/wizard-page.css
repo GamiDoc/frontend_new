@@ -6,54 +6,54 @@
 
 /* ── Page header (title + subtitle under the stepper) ─ */
 .evaluation-header {
-  background: #f5f5f5;
-  padding: 24px 0 16px;
+    background: #f5f5f5;
+    padding: 24px 0 16px;
 }
 
 .evaluation-header-inner {
-  max-width: 950px;
-  margin: 0 auto;
+    max-width: 950px;
+    margin: 0 auto;
 }
 
 .evaluation-header h1 {
-  font-size: 32px;
-  font-weight: 500;
-  margin-bottom: 8px;
+    font-size: 32px;
+    font-weight: 500;
+    margin-bottom: 8px;
 }
 
 .evaluation-header p {
-  font-size: 16px;
-  color: #444;
-  margin: 0;
+    font-size: 16px;
+    color: #444;
+    margin: 0;
 }
 
 /* ── Page body: intro block + centered 1100px column ─
    Named "method-selection-*" for historical reasons, but
    used as the generic wizard content container. */
 .method-selection-page {
-  background: #ffffff;
-  padding-bottom: 24px;
+    background: #ffffff;
+    padding-bottom: 24px;
 }
 
 .method-selection-intro {
-  padding: 40px 0 12px;
+    padding: 40px 0 12px;
 }
 
 .method-selection-container {
-  max-width: var(--gd-content-width);
-  margin: 0 auto;
+    max-width: var(--gd-content-width);
+    margin: 0 auto;
 }
 
 .method-selection-container h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 10px;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
 }
 
 .method-selection-container p {
-  font-size: 16px;
-  color: #222;
-  line-height: 1.5;
+    font-size: 16px;
+    color: #222;
+    line-height: 1.5;
 }
 
 /* ── Bordered box around each step-1 section ─────── */
@@ -63,29 +63,40 @@
 .development-stage-box,
 .constraints-box,
 .research-box {
-  max-width: var(--gd-content-width);
-  margin: 0 auto;
-  border: 1px solid var(--gd-border-section);
-  border-radius: 10px;
-  padding: 24px;
-  background: #fff;
+    max-width: var(--gd-content-width);
+    margin: 0 auto;
+    border: 1px solid var(--gd-border-section);
+    border-radius: 10px;
+    padding: 24px;
+    background: #fff;
 }
 
 /* Description paragraph under each wizard section title */
 .section-description {
-  color: var(--gd-text-muted);
-  margin-bottom: 24px;
+    color: var(--gd-text-muted);
+    margin-bottom: 24px;
 }
 
 @media (max-width: 640px) {
-  .evaluation-goals-box,
-  .development-stage-box,
-  .constraints-box,
-  .research-box { margin-left: 16px; margin-right: 16px; }
+    .evaluation-goals-box,
+    .development-stage-box,
+    .constraints-box,
+    .research-box {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
 
-  .evaluation-header-inner { padding: 0 16px; }
-  .evaluation-header h1    { font-size: 20px; }
+    .evaluation-header-inner {
+        padding: 0 16px;
+    }
+    .evaluation-header h1 {
+        font-size: 20px;
+    }
 
-  .method-selection-intro  { padding: 20px 0 8px; }
-  .method-selection-container { padding: 0 16px; }
+    .method-selection-intro {
+        padding: 20px 0 8px;
+    }
+    .method-selection-container {
+        padding: 0 16px;
+    }
 }

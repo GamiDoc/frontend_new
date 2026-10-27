@@ -4,24 +4,24 @@
    ===================================================== */
 .summary-tag,
 .method-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: var(--gd-yellow-tag);
-  font-size: 14px;
-  color: var(--gd-text);
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--gd-yellow-tag);
+    font-size: 14px;
+    color: var(--gd-text);
 }
 
 /* Wrapper for a row of .method-tag */
 .method-card-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 /* Variant: item manually added by the user (green) */
 .method-tag--added {
-  background: #e8f4e8;
-  color: #2a6b2a;
+    background: #e8f4e8;
+    color: #2a6b2a;
 }

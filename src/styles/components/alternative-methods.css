@@ -3,50 +3,52 @@
    (also used by InstrumentSelection for alternative instruments)
    ===================================================== */
 .alternative-methods-section {
-  padding: 8px 0 4px;
+    padding: 8px 0 4px;
 }
 
 .alternative-methods-box {
-  max-width: var(--gd-content-width);
-  margin: 0 auto;
-  border: 1px solid var(--gd-border);
-  border-radius: 10px;
-  padding: 18px 22px;
-  background: #fff;
+    max-width: var(--gd-content-width);
+    margin: 0 auto;
+    border: 1px solid var(--gd-border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    background: #fff;
 }
 
 .alternative-methods-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--gd-text);
-  margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gd-text);
+    margin-bottom: 12px;
 }
 
 .alternative-methods-arrow {
-  font-size: 20px;
-  line-height: 1;
-  color: var(--gd-text);
-  transition: transform 0.2s;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--gd-text);
+    transition: transform 0.2s;
 }
 
 .alternative-methods-arrow--open {
-  transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
 .alternative-methods-link {
-  color: #384250;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: underline;
+    color: #384250;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: underline;
 }
 
 .alternative-methods-link:hover {
-  opacity: 0.85;
+    opacity: 0.85;
 }
 
 @media (max-width: 640px) {
-  .alternative-methods-box { margin: 0 16px; }
+    .alternative-methods-box {
+        margin: 0 16px;
+    }
 }

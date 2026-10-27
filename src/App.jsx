@@ -23,74 +23,120 @@ import { useWizard } from './context/WizardContext';
 import { useAuth } from './context/AuthContext';
 
 function LandingPage({ onOpenLogin, onOpenSignup }) {
-  const { startWizard, createProject, loading, draftAvailable, resumeDraft, discardDraft } = useWizard();
-  const { user, loading: authLoading } = useAuth();
+    const {
+        startWizard,
+        createProject,
+        loading,
+        draftAvailable,
+        resumeDraft,
+        discardDraft,
+    } = useWizard();
+    const { user, loading: authLoading } = useAuth();
 
-  return (
-    <div className="page">
-      <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
-      <main>
-        {draftAvailable && (
-          <DraftResumeBanner onResume={resumeDraft} onDiscard={discardDraft} />
-        )}
-        <Hero
-          onStart={() => (user ? createProject() : startWizard())}
-          loading={loading || authLoading}
-        />
-        <FeatureCards />
-        <InfoSection />
-      </main>
-      <Footer />
-    </div>
-  );
+    return (
+        <div className="page">
+            <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
+            <main>
+                {draftAvailable && (
+                    <DraftResumeBanner
+                        onResume={resumeDraft}
+                        onDiscard={discardDraft}
+                    />
+                )}
+                <Hero
+                    onStart={() => (user ? createProject() : startWizard())}
+                    loading={loading || authLoading}
+                />
+                <FeatureCards />
+                <InfoSection />
+            </main>
+            <Footer />
+        </div>
+    );
 }
 
 function ProjectDetailWrapper({ onOpenLogin, onOpenSignup }) {
-  const { currentProjectId } = useWizard();
-  return <ProjectDetail projectId={currentProjectId} onOpenLogin={onOpenLogin} onOpenSignup={onOpenSignup} />;
+    const { currentProjectId } = useWizard();
+    return (
+        <ProjectDetail
+            projectId={currentProjectId}
+            onOpenLogin={onOpenLogin}
+            onOpenSignup={onOpenSignup}
+        />
+    );
 }
 
 function App() {
-  const { page, setPage } = useWizard();
-  const [authModal, setAuthModal] = useState(null);
-  const [currentProjectId, setCurrentProjectId] = useState(null);
-  const stayOnPageRef = useRef(false);
+    const { page, setPage } = useWizard();
+    const [authModal, setAuthModal] = useState(null);
+    const [currentProjectId, setCurrentProjectId] = useState(null);
+    const stayOnPageRef = useRef(false);
 
-  const openLogin = () => { stayOnPageRef.current = false; setAuthModal('login'); };
-  const openSignup = () => { stayOnPageRef.current = false; setAuthModal('register'); };
-  const openLoginStay = () => { stayOnPageRef.current = true; setAuthModal('login'); };
-  const openSignupStay = () => { stayOnPageRef.current = true; setAuthModal('register'); };
-  const closeModal = () => { stayOnPageRef.current = false; setAuthModal(null); };
-  const loginSuccess = () => {
-    const stay = stayOnPageRef.current;
-    stayOnPageRef.current = false;
-    setAuthModal(null);
-    if (!stay) setPage('dashboard');
-  };
+    const openLogin = () => {
+        stayOnPageRef.current = false;
+        setAuthModal('login');
+    };
+    const openSignup = () => {
+        stayOnPageRef.current = false;
+        setAuthModal('register');
+    };
+    const openLoginStay = () => {
+        stayOnPageRef.current = true;
+        setAuthModal('login');
+    };
+    const openSignupStay = () => {
+        stayOnPageRef.current = true;
+        setAuthModal('register');
+    };
+    const closeModal = () => {
+        stayOnPageRef.current = false;
+        setAuthModal(null);
+    };
+    const loginSuccess = () => {
+        const stay = stayOnPageRef.current;
+        stayOnPageRef.current = false;
+        setAuthModal(null);
+        if (!stay) setPage('dashboard');
+    };
 
-  const navProps = { onOpenLogin: openLogin, onOpenSignup: openSignup };
-  const wizardProps = { onOpenLogin: openLoginStay, onOpenSignup: openSignupStay };
+    const navProps = { onOpenLogin: openLogin, onOpenSignup: openSignup };
+    const wizardProps = {
+        onOpenLogin: openLoginStay,
+        onOpenSignup: openSignupStay,
+    };
 
-  return (
-    <div className="page">
-      {authModal && <AuthModal mode={authModal} onClose={closeModal} onSuccess={loginSuccess} />}
+    return (
+        <div className="page">
+            {authModal && (
+                <AuthModal
+                    mode={authModal}
+                    onClose={closeModal}
+                    onSuccess={loginSuccess}
+                />
+            )}
 
-      {page === 'landing'            && <LandingPage {...navProps} />}
-      {page === 'setup'              && <EvaluationSetup {...wizardProps} />}
-      {page === 'methods'            && <MethodSelection {...wizardProps} />}
-      {page === 'instruments'        && <InstrumentSelection {...wizardProps} />}
-      {page === 'browse-instruments' && <BrowseInstruments {...wizardProps} />}
-      {page === 'browse-methods'     && <BrowseMethods {...wizardProps} />}
-      {page === 'custom-construct'   && <CustomConstruct {...wizardProps} />}
-      {page === 'evaluation'         && <EvaluationReview {...wizardProps} />}
-      {page === 'dashboard'          && <Dashboard {...navProps} />}
-      {page === 'project-detail'     && <ProjectDetailWrapper {...navProps} />}
-      {page === 'ds-spark'           && <DesignSpark {...wizardProps} />}
-      {page === 'ds-section'         && <DesignSection {...wizardProps} />}
-      {page === 'ds-path'            && <DesignPathChoice {...wizardProps} />}
-      {page === 'ds-dashboard'       && <DesignDashboard {...wizardProps} />}
-    </div>
-  );
+            {page === 'landing' && <LandingPage {...navProps} />}
+            {page === 'setup' && <EvaluationSetup {...wizardProps} />}
+            {page === 'methods' && <MethodSelection {...wizardProps} />}
+            {page === 'instruments' && <InstrumentSelection {...wizardProps} />}
+            {page === 'browse-instruments' && (
+                <BrowseInstruments {...wizardProps} />
+            )}
+            {page === 'browse-methods' && <BrowseMethods {...wizardProps} />}
+            {page === 'custom-construct' && (
+                <CustomConstruct {...wizardProps} />
+            )}
+            {page === 'evaluation' && <EvaluationReview {...wizardProps} />}
+            {page === 'dashboard' && <Dashboard {...navProps} />}
+            {page === 'project-detail' && (
+                <ProjectDetailWrapper {...navProps} />
+            )}
+            {page === 'ds-spark' && <DesignSpark {...wizardProps} />}
+            {page === 'ds-section' && <DesignSection {...wizardProps} />}
+            {page === 'ds-path' && <DesignPathChoice {...wizardProps} />}
+            {page === 'ds-dashboard' && <DesignDashboard {...wizardProps} />}
+        </div>
+    );
 }
 
 export default App;

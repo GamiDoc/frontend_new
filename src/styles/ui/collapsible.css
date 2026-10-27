@@ -5,27 +5,41 @@
    InstrumentSelection.
    ===================================================== */
 .recommended-instruments-header {
-  display: flex; align-items: center; justify-content: space-between;
-  cursor: pointer; user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
 }
-.recommended-instruments-header h3 { margin: 0; }
+.recommended-instruments-header h3 {
+    margin: 0;
+}
 .recommended-instruments-arrow {
-  font-size: 28px; color: #888; transition: transform 0.2s; line-height: 1;
-  transform: rotate(90deg);
+    font-size: 28px;
+    color: #888;
+    transition: transform 0.2s;
+    line-height: 1;
+    transform: rotate(90deg);
 }
-.recommended-instruments-arrow--collapsed { transform: rotate(0deg); }
-.recommended-instruments-header:hover .recommended-instruments-arrow { color: #333; }
+.recommended-instruments-arrow--collapsed {
+    transform: rotate(0deg);
+}
+.recommended-instruments-header:hover .recommended-instruments-arrow {
+    color: #333;
+}
 
 /* "Show all / Show less" underlined text button */
 .instruments-expand-btn {
-  background: none;
-  border: none;
-  color: #384250;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 8px 0 2px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+    background: none;
+    border: none;
+    color: #384250;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 0 2px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
-.instruments-expand-btn:hover { color: #000; }
+.instruments-expand-btn:hover {
+    color: #000;
+}

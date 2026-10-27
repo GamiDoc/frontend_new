@@ -3,123 +3,234 @@
    ===================================================== */
 
 /* ── Summary of all choices ───────────────────────── */
-.eval-summary-section { padding: 16px 0 12px; }
-.eval-summary-box {
-  max-width: var(--gd-content-width); margin: 0 auto;
-  border: 1px solid var(--gd-border); border-radius: 10px;
-  overflow: hidden; background: #fff;
+.eval-summary-section {
+    padding: 16px 0 12px;
 }
-.eval-summary-content { padding: 16px 18px; }
+.eval-summary-box {
+    max-width: var(--gd-content-width);
+    margin: 0 auto;
+    border: 1px solid var(--gd-border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+.eval-summary-content {
+    padding: 16px 18px;
+}
 .eval-summary-hint {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 12px;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
 }
 .eval-summary-group-label {
-  font-weight: 700; font-size: 14px; color: var(--gd-text-muted);
-  text-transform: uppercase; letter-spacing: .04em;
-  margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--gd-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
 }
 .eval-summary-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 0; border-bottom: 1px solid #ececec;
-  font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ececec;
+    font-size: 15px;
 }
-.eval-summary-row:last-child { border-bottom: none; }
-.eval-summary-icon { font-size: 17px; flex-shrink: 0; color: var(--gd-text-muted); }
-.eval-summary-key  { font-weight: 600; min-width: 100px; flex-shrink: 0; }
-.eval-summary-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.eval-summary-row:last-child {
+    border-bottom: none;
+}
+.eval-summary-icon {
+    font-size: 17px;
+    flex-shrink: 0;
+    color: var(--gd-text-muted);
+}
+.eval-summary-key {
+    font-weight: 600;
+    min-width: 100px;
+    flex-shrink: 0;
+}
+.eval-summary-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
 
 /* "Edit" pill at the end of each summary row (R6) */
 .eval-summary-edit {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border: 1px solid var(--gd-border);
-  border-radius: 999px;
-  background: #fff;
-  font-size: 13px;
-  color: #333;
-  cursor: pointer;
-  flex-shrink: 0;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border: 1px solid var(--gd-border);
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .eval-summary-edit:hover {
-  background: #f3f1f5;
+    background: #f3f1f5;
 }
 
 /* ── Evaluation plan / PDF box ────────────────────── */
-.eval-plan-section { padding: 16px 0; }
+.eval-plan-section {
+    padding: 16px 0;
+}
 .eval-plan-box {
-  max-width: var(--gd-content-width); margin: 0 auto;
-  border: 1.5px solid var(--gd-yellow-accent); border-radius: 10px;
-  padding: 24px; background: var(--gd-yellow-bg-hover);
-  display: flex; gap: 20px; align-items: flex-start;
+    max-width: var(--gd-content-width);
+    margin: 0 auto;
+    border: 1.5px solid var(--gd-yellow-accent);
+    border-radius: 10px;
+    padding: 24px;
+    background: var(--gd-yellow-bg-hover);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
 }
-.eval-plan-icon { font-size: 36px; flex-shrink: 0; }
-.eval-plan-content h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-.eval-plan-content > p { font-size: 15px; color: #444; margin-bottom: 12px; }
+.eval-plan-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+}
+.eval-plan-content h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.eval-plan-content > p {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 12px;
+}
 .eval-plan-checklist {
-  list-style: none; padding: 0; display: flex;
-  flex-direction: column; gap: 5px; margin-bottom: 18px;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 18px;
 }
-.eval-plan-checklist li { font-size: 14px; color: #444; }
-.eval-plan-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.eval-plan-checklist li {
+    font-size: 14px;
+    color: #444;
+}
+.eval-plan-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
 .eval-btn-download {
-  background: var(--gd-text); color: #fff; border: none;
-  border-radius: 8px; padding: 10px 20px; font-size: 14px; cursor: pointer;
+    background: var(--gd-text);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
 }
-.eval-btn-download:hover { background: #333; color: #fff; }
+.eval-btn-download:hover {
+    background: #333;
+    color: #fff;
+}
 .eval-btn-save {
-  background: #fff; color: var(--gd-text); border: 1.5px solid #ccc;
-  border-radius: 8px; padding: 10px 20px; font-size: 14px; cursor: pointer;
+    background: #fff;
+    color: var(--gd-text);
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
 }
-.eval-btn-save:hover { background: #f5f5f5; }
+.eval-btn-save:hover {
+    background: #f5f5f5;
+}
 
 .eval-name-input-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
 }
 .eval-name-input-row .project-type-input {
-  flex: 1;
-  min-width: 200px;
+    flex: 1;
+    min-width: 200px;
 }
 
 /* ── Next steps ───────────────────────────────────── */
-.eval-nextsteps-section { padding: 24px 0; }
-.eval-nextsteps-section h3 { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
-.eval-nextsteps-list {
-  padding-left: 20px; display: flex; flex-direction: column; gap: 10px;
+.eval-nextsteps-section {
+    padding: 24px 0;
 }
-.eval-nextsteps-list li { font-size: 15px; color: #333; line-height: 1.5; }
+.eval-nextsteps-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+.eval-nextsteps-list {
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.eval-nextsteps-list li {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;
+}
 
 @media (max-width: 900px) {
-  .eval-summary-edit { margin-left: 0; }
+    .eval-summary-edit {
+        margin-left: 0;
+    }
 }
 
 @media (max-width: 640px) {
-  .eval-summary-box,
-  .eval-plan-box { margin-left: 16px; margin-right: 16px; }
-  .eval-nextsteps-section .method-selection-container { padding: 0 16px; }
+    .eval-summary-box,
+    .eval-plan-box {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+    .eval-nextsteps-section .method-selection-container {
+        padding: 0 16px;
+    }
 
-  .eval-plan-box    { flex-direction: column; gap: 12px; }
-  .eval-plan-icon   { font-size: 28px; }
-  .eval-plan-actions { flex-direction: column; gap: 8px; }
-  .eval-btn-download,
-  .eval-btn-save    { width: 100%; text-align: center; min-height: 44px; }
+    .eval-plan-box {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .eval-plan-icon {
+        font-size: 28px;
+    }
+    .eval-plan-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .eval-btn-download,
+    .eval-btn-save {
+        width: 100%;
+        text-align: center;
+        min-height: 44px;
+    }
 
-  .eval-summary-row { flex-wrap: wrap; gap: 6px; }
-  .eval-summary-key { min-width: 80px; }
+    .eval-summary-row {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .eval-summary-key {
+        min-width: 80px;
+    }
 
-  .eval-name-input-row { flex-direction: column; align-items: stretch; }
-  .eval-name-input-row .btn {
-    width: 100%;
-    margin-left: 0 !important;
-    min-height: 44px;
-  }
+    .eval-name-input-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .eval-name-input-row .btn {
+        width: 100%;
+        margin-left: 0 !important;
+        min-height: 44px;
+    }
 }

@@ -9,383 +9,571 @@ import { sessionApi } from '../api/session';
 import { projectApi } from '../api/project';
 
 function EvaluationReview({ onOpenLogin, onOpenSignup }) {
-  const {
-    step1Data, step2Data, step3Data, step4Data,
-    sessionId, editingProjectId, setEditingProjectId,
-    generatePDF, setPage, setCurrentProjectId,
-    pendingAuthProject, editStepFromReview, clearDraft,
-  } = useWizard();
-  const { user } = useAuth();
+    const {
+        step1Data,
+        step2Data,
+        step3Data,
+        step4Data,
+        sessionId,
+        editingProjectId,
+        setEditingProjectId,
+        generatePDF,
+        setPage,
+        setCurrentProjectId,
+        pendingAuthProject,
+        editStepFromReview,
+        clearDraft,
+    } = useWizard();
+    const { user } = useAuth();
 
-  const [generating, setGenerating] = useState(false);
-  const [pdfError, setPdfError] = useState(null);
+    const [generating, setGenerating] = useState(false);
+    const [pdfError, setPdfError] = useState(null);
 
-  // Mark project/session as complete on arrival at step 4
-  useEffect(() => {
-    if (editingProjectId) {
-      projectApi.saveStep(editingProjectId, 4, step4Data).catch(() => {});
-    } else if (sessionId) {
-      sessionApi.saveStep(sessionId, 4, step4Data).catch(() => {});
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Save-to-dashboard state (anonymous flow)
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(null);
-  const [saved, setSaved] = useState(false);
-  const [showNameInput, setShowNameInput] = useState(false);
-  const [projectName, setProjectName] = useState(step1Data.projectName || step1Data.projectType || '');
-  const pendingSaveRef = useRef(false);
-
-  // After login from "Log in to save", auto-show name input
-  useEffect(() => {
-    if (user && pendingSaveRef.current && !editingProjectId && !saved) {
-      pendingSaveRef.current = false;
-      setShowNameInput(true);
-    }
-  }, [user]);
-
-  // R1 — a logged-in user who started a new plan gets it filed as a project here,
-  // at the end of the flow, instead of being blocked by registration at step 1.
-  const autoSavedRef = useRef(false);
-  useEffect(() => {
-    if (!user || !pendingAuthProject || editingProjectId || saved || autoSavedRef.current) return;
-    autoSavedRef.current = true;
-    (async () => {
-      setSaving(true);
-      setSaveError(null);
-      try {
-        const name = step1Data.projectName || step1Data.projectType || 'My Evaluation Project';
-        const project = await sessionApi.convertToProject(sessionId, name, step1Data.projectType || '');
-        if (project?.projectId) {
-          setEditingProjectId(project.projectId);
-          setCurrentProjectId(project.projectId);
+    // Mark project/session as complete on arrival at step 4
+    useEffect(() => {
+        if (editingProjectId) {
+            projectApi.saveStep(editingProjectId, 4, step4Data).catch(() => {});
+        } else if (sessionId) {
+            sessionApi.saveStep(sessionId, 4, step4Data).catch(() => {});
         }
-        setSaved(true);
-        clearDraft();
-      } catch (e) {
-        if (e.status === 409 || e.code === 'PROJECT_ALREADY_EXISTS') {
-          setSaved(true);
-          clearDraft();
-        } else {
-          setSaveError(e.message || 'Failed to save project.');
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Save-to-dashboard state (anonymous flow)
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState(null);
+    const [saved, setSaved] = useState(false);
+    const [showNameInput, setShowNameInput] = useState(false);
+    const [projectName, setProjectName] = useState(
+        step1Data.projectName || step1Data.projectType || '',
+    );
+    const pendingSaveRef = useRef(false);
+
+    // After login from "Log in to save", auto-show name input
+    useEffect(() => {
+        if (user && pendingSaveRef.current && !editingProjectId && !saved) {
+            pendingSaveRef.current = false;
+            setShowNameInput(true);
         }
-      } finally {
-        setSaving(false);
-      }
-    })();
-  }, [user, pendingAuthProject, editingProjectId, saved]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [user]);
 
-  // Rename state (editingProjectId flow)
-  const [showRename, setShowRename] = useState(false);
-  const [renameName, setRenameName] = useState(step1Data.projectName || step1Data.projectType || '');
-  const [renaming, setRenaming] = useState(false);
-  const [renameError, setRenameError] = useState(null);
-  const [renameDone, setRenameDone] = useState(false);
+    // R1 — a logged-in user who started a new plan gets it filed as a project here,
+    // at the end of the flow, instead of being blocked by registration at step 1.
+    const autoSavedRef = useRef(false);
+    useEffect(() => {
+        if (
+            !user ||
+            !pendingAuthProject ||
+            editingProjectId ||
+            saved ||
+            autoSavedRef.current
+        )
+            return;
+        autoSavedRef.current = true;
+        (async () => {
+            setSaving(true);
+            setSaveError(null);
+            try {
+                const name =
+                    step1Data.projectName ||
+                    step1Data.projectType ||
+                    'My Evaluation Project';
+                const project = await sessionApi.convertToProject(
+                    sessionId,
+                    name,
+                    step1Data.projectType || '',
+                );
+                if (project?.projectId) {
+                    setEditingProjectId(project.projectId);
+                    setCurrentProjectId(project.projectId);
+                }
+                setSaved(true);
+                clearDraft();
+            } catch (e) {
+                if (e.status === 409 || e.code === 'PROJECT_ALREADY_EXISTS') {
+                    setSaved(true);
+                    clearDraft();
+                } else {
+                    setSaveError(e.message || 'Failed to save project.');
+                }
+            } finally {
+                setSaving(false);
+            }
+        })();
+    }, [user, pendingAuthProject, editingProjectId, saved]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function handleRename() {
-    const name = renameName.trim();
-    if (!name) return;
-    setRenaming(true);
-    setRenameError(null);
-    try {
-      await projectApi.update(editingProjectId, name, step1Data.projectType);
-      setRenameDone(true);
-      setShowRename(false);
-    } catch (e) {
-      setRenameError(e.message || 'Failed to rename project.');
-    } finally {
-      setRenaming(false);
+    // Rename state (editingProjectId flow)
+    const [showRename, setShowRename] = useState(false);
+    const [renameName, setRenameName] = useState(
+        step1Data.projectName || step1Data.projectType || '',
+    );
+    const [renaming, setRenaming] = useState(false);
+    const [renameError, setRenameError] = useState(null);
+    const [renameDone, setRenameDone] = useState(false);
+
+    async function handleRename() {
+        const name = renameName.trim();
+        if (!name) return;
+        setRenaming(true);
+        setRenameError(null);
+        try {
+            await projectApi.update(
+                editingProjectId,
+                name,
+                step1Data.projectType,
+            );
+            setRenameDone(true);
+            setShowRename(false);
+        } catch (e) {
+            setRenameError(e.message || 'Failed to rename project.');
+        } finally {
+            setRenaming(false);
+        }
     }
-  }
 
-  async function handleSave() {
-    if (!user) { pendingSaveRef.current = true; onOpenLogin(); return; }
-    if (!showNameInput) {
-      setShowNameInput(true);
-      return;
+    async function handleSave() {
+        if (!user) {
+            pendingSaveRef.current = true;
+            onOpenLogin();
+            return;
+        }
+        if (!showNameInput) {
+            setShowNameInput(true);
+            return;
+        }
+        const name =
+            projectName.trim() ||
+            step1Data.projectName ||
+            step1Data.projectType ||
+            'My Evaluation Project';
+        setSaving(true);
+        setSaveError(null);
+        try {
+            const project = await sessionApi.convertToProject(
+                sessionId,
+                name,
+                step1Data.projectType || '',
+            );
+            if (project?.projectId) {
+                setEditingProjectId(project.projectId);
+                setCurrentProjectId(project.projectId);
+            }
+            setSaved(true);
+            setShowNameInput(false);
+            clearDraft();
+        } catch (e) {
+            if (e.status === 409 || e.code === 'PROJECT_ALREADY_EXISTS') {
+                setSaved(true);
+                setShowNameInput(false);
+                clearDraft();
+            } else {
+                setSaveError(e.message || 'Failed to save project.');
+            }
+        } finally {
+            setSaving(false);
+        }
     }
-    const name = projectName.trim() || step1Data.projectName || step1Data.projectType || 'My Evaluation Project';
-    setSaving(true);
-    setSaveError(null);
-    try {
-      const project = await sessionApi.convertToProject(sessionId, name, step1Data.projectType || '');
-      if (project?.projectId) {
-        setEditingProjectId(project.projectId);
-        setCurrentProjectId(project.projectId);
-      }
-      setSaved(true);
-      setShowNameInput(false);
-      clearDraft();
-    } catch (e) {
-      if (e.status === 409 || e.code === 'PROJECT_ALREADY_EXISTS') {
-        setSaved(true);
-        setShowNameInput(false);
-        clearDraft();
-      } else {
-        setSaveError(e.message || 'Failed to save project.');
-      }
-    } finally {
-      setSaving(false);
+
+    async function handleDownloadPDF() {
+        setPdfError(null);
+        setGenerating(true);
+        try {
+            const result = await generatePDF();
+            if (!result?.pdfUrl) {
+                setPdfError('PDF generation failed — no URL returned.');
+                return;
+            }
+            const blob = editingProjectId
+                ? await projectApi.downloadPDF(editingProjectId)
+                : await sessionApi.downloadPDF(sessionId);
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = 'evaluation-plan.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+        } catch (e) {
+            setPdfError(e.message || 'PDF generation failed.');
+        } finally {
+            setGenerating(false);
+        }
     }
-  }
 
-  async function handleDownloadPDF() {
-    setPdfError(null);
-    setGenerating(true);
-    try {
-      const result = await generatePDF();
-      if (!result?.pdfUrl) {
-        setPdfError('PDF generation failed — no URL returned.');
-        return;
-      }
-      const blob = editingProjectId
-        ? await projectApi.downloadPDF(editingProjectId)
-        : await sessionApi.downloadPDF(sessionId);
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = 'evaluation-plan.pdf';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    } catch (e) {
-      setPdfError(e.message || 'PDF generation failed.');
-    } finally {
-      setGenerating(false);
-    }
-  }
+    return (
+        <div>
+            <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
 
-  return (
-    <div>
-      <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
-
-      <section className="evaluation-header">
-        <div className="container evaluation-header-inner">
-          <h1>Evaluation & UX Methods</h1>
-          <p>Follow these steps to create your evaluation plan.</p>
-        </div>
-      </section>
-
-      <Stepper currentStep={4} />
-
-      <main className="method-selection-page">
-        <section className="method-selection-intro">
-          <div className="method-selection-container">
-            <h2>Evaluation</h2>
-            <p>Review your selected goals, methods, and instruments before conducting the evaluation.</p>
-          </div>
-        </section>
-
-        {/* Summary */}
-        <section className="eval-summary-section">
-          <div className="eval-summary-box">
-            <div className="selection-summary-header">
-              <span className="selection-summary-arrow">⌄</span>
-              <h3>Evaluation summary</h3>
-            </div>
-            <div className="eval-summary-content">
-              <p className="eval-summary-group-label">Overview</p>
-              <p className="eval-summary-hint">
-                Need to change something? Edit the step directly — you come straight back here.
-              </p>
-
-              <div className="eval-summary-row">
-                <span className="eval-summary-icon">◎</span>
-                <span className="eval-summary-key">Goals:</span>
-                <div className="eval-summary-tags">
-                  {step1Data.evaluationGoals.map((g) => (
-                    <span key={g} className="summary-tag">{g}</span>
-                  ))}
+            <section className="evaluation-header">
+                <div className="container evaluation-header-inner">
+                    <h1>Evaluation & UX Methods</h1>
+                    <p>Follow these steps to create your evaluation plan.</p>
                 </div>
-                <button className="eval-summary-edit" onClick={() => editStepFromReview(1)}>
-                  <Icon name="edit" size={13} /> Edit
-                </button>
-              </div>
+            </section>
 
-              <div className="eval-summary-row">
-                <span className="eval-summary-icon"><Icon name="hexagon" size={16} /></span>
-                <span className="eval-summary-key">Methods:</span>
-                <span>{step2Data.selectedMethods.join(', ') || '—'}</span>
-                <button className="eval-summary-edit" onClick={() => editStepFromReview(2)}>
-                  <Icon name="edit" size={13} /> Edit
-                </button>
-              </div>
+            <Stepper currentStep={4} />
 
-              <div className="eval-summary-row">
-                <span className="eval-summary-icon"><Icon name="clipboard" size={16} /></span>
-                <span className="eval-summary-key">Instruments:</span>
-                <span>{step3Data.selectedInstruments.join(', ') || '—'}</span>
-                <button className="eval-summary-edit" onClick={() => editStepFromReview(3)}>
-                  <Icon name="edit" size={13} /> Edit
-                </button>
-              </div>
+            <main className="method-selection-page">
+                <section className="method-selection-intro">
+                    <div className="method-selection-container">
+                        <h2>Evaluation</h2>
+                        <p>
+                            Review your selected goals, methods, and instruments
+                            before conducting the evaluation.
+                        </p>
+                    </div>
+                </section>
 
-              <p className="eval-summary-group-label" style={{ marginTop: '1rem' }}>
-                Participants & Constraints
-              </p>
+                {/* Summary */}
+                <section className="eval-summary-section">
+                    <div className="eval-summary-box">
+                        <div className="selection-summary-header">
+                            <span className="selection-summary-arrow">⌄</span>
+                            <h3>Evaluation summary</h3>
+                        </div>
+                        <div className="eval-summary-content">
+                            <p className="eval-summary-group-label">Overview</p>
+                            <p className="eval-summary-hint">
+                                Need to change something? Edit the step directly
+                                — you come straight back here.
+                            </p>
 
-              {step1Data.participants && (
-                <div className="eval-summary-row">
-                  <span className="eval-summary-icon"><Icon name="users" size={16} /></span>
-                  <span>{step1Data.participants} participants</span>
-                  <button className="eval-summary-edit" onClick={() => editStepFromReview(1)}>
-                    <Icon name="edit" size={13} /> Edit
-                  </button>
-                </div>
-              )}
+                            <div className="eval-summary-row">
+                                <span className="eval-summary-icon">◎</span>
+                                <span className="eval-summary-key">Goals:</span>
+                                <div className="eval-summary-tags">
+                                    {step1Data.evaluationGoals.map((g) => (
+                                        <span key={g} className="summary-tag">
+                                            {g}
+                                        </span>
+                                    ))}
+                                </div>
+                                <button
+                                    className="eval-summary-edit"
+                                    onClick={() => editStepFromReview(1)}
+                                >
+                                    <Icon name="edit" size={13} /> Edit
+                                </button>
+                            </div>
 
-              <div className="eval-summary-row">
-                <span className="eval-summary-icon"><Icon name="fileText" size={16} /></span>
-                <span>A structured summary of your evaluation design will be included in the final Evaluation Plan document.</span>
-              </div>
-            </div>
-          </div>
-        </section>
+                            <div className="eval-summary-row">
+                                <span className="eval-summary-icon">
+                                    <Icon name="hexagon" size={16} />
+                                </span>
+                                <span className="eval-summary-key">
+                                    Methods:
+                                </span>
+                                <span>
+                                    {step2Data.selectedMethods.join(', ') ||
+                                        '—'}
+                                </span>
+                                <button
+                                    className="eval-summary-edit"
+                                    onClick={() => editStepFromReview(2)}
+                                >
+                                    <Icon name="edit" size={13} /> Edit
+                                </button>
+                            </div>
 
-        {/* Evaluation Plan Ready */}
-        <section className="eval-plan-section">
-          <div className="eval-plan-box">
-            <div className="eval-plan-icon"><Icon name="fileText" size={32} /></div>
-            <div className="eval-plan-content">
-              <h3>Evaluation Plan Ready</h3>
-              <p>Use this document to conduct and document your evaluation sessions. This document includes:</p>
-              <ul className="eval-plan-checklist">
-                <li>✓ Evaluation goals</li>
-                <li>✓ Selected methods</li>
-                <li>✓ Selected instruments</li>
-                <li>✓ Participant constraints</li>
-              </ul>
+                            <div className="eval-summary-row">
+                                <span className="eval-summary-icon">
+                                    <Icon name="clipboard" size={16} />
+                                </span>
+                                <span className="eval-summary-key">
+                                    Instruments:
+                                </span>
+                                <span>
+                                    {step3Data.selectedInstruments.join(', ') ||
+                                        '—'}
+                                </span>
+                                <button
+                                    className="eval-summary-edit"
+                                    onClick={() => editStepFromReview(3)}
+                                >
+                                    <Icon name="edit" size={13} /> Edit
+                                </button>
+                            </div>
 
-              {/* Project name input (shown before confirming save) */}
-              {showNameInput && (
-                <div className="eval-name-input-row">
-                  <input
-                    className="project-type-input"
-                    type="text"
-                    placeholder="Project name"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    autoFocus
-                  />
-                  <button
-                    className="btn eval-btn-save"
-                    onClick={handleSave}
-                    disabled={saving}
-                    style={{ marginLeft: '0.5rem' }}
-                  >
-                    {saving ? 'Saving…' : 'Confirm Save'}
-                  </button>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => setShowNameInput(false)}
-                    style={{ marginLeft: '0.5rem' }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
+                            <p
+                                className="eval-summary-group-label"
+                                style={{ marginTop: '1rem' }}
+                            >
+                                Participants & Constraints
+                            </p>
 
-              <div className="eval-plan-actions">
-                <button
-                  className="btn eval-btn-download"
-                  onClick={handleDownloadPDF}
-                  disabled={generating}
-                >
-                  {generating ? 'Generating…' : <><Icon name="download" size={16} /> Download Evaluation Plan (PDF)</>}
-                </button>
+                            {step1Data.participants && (
+                                <div className="eval-summary-row">
+                                    <span className="eval-summary-icon">
+                                        <Icon name="users" size={16} />
+                                    </span>
+                                    <span>
+                                        {step1Data.participants} participants
+                                    </span>
+                                    <button
+                                        className="eval-summary-edit"
+                                        onClick={() => editStepFromReview(1)}
+                                    >
+                                        <Icon name="edit" size={13} /> Edit
+                                    </button>
+                                </div>
+                            )}
 
-                {editingProjectId ? (
-                  /* Editing existing project — rename + go back */
-                  <>
-                    {showRename ? (
-                      <div className="eval-name-input-row">
-                        <input
-                          className="project-type-input"
-                          type="text"
-                          placeholder="Project name"
-                          value={renameName}
-                          onChange={(e) => setRenameName(e.target.value)}
-                          autoFocus
-                        />
-                        <button
-                          className="btn eval-btn-save"
-                          onClick={handleRename}
-                          disabled={renaming}
-                          style={{ marginLeft: '0.5rem' }}
-                        >
-                          {renaming ? 'Saving…' : 'Confirm'}
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          onClick={() => { setShowRename(false); setRenameError(null); }}
-                          style={{ marginLeft: '0.5rem' }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
+                            <div className="eval-summary-row">
+                                <span className="eval-summary-icon">
+                                    <Icon name="fileText" size={16} />
+                                </span>
+                                <span>
+                                    A structured summary of your evaluation
+                                    design will be included in the final
+                                    Evaluation Plan document.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Evaluation Plan Ready */}
+                <section className="eval-plan-section">
+                    <div className="eval-plan-box">
+                        <div className="eval-plan-icon">
+                            <Icon name="fileText" size={32} />
+                        </div>
+                        <div className="eval-plan-content">
+                            <h3>Evaluation Plan Ready</h3>
+                            <p>
+                                Use this document to conduct and document your
+                                evaluation sessions. This document includes:
+                            </p>
+                            <ul className="eval-plan-checklist">
+                                <li>✓ Evaluation goals</li>
+                                <li>✓ Selected methods</li>
+                                <li>✓ Selected instruments</li>
+                                <li>✓ Participant constraints</li>
+                            </ul>
+
+                            {/* Project name input (shown before confirming save) */}
+                            {showNameInput && (
+                                <div className="eval-name-input-row">
+                                    <input
+                                        className="project-type-input"
+                                        type="text"
+                                        placeholder="Project name"
+                                        value={projectName}
+                                        onChange={(e) =>
+                                            setProjectName(e.target.value)
+                                        }
+                                        autoFocus
+                                    />
+                                    <button
+                                        className="btn eval-btn-save"
+                                        onClick={handleSave}
+                                        disabled={saving}
+                                        style={{ marginLeft: '0.5rem' }}
+                                    >
+                                        {saving ? 'Saving…' : 'Confirm Save'}
+                                    </button>
+                                    <button
+                                        className="btn btn-secondary"
+                                        onClick={() => setShowNameInput(false)}
+                                        style={{ marginLeft: '0.5rem' }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className="eval-plan-actions">
+                                <button
+                                    className="btn eval-btn-download"
+                                    onClick={handleDownloadPDF}
+                                    disabled={generating}
+                                >
+                                    {generating ? (
+                                        'Generating…'
+                                    ) : (
+                                        <>
+                                            <Icon name="download" size={16} />{' '}
+                                            Download Evaluation Plan (PDF)
+                                        </>
+                                    )}
+                                </button>
+
+                                {editingProjectId ? (
+                                    /* Editing existing project — rename + go back */
+                                    <>
+                                        {showRename ? (
+                                            <div className="eval-name-input-row">
+                                                <input
+                                                    className="project-type-input"
+                                                    type="text"
+                                                    placeholder="Project name"
+                                                    value={renameName}
+                                                    onChange={(e) =>
+                                                        setRenameName(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    autoFocus
+                                                />
+                                                <button
+                                                    className="btn eval-btn-save"
+                                                    onClick={handleRename}
+                                                    disabled={renaming}
+                                                    style={{
+                                                        marginLeft: '0.5rem',
+                                                    }}
+                                                >
+                                                    {renaming
+                                                        ? 'Saving…'
+                                                        : 'Confirm'}
+                                                </button>
+                                                <button
+                                                    className="btn btn-secondary"
+                                                    onClick={() => {
+                                                        setShowRename(false);
+                                                        setRenameError(null);
+                                                    }}
+                                                    style={{
+                                                        marginLeft: '0.5rem',
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                className="btn btn-secondary"
+                                                onClick={() => {
+                                                    setShowRename(true);
+                                                    setRenameDone(false);
+                                                }}
+                                            >
+                                                <Icon name="edit" size={16} />{' '}
+                                                Rename project
+                                            </button>
+                                        )}
+                                        {renameError && (
+                                            <p
+                                                className="auth-error"
+                                                style={{ marginTop: '0.5rem' }}
+                                            >
+                                                {renameError}
+                                            </p>
+                                        )}
+                                        {renameDone && (
+                                            <p
+                                                style={{
+                                                    color: '#4caf50',
+                                                    marginTop: '0.5rem',
+                                                }}
+                                            >
+                                                Project renamed.
+                                            </p>
+                                        )}
+                                        <button
+                                            className="btn eval-btn-save"
+                                            onClick={() => setPage('dashboard')}
+                                        >
+                                            ⊞ Back to dashboard
+                                        </button>
+                                    </>
+                                ) : !user ? (
+                                    <button
+                                        className="btn eval-btn-save"
+                                        onClick={() => {
+                                            pendingSaveRef.current = true;
+                                            onOpenLogin();
+                                        }}
+                                    >
+                                        Log in to save
+                                    </button>
+                                ) : saved ? (
+                                    <button
+                                        className="btn eval-btn-save"
+                                        onClick={() => setPage('dashboard')}
+                                    >
+                                        ⊞ Go to dashboard
+                                    </button>
+                                ) : (
+                                    !showNameInput && (
+                                        <button
+                                            className="btn eval-btn-save"
+                                            onClick={handleSave}
+                                            disabled={saving}
+                                        >
+                                            ⊞ Save to dashboard
+                                        </button>
+                                    )
+                                )}
+                            </div>
+
+                            {pdfError && (
+                                <p
+                                    className="auth-error"
+                                    style={{ marginTop: '0.75rem' }}
+                                >
+                                    {pdfError}
+                                </p>
+                            )}
+                            {saveError && (
+                                <p
+                                    className="auth-error"
+                                    style={{ marginTop: '0.75rem' }}
+                                >
+                                    {saveError}
+                                </p>
+                            )}
+                            {saved && (
+                                <p
+                                    style={{
+                                        color: '#4caf50',
+                                        marginTop: '0.75rem',
+                                    }}
+                                >
+                                    Project saved to your dashboard.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Next Steps */}
+                <section className="eval-nextsteps-section">
+                    <div className="method-selection-container">
+                        <h3>Next Steps for Conducting Your Evaluation</h3>
+                        <ol className="eval-nextsteps-list">
+                            <li>
+                                Conduct a pilot test to identify potential
+                                issues and refine instructions.
+                            </li>
+                            <li>
+                                Coordinate with participants and schedule your
+                                evaluation sessions.
+                            </li>
+                            <li>Observe user interactions and collect data.</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <div className="nav-buttons">
+                    <button
                         className="btn btn-secondary"
-                        onClick={() => { setShowRename(true); setRenameDone(false); }}
-                      >
-                        <Icon name="edit" size={16} /> Rename project
-                      </button>
-                    )}
-                    {renameError && <p className="auth-error" style={{ marginTop: '0.5rem' }}>{renameError}</p>}
-                    {renameDone && <p style={{ color: '#4caf50', marginTop: '0.5rem' }}>Project renamed.</p>}
-                    <button className="btn eval-btn-save" onClick={() => setPage('dashboard')}>
-                      ⊞ Back to dashboard
+                        onClick={() => setPage('instruments')}
+                    >
+                        ← Back
                     </button>
-                  </>
-                ) : !user ? (
-                  <button className="btn eval-btn-save" onClick={() => { pendingSaveRef.current = true; onOpenLogin(); }}>
-                    Log in to save
-                  </button>
-                ) : saved ? (
-                  <button className="btn eval-btn-save" onClick={() => setPage('dashboard')}>
-                    ⊞ Go to dashboard
-                  </button>
-                ) : (
-                  !showNameInput && (
-                    <button className="btn eval-btn-save" onClick={handleSave} disabled={saving}>
-                      ⊞ Save to dashboard
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => setPage('landing')}
+                    >
+                        Finish Evaluation Plan
                     </button>
-                  )
-                )}
-              </div>
+                </div>
+            </main>
 
-              {pdfError && <p className="auth-error" style={{ marginTop: '0.75rem' }}>{pdfError}</p>}
-              {saveError && <p className="auth-error" style={{ marginTop: '0.75rem' }}>{saveError}</p>}
-              {saved && <p style={{ color: '#4caf50', marginTop: '0.75rem' }}>Project saved to your dashboard.</p>}
-            </div>
-          </div>
-        </section>
-
-        {/* Next Steps */}
-        <section className="eval-nextsteps-section">
-          <div className="method-selection-container">
-            <h3>Next Steps for Conducting Your Evaluation</h3>
-            <ol className="eval-nextsteps-list">
-              <li>Conduct a pilot test to identify potential issues and refine instructions.</li>
-              <li>Coordinate with participants and schedule your evaluation sessions.</li>
-              <li>Observe user interactions and collect data.</li>
-            </ol>
-          </div>
-        </section>
-
-        <div className="nav-buttons">
-          <button className="btn btn-secondary" onClick={() => setPage('instruments')}>← Back</button>
-          <button className="btn btn-primary" onClick={() => setPage('landing')}>
-            Finish Evaluation Plan
-          </button>
+            <Footer />
         </div>
-      </main>
-
-      <Footer />
-    </div>
-  );
+    );
 }
 
 export default EvaluationReview;

@@ -1,0 +1,68 @@
+/* =====================================================
+   DESIGN SYSTEM PAGE LAYOUT
+   Shared by every game design page (Spark,
+   PathChoice, ...).
+   ===================================================== */
+
+.ds-page {
+    background: #eeede8;
+    min-height: 100vh;
+    min-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.ds-main {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    align-items: center;
+    min-width: 50vw;
+    gap: 20px;
+}
+
+.ds-main > * {
+    min-width: 100%;
+}
+
+.ds-main > h1 {
+    font-weight: 600;
+}
+
+/* -- Group sections (the main content the user has to fill/select/type) ------------------------------ 
+    NOTES:
+    -`.ds-section-form` + `.ds-section-form--<section-id>`(context, timeline, personification, gameful-core, technology, impacts, evaluation),
+     can be used to style a specific section.
+   - Every group has a card: <section class="ds-group ds-group--<id gruppo>" id="ds-group-<id>">.
+     `.ds-group-title` (etichetta piccola, es. "DOMAIN"), `.ds-group-question` (domanda grande),
+     `.ds-group-description` (testo di supporto).
+   - Experience Timeline: Colors for the 4 phases can be assigned with: .ds-tab--onboarding / --engagement / --mastering / --fidelity e .ds-group--<phase>.
+   - Gameful Core, "Game loop": every loop has a <details class="ds-loop ds-loop--<short|long|social>"> that can be opened;
+     in the <summary> there is `.ds-loop-badge` e `.ds-loop-title`.
+*/
+.ds-group-title {
+    font-size: 20px;    
+}
+
+.ds-group {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 30px 50px;
+    gap: 12px;
+}
+
+.ds-group > p {
+    color: var(--gd-text-muted);
+}
+
+/* -- Navigation buttons at bottom of the page -------------------------------------------------------- */
+.ds-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 31px; /* leave space at the bottom of the page*/
+}

@@ -12,11 +12,10 @@
    Bootstrap's defaults (grey, blue) show through.
    ===================================================== */
 .btn {
-  border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
-  font: inherit;
-  cursor: pointer;
+    --bs-btn-border-radius: 8px;
+    padding: 12px 20px;
+    font: inherit;
+    cursor: pointer;
 }
 
 /* Our buttons have no focus ring */
@@ -26,79 +25,80 @@
 .btn-outline:focus,
 .btn-outline:active,
 .btn-outline:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-/* ── Primary (yellow) ─────────────────────────────── */
+/* ── Primary (purple) ─────────────────────────────── */
 .btn-primary {
-  --bs-btn-color: var(--gd-text);
-  --bs-btn-bg: var(--gd-yellow);
-  --bs-btn-border-color: var(--gd-yellow);
+    --bs-btn-color: var(--gd-text);
+    --bs-btn-bg: var(--gd-yellow);
+    --bs-btn-border-width: 1px;
+    --bs-btn-border-color: var(--gd-yellow-accent);
 
-  --bs-btn-hover-color: var(--gd-text);
-  --bs-btn-hover-bg: var(--gd-yellow-hover);
-  --bs-btn-hover-border-color: var(--gd-yellow-hover);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: var(--gd-yellow-hover);
+    --bs-btn-hover-border-color: var(--gd-yellow-hover-accent);
 
-  --bs-btn-active-color: var(--gd-text);
-  --bs-btn-active-bg: var(--gd-yellow-hover);
-  --bs-btn-active-border-color: var(--gd-yellow-hover);
+    --bs-btn-active-color: var(--gd-text);
+    --bs-btn-active-bg: var(--gd-yellow-hover);
+    --bs-btn-active-border-color: var(--gd-yellow-hover);
 
-  --bs-btn-disabled-color: var(--gd-text);
-  --bs-btn-disabled-bg: var(--gd-yellow);
-  --bs-btn-disabled-border-color: var(--gd-yellow);
+    --bs-btn-disabled-color: var(--gd-text);
+    --bs-btn-disabled-bg: var(--gd-yellow);
+    --bs-btn-disabled-border-color: var(--gd-yellow);
 
-  --bs-btn-focus-shadow-rgb: 240, 201, 79;
+    --bs-btn-focus-shadow-rgb: 240, 201, 79;
 }
 
 /* Keep the hover colour while the button stays focused after a click */
 .btn-primary:focus {
-  background-color: var(--bs-btn-hover-bg);
-  border-color: var(--bs-btn-hover-border-color);
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
 }
 
 /* ── Outline (white, for dark backgrounds e.g. navbar) */
 .btn-outline {
-  --bs-btn-color: #fff;
-  --bs-btn-bg: transparent;
-  --bs-btn-border-color: #fff;
+    --bs-btn-color: #fff;
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: #fff;
 
-  --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: rgba(255, 255, 255, 0.08);
-  --bs-btn-hover-border-color: #fff;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(255, 255, 255, 0.08);
+    --bs-btn-hover-border-color: #fff;
 
-  --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: rgba(255, 255, 255, 0.08);
-  --bs-btn-active-border-color: #fff;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(255, 255, 255, 0.08);
+    --bs-btn-active-border-color: #fff;
 
-  border: 1px solid var(--bs-btn-border-color);
+    border: 1px solid var(--bs-btn-border-color);
 }
 
 .btn-outline:focus {
-  background-color: var(--bs-btn-hover-bg);
+    background-color: var(--bs-btn-hover-bg);
 }
 
 /* ── Secondary (light blue) ───────────────────────── */
 .btn-secondary {
-  --bs-btn-color: var(--gd-text);
-  --bs-btn-bg: #dce7f6;
-  --bs-btn-border-color: #8aa6c8;
+    --bs-btn-color: var(--gd-text);
+    --bs-btn-bg: #dce7f6;
+    --bs-btn-border-color: #8aa6c8;
 
-  --bs-btn-hover-color: var(--gd-text);
-  --bs-btn-hover-bg: #cbdcf2;
-  --bs-btn-hover-border-color: #8aa6c8;
+    --bs-btn-hover-color: var(--gd-text);
+    --bs-btn-hover-bg: #cbdcf2;
+    --bs-btn-hover-border-color: #8aa6c8;
 
-  --bs-btn-active-color: var(--gd-text);
-  --bs-btn-active-bg: #cbdcf2;
-  --bs-btn-active-border-color: #8aa6c8;
+    --bs-btn-active-color: var(--gd-text);
+    --bs-btn-active-bg: #cbdcf2;
+    --bs-btn-active-border-color: #8aa6c8;
 
-  --bs-btn-disabled-color: var(--gd-text);
-  --bs-btn-disabled-bg: #dce7f6;
-  --bs-btn-disabled-border-color: #8aa6c8;
+    --bs-btn-disabled-color: var(--gd-text);
+    --bs-btn-disabled-bg: #dce7f6;
+    --bs-btn-disabled-border-color: #8aa6c8;
 
-  --bs-btn-focus-shadow-rgb: 138, 166, 200;
+    --bs-btn-focus-shadow-rgb: 138, 166, 200;
 
-  border: 1px solid var(--bs-btn-border-color);
+    border: 1px solid var(--bs-btn-border-color);
 }
 
 /* ── White outlined button in action bars ─────────────
@@ -107,77 +107,135 @@
 .nav-buttons .btn-secondary,
 .browse-footer .btn-secondary,
 .custom-construct-actions .btn-secondary {
-  min-width: 72px;
-  height: 40px;
-  padding: 0 18px;
-  border: 1px solid #9aa4b2;
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--gd-text);
-  font-size: 14px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+    min-width: 72px;
+    height: 40px;
+    padding: 0 18px;
+    border: 1px solid #9aa4b2;
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--gd-text);
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .nav-buttons .btn-secondary:hover,
 .browse-footer .btn-secondary:hover,
 .custom-construct-actions .btn-secondary:hover {
-  background: #f7f7f7;
-  border-color: #7f8a99;
+    background: #f7f7f7;
+    border-color: #7f8a99;
 }
 
 /* ── Small outlined button (e.g. "+ Add question") ── */
 .secondary-btn {
-  margin-top: 8px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1px solid #9fb7d3;
-  background: #fff;
-  cursor: pointer;
-  font-size: 15px;
+    margin-top: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid #9fb7d3;
+    background: #fff;
+    cursor: pointer;
+    font-size: 15px;
 }
 
 .secondary-btn:hover {
-  background: #f5f7fa;
+    background: #f5f7fa;
 }
 
 /* ── Underlined blue text button ──────────────────── */
 .wizard-notice-link,
 .coverage-add-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--gd-link);
-  font-size: 15px;
-  text-decoration: underline;
-  cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--gd-link);
+    font-size: 15px;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 /* ── Square ✕ remove button ───────────────────────── */
 .dynamic-input-remove,
 .selected-method-remove {
-  border: 1.5px solid #d0d0d0;
-  border-radius: 6px;
-  background: none;
-  font-size: 13px;
-  color: #666;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 6px;
+    background: none;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition:
+        border-color 0.15s,
+        color 0.15s,
+        background 0.15s;
 }
 
 .dynamic-input-remove:hover,
 .selected-method-remove:hover {
-  border-color: var(--gd-danger-hover);
-  color: var(--gd-danger-hover);
-  background: #fff5f5;
+    border-color: var(--gd-danger-hover);
+    color: var(--gd-danger-hover);
+    background: #fff5f5;
 }
 
 @media (max-width: 640px) {
-  /* Tap-friendly buttons */
-  .btn { min-height: 44px; }
+    /* Tap-friendly buttons */
+    .btn {
+        min-height: 44px;
+    }
+}
+
+/* =====================================================
+   STYLING UPDATE for Design System pages
+   ===================================================== */
+
+.ds-btn {
+    border-radius: 8px;
+    border: 1px solid;
+    padding: 8px 15px;
+    font: inherit;
+    cursor: pointer;
+}
+
+/* Section Buttons */
+.ds-btn--primary {
+    background-color: var(--gd-blue);
+    color: var(--gd-light-text);
+    border-color: var(--gd-blue);
+}
+
+.ds-btn--primary:hover {
+    background-color: var(--gd-blue-hover);
+    border-color: var(--gd-inputs-hover);
+}
+
+.ds-btn--primary:disabled {
+    background-color: var(--gd-blue-disabled);
+    border-color: var(--gd-blue-disabled);
+    color: var(--gd-blue-text-disabled);
+}
+
+.ds-btn--secondary {
+    background-color: #ffffff;
+    color: var(--gd-blue);
+    border-color: var(--gd-blue);
+}
+
+.ds-btn--secondary:hover {
+    color: var(--gd-blue-hover);
+    border-color: var(--gd-blue-hover);
+}
+
+.ds-btn--secondary:disabled {
+    color: var(--gd-blue-text-disabled);
+    border-color: var(--gd-blue-text-disabled);
+}
+
+/* Secondary buttons at the bottom of the page */
+.ds-actions > .ds-btn {
+    background: #eeede8;
 }

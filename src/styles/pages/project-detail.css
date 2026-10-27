@@ -1,78 +1,181 @@
 /* =====================================================
    PROJECT DETAIL — pages/ProjectDetail.jsx
    ===================================================== */
-.project-detail-main      { background: #f5f5f5; min-height: 80vh; padding: 40px 0; }
-.project-detail-container { max-width: var(--gd-content-width); margin: 0 auto; padding: 0 24px; }
-.project-detail-breadcrumb {
-  font-size: 14px; color: var(--gd-text-muted); cursor: pointer; margin-bottom: 20px;
+.project-detail-main {
+    background: #f5f5f5;
+    min-height: 80vh;
+    padding: 40px 0;
 }
-.project-detail-breadcrumb:hover { color: var(--gd-text); text-decoration: underline; }
+.project-detail-container {
+    max-width: var(--gd-content-width);
+    margin: 0 auto;
+    padding: 0 24px;
+}
+.project-detail-breadcrumb {
+    font-size: 14px;
+    color: var(--gd-text-muted);
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+.project-detail-breadcrumb:hover {
+    color: var(--gd-text);
+    text-decoration: underline;
+}
 
 /* ── Header (title, description, actions) ─────────── */
 .project-detail-header {
-  display: flex; justify-content: space-between;
-  align-items: flex-start; gap: 16px; margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
 }
 .project-detail-title {
-  font-size: 26px; font-weight: 700;
-  display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
-  overflow-wrap: break-word; word-break: break-word; min-width: 0;
+    font-size: 26px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
 }
 .project-detail-desc {
-  font-size: 15px; color: #666;
-  overflow-wrap: break-word; word-break: break-word;
+    font-size: 15px;
+    color: #666;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 .project-edit-btn {
-  background: none; border: none; font-size: 18px; cursor: pointer; opacity: 0.6;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.6;
 }
-.project-edit-btn:hover { opacity: 1; }
-.project-detail-actions { display: flex; gap: 10px; flex-shrink: 0; }
+.project-edit-btn:hover {
+    opacity: 1;
+}
+.project-detail-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
 
 .project-detail-body {
-  display: grid; grid-template-columns: 1fr 260px; gap: 24px; align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 24px;
+    align-items: flex-start;
 }
 
 /* ── Documents column ─────────────────────────────── */
-.project-detail-docs { background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; }
-.project-detail-docs h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.project-detail-docs {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    padding: 24px;
+}
+.project-detail-docs h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
 .project-docs-note {
-  font-size: 15px;
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 16px;
-  max-width: 720px;
+    font-size: 15px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    max-width: 720px;
 }
 .project-doc-card {
-  display: flex; align-items: center; gap: 14px;
-  padding: 14px; border: 1px solid #e5e5e5; border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
 }
-.project-doc-icon { font-size: 28px; flex-shrink: 0; }
-.project-doc-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-.project-doc-name { font-weight: 600; font-size: 15px; }
-.project-doc-date { font-size: 13px; color: #888; }
-.project-doc-actions { flex-shrink: 0; }
+.project-doc-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+.project-doc-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+.project-doc-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+.project-doc-date {
+    font-size: 13px;
+    color: #888;
+}
+.project-doc-actions {
+    flex-shrink: 0;
+}
 .project-doc-empty {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 12px; padding: 30px; color: #888; text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 30px;
+    color: #888;
+    text-align: center;
 }
 
 /* ── Info sidebar ─────────────────────────────────── */
 .project-detail-info {
-  background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
 }
-.project-detail-info h2 { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+.project-detail-info h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
 .project-info-row {
-  display: flex; flex-direction: column; gap: 2px;
-  padding: 10px 0; border-bottom: 1px solid #ececec; font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ececec;
+    font-size: 14px;
 }
-.project-info-row:last-child { border-bottom: none; }
-.project-info-label { font-weight: 600; color: var(--gd-text-muted); font-size: 12px; text-transform: uppercase; }
+.project-info-row:last-child {
+    border-bottom: none;
+}
+.project-info-label {
+    font-weight: 600;
+    color: var(--gd-text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+}
 
 @media (max-width: 640px) {
-  .project-detail-main      { padding: 24px 0; }
-  .project-detail-container { padding: 0 16px; }
-  .project-detail-body      { grid-template-columns: 1fr; }
-  .project-detail-header    { flex-direction: column; gap: 12px; }
-  .project-detail-title     { font-size: 20px; }
-  .project-detail-actions   { flex-wrap: wrap; }
+    .project-detail-main {
+        padding: 24px 0;
+    }
+    .project-detail-container {
+        padding: 0 16px;
+    }
+    .project-detail-body {
+        grid-template-columns: 1fr;
+    }
+    .project-detail-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .project-detail-title {
+        font-size: 20px;
+    }
+    .project-detail-actions {
+        flex-wrap: wrap;
+    }
 }

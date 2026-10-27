@@ -1,0 +1,22 @@
+/* =====================================================
+   DESIGN SPARK — pages/DesignSpark.jsx
+   Styling for section
+   ===================================================== */
+/* -- Form -------------------------------------------------------------------------------- */
+#ds-spark-text {
+    min-height: 238px;
+}
+
+/* -- Buttons in text area section (Save as draft, Let AI anlyze & continue) -------------- */
+.ds-spark-ai-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 30px;
+}
+
+/* -- Error/Warning messages -------------------------------------------------------------- */
+.ds-draft-status{
+    color: var(--gd-blue-hover);
+    align-content: center;
+}

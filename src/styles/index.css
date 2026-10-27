@@ -37,6 +37,8 @@
 @import './layout/footer.css';
 @import './layout/stepper.css';
 @import './layout/wizard-page.css';
+@import './layout/ds-page.css';
+@import './layout/ds-stepper.css';
 
 /* ── Components ───────────────────────────────────── */
 /* step 1 — evaluation setup */
@@ -62,6 +64,8 @@
 @import './pages/evaluation-review.css';
 @import './pages/dashboard.css';
 @import './pages/project-detail.css';
+/* Design System pages*/
+@import './pages/design-spark.css';
 
 /* ── Modals ───────────────────────────────────────────
    Kept last on purpose: some modals render inside page

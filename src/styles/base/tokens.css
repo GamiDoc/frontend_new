@@ -4,33 +4,46 @@
    colour here to change it everywhere.
    ===================================================== */
 :root {
-  /* ── Brand yellow ───────────────────────────────── */
-  --gd-yellow: #FCDD70;            /* primary button */
-  --gd-yellow-hover: #f0c94f;      /* primary button hover/active */
-  --gd-yellow-accent: #e7c74f;     /* checkboxes, selected borders, stepper */
-  --gd-yellow-soft: #f4d35e;       /* "Next" button, tooltip links */
-  --gd-yellow-tag: #FBECBB;        /* tag background */
-  --gd-yellow-bg-selected: #fffdf0;/* selected card background */
-  --gd-yellow-bg-hover: #fffdf5;   /* hovered card background */
-  --gd-yellow-bg-notice: #fdf8e6;  /* notice / banner background */
+    /* ── Brand yellow ───────────────────────────────── */
+    --gd-yellow: #fcdd70; /* primary button */
+    --gd-yellow-hover: #f0c94f; /* primary button hover/active */
+    --gd-yellow-accent: #e7c74f; /* checkboxes, selected borders, stepper */
+    --gd-yellow-soft: #f4d35e; /* "Next" button, tooltip links */
+    --gd-yellow-tag: #fbecbb; /* tag background */
+    --gd-yellow-bg-selected: #fffdf0; /* selected card background */
+    --gd-yellow-bg-hover: #fffdf5; /* hovered card background */
+    --gd-yellow-bg-notice: #fdf8e6; /* notice / banner background */
 
-  /* ── Text ───────────────────────────────────────── */
-  --gd-text: #111;
-  --gd-text-muted: #555;
+    /* ── Brand purple & blue (DESIGN SYSTEM STYLING) ───────────────────────────────── */
+    --gd-purple: #c5a3de; /* primary button */
+    --gd-purple-hover: #8b48be; /* primary button hover/active */
+    --gd-purple-hover-accent: #521c7b; /* darker color for checkboxes, selected borders, stepper */
+    --gd-purple-accent: #a876ce; /* checkboxes, selected borders, stepper */
+    --gd-blue: #547194; /* blue primary buttons */
+    --gd-blue-hover: #405166;
+    --gd-blue-disabled: #e6e6e6;
 
-  /* ── Borders ────────────────────────────────────── */
-  --gd-border: #d9dde3;            /* cards, boxes, inputs */
-  --gd-border-section: #e1e1e1;    /* wizard step-1 section boxes */
+    /* ── Text ───────────────────────────────────────── */
+    --gd-text: #111;
+    --gd-text-muted: #333333;
+    --gd-light-text: #dde3ea; /* text on blue background */
+    --gd-blue-text-disabled: #999999;
 
-  /* ── Status ─────────────────────────────────────── */
-  --gd-error: #c0392b;
-  --gd-error-strong: #e74c3c;      /* invalid field border */
-  --gd-danger-hover: #e05555;      /* hover of remove (✕) buttons */
-  --gd-success: #4a8c3f;
-  --gd-success-text: #2f6b2f;
-  --gd-success-bg: #e6f2e6;
-  --gd-link: #1f5f9e;              /* underlined text buttons */
+    /* ── Borders ────────────────────────────────────── */
+    --gd-border: #d9dde3; /* cards, boxes, inputs */
+    --gd-border-section: #e1e1e1; /* wizard step-1 section boxes */
+    --gd-inputs-border: #cccccc; /* cards, text areas, inputs of game design pages */
 
-  /* ── Layout ─────────────────────────────────────── */
-  --gd-content-width: 1100px;      /* centred column of wizard pages */
+    /* ── Status ─────────────────────────────────────── */
+    --gd-error: #c0392b;
+    --gd-error-strong: #e74c3c; /* invalid field border */
+    --gd-danger-hover: #e05555; /* hover of remove (✕) buttons */
+    --gd-warning: #e7c74f;      /* popup messages, etc. */
+    --gd-success: #4a8c3f;
+    --gd-success-text: #2f6b2f;
+    --gd-success-bg: #e6f2e6;
+    --gd-link: #1f5f9e; /* underlined text buttons */
+
+    /* ── Layout ─────────────────────────────────────── */
+    --gd-content-width: 1100px; /* centred column of wizard pages */
 }

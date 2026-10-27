@@ -4,53 +4,53 @@
    used by InstrumentBundles.
    ===================================================== */
 .match-rationale {
-  margin-top: 14px;
-  padding: 12px 14px;
-  border-left: 3px solid var(--gd-yellow-accent);
-  border-radius: 0 8px 8px 0;
-  background: #fbfaf5;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--gd-yellow-accent);
+    border-radius: 0 8px 8px 0;
+    background: #fbfaf5;
 }
 
 .match-rationale-title {
-  display: block;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #8a6d15;
-  margin-bottom: 6px;
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #8a6d15;
+    margin-bottom: 6px;
 }
 
 /* Two classes so it wins over ".method-card-content p" */
 .match-rationale .match-rationale-text {
-  font-size: 15px;
-  color: #333;
-  line-height: 1.5;
-  margin-bottom: 8px;
+    font-size: 15px;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 8px;
 }
 
 .match-rationale-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
 .match-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border: 1px solid var(--gd-border);
-  border-radius: 999px;
-  background: #fff;
-  font-size: 13px;
-  color: #222;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--gd-border);
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    color: #222;
 }
 
 .match-chip-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: #777;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #777;
 }
