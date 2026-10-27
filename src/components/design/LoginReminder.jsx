@@ -54,7 +54,7 @@ function LoginReminder({ onOpenLogin }) {
                 onClick={dismiss}
                 aria-label="Dismiss reminder"
             >
-                Dismiss
+                ×
             </button>
         </aside>
     );

@@ -192,6 +192,9 @@
 /* =====================================================
    STYLING UPDATE for Design System pages
    ===================================================== */
+.ds-actions {
+    gap: 10px;
+}
 
 .ds-btn {
     border-radius: 8px;
@@ -220,7 +223,7 @@
 }
 
 .ds-btn--secondary {
-    background-color: #ffffff;
+    background: none;
     color: var(--gd-blue);
     border-color: var(--gd-blue);
 }
@@ -235,7 +238,3 @@
     border-color: var(--gd-blue-text-disabled);
 }
 
-/* Secondary buttons at the bottom of the page */
-.ds-actions > .ds-btn {
-    background: #eeede8;
-}

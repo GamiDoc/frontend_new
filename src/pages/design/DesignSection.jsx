@@ -97,28 +97,15 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
                         onClick={() => goBackFrom(currentSection)}
                         disabled={saving}
                     >
-                        ‹ Go back to {backLabel}
+                        Go back to {backLabel}
                     </button>
-                    <SaveDraftButton onOpenLogin={onOpenLogin} />
-                    {canSkip && (
-                        <button
-                            type="button"
-                            className="ds-btn ds-btn--link"
-                            onClick={() =>
-                                continueFrom(currentSection, { skip: true })
-                            }
-                            disabled={saving}
-                        >
-                            Skip this section
-                        </button>
-                    )}
                     <button
                         type="button"
                         className="ds-btn ds-btn--primary"
                         onClick={() => continueFrom(currentSection)}
                         disabled={saving}
                     >
-                        {saving ? 'Saving…' : 'Continue ›'}
+                        {saving ? 'Saving…' : 'Continue\u00A0\u00A0›'}
                     </button>
                 </div>
             </main>

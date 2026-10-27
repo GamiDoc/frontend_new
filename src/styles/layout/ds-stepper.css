@@ -11,6 +11,7 @@
 .ds-step-header {
     background: #eeede8;
     display: flex;
+    align-items: center;
     gap: 10px;
     min-width: 60vw;
     font-size: 12px;
@@ -30,6 +31,10 @@
 .ds-progress-bar-labels {
     display: flex;
     justify-content: space-between;
+}
+
+.ds-overview-btn{
+    padding: 4px 15px;
 }
 
 /* -- Step Bars on top ---------------------------------------------------*/

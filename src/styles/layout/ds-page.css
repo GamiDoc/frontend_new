@@ -19,7 +19,8 @@
     flex-direction: column;
     flex-basis: 100%;
     align-items: center;
-    min-width: 50vw;
+    min-width: 60vw;
+    max-width: 60vw;
     gap: 20px;
 }
 
@@ -30,7 +31,41 @@
 .ds-main > h1 {
     font-weight: 600;
 }
+/* -- Login reminder ---------------------------------------------------------------------------------- */
+.ds-login-reminder {
+    display: flex;
+    justify-content: space-between;
+    max-width: 60vw;
+    min-width: 60vw;
+    background: var(--gd-purple-light);
+    border: 1px solid var(--gd-purple);
+    border-radius: 15px;
+    padding: 10px 25px;
+    margin-bottom: 20px;
+}
 
+.ds-login-reminder > p {
+    margin: 0px;
+    align-content: center;
+}
+
+/* Style login pop up button */
+.ds-login-reminder > .ds-btn--link:not([aria-label="Dismiss reminder"]){
+    background: none;
+    border: none;
+    color: var(--gd-blue-hover);
+    text-decoration: underline;
+}
+
+/* Style closing button */
+.ds-login-reminder > .ds-btn--link[aria-label="Dismiss reminder"]{
+    background: none;
+    border: none;
+    font-size: 30px;
+    color: var(--gd-purple-hover-accent);
+    text-align: right;
+    flex-basis: 10%;
+}
 /* -- Group sections (the main content the user has to fill/select/type) ------------------------------ 
     NOTES:
     -`.ds-section-form` + `.ds-section-form--<section-id>`(context, timeline, personification, gameful-core, technology, impacts, evaluation),
@@ -42,8 +77,15 @@
    - Gameful Core, "Game loop": every loop has a <details class="ds-loop ds-loop--<short|long|social>"> that can be opened;
      in the <summary> there is `.ds-loop-badge` e `.ds-loop-title`.
 */
+
+.ds-section-form {
+    display: flex;
+    flex-direction: column;
+    gap: 27px;
+}
+
 .ds-group-title {
-    font-size: 20px;    
+    font-size: 20px;
 }
 
 .ds-group {
@@ -59,10 +101,31 @@
 .ds-group > p {
     color: var(--gd-text-muted);
 }
+/* -- Option Cards styling ---------------------------------------------------------------------------- */
+.ds-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
+.ds-option {
+    background-color: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 8px 20px;
+}
+
+.ds-option--selected {
+    background-color: var(--gd-blue);
+    color: #ffffff;
+}
 /* -- Navigation buttons at bottom of the page -------------------------------------------------------- */
 .ds-actions {
     display: flex;
     justify-content: flex-end;
     margin-bottom: 31px; /* leave space at the bottom of the page*/
+}
+
+.ds-group-description {
+    color: #666666;
 }
