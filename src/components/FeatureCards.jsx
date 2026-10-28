@@ -7,20 +7,13 @@ import { useAuth } from '../context/AuthContext';
 /* Landing options, in two groups:
    - Start a Project: Design System and UX Evaluation
    - Explore Resources: UX methods and reviewed designs (not built yet → "under construction")
+   The two start buttons ALWAYS begin a new project; projects already started
+   are continued from the Dashboard (project page).
    A design or evaluation started by a logged-in user is saved as a project. */
 function FeatureCards() {
     const { user, loading: authLoading } = useAuth();
     const { startWizard, createProject, loading: wizardLoading } = useWizard();
-    const {
-        hasDesign,
-        startDesign,
-        resumeDesign,
-        loading: designLoading,
-    } = useDesign();
-
-    let designLabel = 'Start Designing';
-    if (designLoading) designLabel = 'Starting…';
-    else if (hasDesign) designLabel = 'Continue Designing';
+    const { startDesign, loading: designLoading } = useDesign();
 
     return (
         <>
@@ -37,11 +30,11 @@ function FeatureCards() {
                         icon={projectIcon}
                         title="Design a Gamified System"
                         description="Plan a gamification project using structured frameworks and design guidance."
-                        buttonText={designLabel}
-                        disabled={designLoading}
-                        onClick={() =>
-                            hasDesign ? resumeDesign() : startDesign()
+                        buttonText={
+                            designLoading ? 'Starting…' : 'Start Designing'
                         }
+                        disabled={designLoading}
+                        onClick={startDesign}
                     />
                     <FeatureCard
                         icon={projectIcon}
