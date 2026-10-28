@@ -6,196 +6,240 @@
 
 /* ── Hero ─────────────────────────────────────────── */
 .hero {
-    background: #f4f3f5;
+    background: #f1f0f0;
+    padding: 88px 24px 92px;
     text-align: center;
-    padding: 64px 20px;
+}
+
+.hero-inner {
+    max-width: 760px;
+    margin: 0 auto;
 }
 
 .hero h1 {
-    max-width: 1100px;
-    margin: 0 auto 20px;
-    font-size: 48px;
+    font-size: 32px;
+    font-weight: 700;
     line-height: 1.2;
-}
-
-.hero p {
-    max-width: 760px;
     margin: 0 auto 36px;
-    font-size: 22px;
-    line-height: 1.4;
+    max-width: 560px;
 }
 
-/* ── Feature cards ────────────────────────────────── */
-.cards-section {
-    padding: 64px 40px;
-    background: #ffffff;
+.hero-text {
+    font-size: 18px;
+    line-height: 1.35;
+    margin: 0 auto 20px;
+}
+
+.hero-hint {
+    font-size: 16px;
+    color: #6b6b6b;
+    margin: 0;
+}
+
+/* ── "Start a Project" / "Explore Resources" ──────── */
+.landing-section {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 48px 24px 32px;
+}
+
+.landing-section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.landing-section-header p {
+    font-size: 18px;
+    margin-bottom: 40px;
 }
 
 .cards-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    gap: 24px;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 52px;
+    padding: 0 12px;
 }
 
+/* Card: icon on the left, text and button on the right */
 .feature-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
     background: #ffffff;
     border: 1px solid #d9d9d9;
     border-radius: 12px;
-    width: 370px;
-    min-height: 280px;
-    padding: 28px 24px;
-    text-align: center;
+    padding: 28px 24px 36px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.card-icon {
-    font-size: 40px;
-    margin-bottom: 20px;
+.feature-card-icon {
+    width: 36px;
+    height: auto;
+    flex-shrink: 0;
 }
 
-.feature-card h3 {
-    font-size: 20px;
+.feature-card-body h3 {
+    font-size: 19px;
+    font-weight: 600;
     margin-bottom: 14px;
 }
 
-.feature-card p {
+.feature-card-body p {
+    font-size: 16px;
+    line-height: 1.3;
+    margin-bottom: 26px;
+    max-width: 360px;
+}
+
+/* Buttons: yellow to start a project, light blue for resources.
+   Colours via Bootstrap variables, as in ui/buttons.css. */
+.feature-card-btn {
+    /* same geometry as the other app buttons (ui/buttons.css: radius 8px, padding 12px 20px) */
+    min-width: 232px;
+    padding: 12px 20px;
     font-size: 18px;
-    line-height: 1.4;
-    margin-bottom: 24px;
+}
+
+.feature-card-btn--primary {
+    --bs-btn-color: var(--gd-text);
+    --bs-btn-bg: var(--gd-yellow);
+    --bs-btn-border-color: var(--gd-yellow-accent);
+    --bs-btn-hover-color: var(--gd-text);
+    --bs-btn-hover-bg: var(--gd-yellow-hover);
+    --bs-btn-hover-border-color: var(--gd-yellow-hover);
+    --bs-btn-active-color: var(--gd-text);
+    --bs-btn-active-bg: var(--gd-yellow-hover);
+    --bs-btn-active-border-color: var(--gd-yellow-hover);
+    --bs-btn-disabled-color: var(--gd-text);
+    --bs-btn-disabled-bg: var(--gd-yellow);
+    --bs-btn-disabled-border-color: var(--gd-yellow);
+}
+
+.feature-card-btn--secondary {
+    --bs-btn-color: var(--gd-text);
+    --bs-btn-bg: #e8eef8;
+    --bs-btn-border-color: var(--gd-blue);
+    --bs-btn-hover-color: var(--gd-text);
+    --bs-btn-hover-bg: #d6e1f2;
+    --bs-btn-hover-border-color: var(--gd-blue);
+    --bs-btn-active-color: var(--gd-text);
+    --bs-btn-active-bg: #d6e1f2;
+    --bs-btn-active-border-color: var(--gd-blue-hover);
+}
+
+.feature-card-btn span {
+    margin-left: 10px;
 }
 
 /* ── Info section ─────────────────────────────────── */
 .info-section {
-    padding: 80px 24px;
+    padding: 80px 24px 88px;
     background: #ffffff;
 }
 
-.info-title {
-    max-width: 1400px;
-    margin: 0 auto 40px;
-    padding: 0 40px;
-    font-size: 44px;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
 .info-container {
-    max-width: 1400px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 0 40px;
-    display: flex;
+    padding: 0 36px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
     gap: 48px;
     align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
 }
 
-.info-text {
-    flex: 1;
-    min-width: 320px;
-}
-
-.info-text h2 {
-    font-size: 40px;
-    line-height: 1.2;
-    margin-bottom: 28px;
+.info-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 34px;
 }
 
 .info-paragraph {
-    font-size: 20px;
-    line-height: 1.5;
+    font-size: 18px;
+    line-height: 1.25;
     margin-bottom: 32px;
-    max-width: 700px;
+    max-width: 620px;
 }
 
 .info-text h3 {
-    font-size: 32px;
-    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 18px;
 }
 
 .info-text ul {
-    padding-left: 24px;
-    margin-bottom: 28px;
+    padding-left: 30px;
+    margin: 0;
 }
 
 .info-text li {
-    font-size: 20px;
-    line-height: 1.5;
-    margin-bottom: 12px;
-}
-
-.learn-link {
-    color: #6f7f96;
-    font-size: 20px;
-    text-decoration: underline;
+    font-size: 18px;
+    line-height: 1.3;
 }
 
 .info-visual {
-    flex: 1;
-    min-width: 320px;
     display: flex;
     justify-content: center;
 }
 
 .visual-image {
     width: 100%;
-    max-width: 500px;
+    max-width: 320px;
     height: auto;
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 900px) {
+    .cards-container {
+        gap: 24px;
+        padding: 0;
+    }
+    .info-container {
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
 }
 
 @media (max-width: 640px) {
     .hero {
-        padding: 40px 16px;
+        padding: 48px 16px;
     }
     .hero h1 {
-        font-size: 28px;
-        line-height: 1.25;
+        font-size: 26px;
     }
-    .hero p {
-        font-size: 17px;
+    .hero-text {
+        font-size: 16px;
     }
 
-    .cards-section {
-        padding: 40px 16px;
+    .landing-section {
+        padding: 32px 16px 16px;
+    }
+    .landing-section-header p {
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+    .cards-container {
+        grid-template-columns: 1fr;
     }
     .feature-card {
+        padding: 20px 16px 28px;
+    }
+    .feature-card-btn {
+        min-width: 0;
         width: 100%;
-        min-height: auto;
+        font-size: 16px;
     }
 
     .info-section {
         padding: 48px 16px;
     }
-    .info-container {
-        padding: 0;
-        flex-direction: column;
-        gap: 32px;
-    }
-    .info-text {
-        min-width: 0;
-    }
-    .info-visual {
-        min-width: 0;
-        width: 100%;
-    }
-    .info-text h2 {
-        font-size: 24px;
-    }
-    .info-text h3 {
-        font-size: 22px;
-    }
-    .info-paragraph {
-        font-size: 17px;
-        max-width: 100%;
-    }
+    .info-paragraph,
     .info-text li {
-        font-size: 17px;
+        font-size: 16px;
     }
-    .info-title {
-        padding: 0 16px;
-        font-size: 26px;
+    .info-title,
+    .info-text h3 {
+        font-size: 20px;
     }
 }

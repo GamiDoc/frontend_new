@@ -1,15 +1,16 @@
 import infographic from '../assets/infographic.png';
-import ConstructionLink from './ConstructionLink';
 
+/* Landing "why GamiDoc" section: problem statement and goals on the left,
+   infographic of the GamiDoc cycle on the right. */
 function InfoSection() {
     return (
         <section className="info-section">
-            <h2 className="info-title">
-                Designing and evaluating gamification is methodologically hard
-            </h2>
-
             <div className="info-container">
                 <div className="info-text">
+                    <h2 className="info-title">
+                        Designing and evaluating gamification is
+                        methodologically hard
+                    </h2>
                     <p className="info-paragraph">
                         Researchers and practitioners often struggle to connect
                         gamification design choices with evaluation methods and
@@ -19,7 +20,6 @@ function InfoSection() {
                     </p>
 
                     <h3>GamiDoc addresses these issues</h3>
-
                     <ul>
                         <li>
                             Make gamification design decisions explicit and
@@ -33,16 +33,12 @@ function InfoSection() {
                             Design decisions are rarely documented over time
                         </li>
                     </ul>
-
-                    <ConstructionLink className="learn-link">
-                        Learn more about GamiDoc
-                    </ConstructionLink>
                 </div>
 
                 <div className="info-visual">
                     <img
                         src={infographic}
-                        alt="GamiDoc infographic"
+                        alt="The GamiDoc cycle: define context, design the gameful system, plan the UX evaluation, generate the report"
                         className="visual-image"
                     />
                 </div>
@@ -50,4 +46,5 @@ function InfoSection() {
         </section>
     );
 }
+
 export default InfoSection;

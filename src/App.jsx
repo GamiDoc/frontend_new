@@ -19,18 +19,9 @@ import DesignDashboard from './pages/design/DesignDashboard';
 import AuthModal from './components/AuthModal';
 import DraftResumeBanner from './components/DraftResumeBanner';
 import { useWizard } from './context/WizardContext';
-import { useAuth } from './context/AuthContext';
 
 function LandingPage({ onOpenLogin, onOpenSignup }) {
-    const {
-        startWizard,
-        createProject,
-        loading,
-        draftAvailable,
-        resumeDraft,
-        discardDraft,
-    } = useWizard();
-    const { user, loading: authLoading } = useAuth();
+    const { draftAvailable, resumeDraft, discardDraft } = useWizard();
 
     return (
         <div className="page">
@@ -42,10 +33,7 @@ function LandingPage({ onOpenLogin, onOpenSignup }) {
                         onDiscard={discardDraft}
                     />
                 )}
-                <Hero
-                    onStart={() => (user ? createProject() : startWizard())}
-                    loading={loading || authLoading}
-                />
+                <Hero />
                 <FeatureCards />
                 <InfoSection />
             </main>

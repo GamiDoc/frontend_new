@@ -67,6 +67,48 @@
     background: var(--gd-yellow-bg-hover);
 }
 
+/* Inline "new project" form (name + Create / Cancel) */
+.dashboard-new-project-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.dashboard-new-project-form input {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Process badges in each project card (Design System / UX Evaluation) */
+.dashboard-project-processes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+.dashboard-process-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--gd-border);
+    background: #f6f6f6;
+    color: var(--gd-text-muted);
+    white-space: nowrap;
+}
+.dashboard-process-badge--design {
+    background: var(--gd-purple-light);
+    border-color: var(--gd-purple);
+}
+.dashboard-process-badge--evaluation {
+    background: var(--gd-yellow-tag);
+    border-color: var(--gd-yellow-accent);
+}
+.dashboard-process-badge--complete::before {
+    content: '✓ ';
+    color: var(--gd-success);
+}
+
 /* ── Project list ─────────────────────────────────── */
 .dashboard-project-list {
     display: flex;

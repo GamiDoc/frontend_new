@@ -70,7 +70,132 @@
     align-items: flex-start;
 }
 
+.project-detail-loading {
+    padding: 3rem;
+    text-align: center;
+}
+.project-detail-error {
+    color: var(--gd-error);
+}
+.project-rename {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.project-rename-input {
+    font-size: 1.4rem;
+    font-weight: 700;
+    width: auto;
+}
+.project-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gd-error) !important;
+    border-color: var(--gd-error) !important;
+}
+
+/* Left column: processes + documents stacked */
+.project-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+/* ── Processes (Design System / UX Evaluation) ────── */
+.project-processes h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+.project-process-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+.project-process-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-top: 4px solid var(--gd-border);
+    border-radius: 12px;
+    padding: 20px;
+}
+.project-process-card--design {
+    border-top-color: var(--gd-purple);
+}
+.project-process-card--evaluation {
+    border-top-color: var(--gd-yellow-accent);
+}
+.project-process-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+.project-process-header h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+}
+.project-process-status {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gd-text-muted);
+    white-space: nowrap;
+}
+.project-process-card--complete .project-process-status {
+    color: var(--gd-success-text);
+}
+.project-process-desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+    flex: 1;
+}
+.project-process-progress {
+    width: 100%;
+    height: 6px;
+    appearance: none;
+    border: none;
+    border-radius: 999px;
+    background: #ececec;
+    overflow: hidden;
+}
+.project-process-progress::-webkit-progress-bar {
+    background: #ececec;
+}
+.project-process-progress::-webkit-progress-value {
+    background: var(--gd-blue);
+}
+.project-process-progress::-moz-progress-bar {
+    background: var(--gd-blue);
+}
+.project-process-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 /* ── Documents column ─────────────────────────────── */
+.project-doc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.project-doc-card--design {
+    border-left: 4px solid var(--gd-purple);
+}
+.project-doc-card--evaluation {
+    border-left: 4px solid var(--gd-yellow-accent);
+}
 .project-detail-docs {
     background: #fff;
     border-radius: 12px;
@@ -166,6 +291,9 @@
         padding: 0 16px;
     }
     .project-detail-body {
+        grid-template-columns: 1fr;
+    }
+    .project-process-grid {
         grid-template-columns: 1fr;
     }
     .project-detail-header {
