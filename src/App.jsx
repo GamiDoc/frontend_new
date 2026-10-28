@@ -19,9 +19,12 @@ import DesignDashboard from './pages/design/DesignDashboard';
 import AuthModal from './components/AuthModal';
 import DraftResumeBanner from './components/DraftResumeBanner';
 import { useWizard } from './context/WizardContext';
+import { useDesign } from './context/DesignContext';
 
 function LandingPage({ onOpenLogin, onOpenSignup }) {
     const { draftAvailable, resumeDraft, discardDraft } = useWizard();
+    const { designInProgress, isGuest, resumeDesign, discardDesign } =
+        useDesign();
 
     return (
         <div className="page">
@@ -31,6 +34,21 @@ function LandingPage({ onOpenLogin, onOpenSignup }) {
                     <DraftResumeBanner
                         onResume={resumeDraft}
                         onDiscard={discardDraft}
+                    />
+                )}
+                {/* Unfinished design: guests keep it only for this browser
+                    session; logged-in users also find it in the Dashboard. */}
+                {designInProgress && (
+                    <DraftResumeBanner
+                        title="You have an unfinished design"
+                        text={
+                            isGuest
+                                ? 'It is kept in this browser until you close it — log in to save it as a project.'
+                                : 'It is saved in your projects — you can also continue it from the Dashboard.'
+                        }
+                        resumeLabel="Continue design"
+                        onResume={resumeDesign}
+                        onDiscard={discardDesign}
                     />
                 )}
                 <Hero />

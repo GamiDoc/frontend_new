@@ -1,8 +1,15 @@
 import Icon from './Icon';
 
-/* Offers to pick up an unfinished plan that is still held in this browser,
-   so nothing is lost when a visitor leaves before creating an account. */
-function DraftResumeBanner({ onResume, onDiscard }) {
+/* Offers to pick up unfinished work from the landing page, so nothing is lost
+   when a visitor leaves before creating an account. Used for both processes:
+   the evaluation plan (default texts) and the Design System (texts via props). */
+function DraftResumeBanner({
+    onResume,
+    onDiscard,
+    title = 'You have an unfinished evaluation plan',
+    text = 'It is stored in this browser — no account needed to continue.',
+    resumeLabel = 'Continue plan',
+}) {
     return (
         <section className="draft-banner-section">
             <div className="draft-banner">
@@ -10,15 +17,12 @@ function DraftResumeBanner({ onResume, onDiscard }) {
                     <Icon name="fileText" size={20} />
                 </span>
                 <div className="draft-banner-text">
-                    <strong>You have an unfinished evaluation plan</strong>
-                    <span>
-                        It is stored in this browser — no account needed to
-                        continue.
-                    </span>
+                    <strong>{title}</strong>
+                    <span>{text}</span>
                 </div>
                 <div className="draft-banner-actions">
                     <button className="btn btn-primary" onClick={onResume}>
-                        Continue plan
+                        {resumeLabel}
                     </button>
                     <button className="btn btn-secondary" onClick={onDiscard}>
                         Discard

@@ -58,7 +58,8 @@ import {
                        status: 'complete' | 'in_progress' | 'current' | 'not_started'
      overall           { percent, completeCount, sectionCount }
      isGuest           true se si lavora da ospite
-     hasDesign         true se c'è un design caricato (per "Continue design")
+     hasDesign         true se c'è un design caricato
+     designInProgress  true se il design caricato è iniziato (banner "unfinished design")
      pendingDraftSave  true se "Save as a draft" aspetta il login
      draftSavedAt      timestamp dell'ultimo "Save as a draft" riuscito
 
@@ -69,7 +70,7 @@ import {
      nextOf(n)          sezione successiva (null = dopo l'ultima si va all'Overview)
 
    Azioni
-     startDesign() · openDesignProject(id) · resumeDesign()
+     startDesign() · openDesignProject(id) · resumeDesign() · discardDesign()
      submitSpark(testo, { navigate }) · skipSpark()
      updateField(n, chiave, valore) · goToSection(n) · continueFrom(n, { skip }) · goBackFrom(n)
      loadDashboard() · goToDashboard() · continueWhereLeftOff()
@@ -720,6 +721,17 @@ export function DesignProvider({ children }) {
                 overall,
                 isGuest: scope?.kind === 'session',
                 hasDesign: Boolean(scope && status),
+                // true when the loaded design has been started (spark, a visited
+                // section or any value): drives the "unfinished design" banner
+                designInProgress: Boolean(
+                    scope &&
+                    status &&
+                    (status.spark ||
+                        status.cursor > 0 ||
+                        DESIGN_SECTIONS.some((s) =>
+                            hasAnyValue(s, drafts[s.number]),
+                        )),
+                ),
                 pendingDraftSave,
                 draftSavedAt,
                 // helper di navigazione
@@ -728,6 +740,7 @@ export function DesignProvider({ children }) {
                 previousOf,
                 nextOf,
                 // azioni
+                discardDesign: reset, // forgets the design in this browser (a project stays in the Dashboard)
                 startDesign,
                 openDesignProject,
                 resumeDesign,
