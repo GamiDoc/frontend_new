@@ -50,7 +50,7 @@
 }
 
 /* Style login pop up button */
-.ds-login-reminder > .ds-btn--link:not([aria-label="Dismiss reminder"]){
+.ds-login-reminder > .ds-btn--link:not([aria-label='Dismiss reminder']) {
     background: none;
     border: none;
     color: var(--gd-blue-hover);
@@ -58,7 +58,7 @@
 }
 
 /* Style closing button */
-.ds-login-reminder > .ds-btn--link[aria-label="Dismiss reminder"]{
+.ds-login-reminder > .ds-btn--link[aria-label='Dismiss reminder'] {
     background: none;
     border: none;
     font-size: 30px;
@@ -84,10 +84,24 @@
     gap: 27px;
 }
 
-.ds-group-title {
+.ds-group-header,
+.ds-field-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ds-group-title,
+.ds-field-title {
     font-size: 20px;
 }
 
+/* -- Introduction under the title ------------------------------------------------- */
+.ds-intro {
+    font-size: 17px;
+    line-height: 1.45;
+    margin: 0;
+}
 .ds-group {
     display: flex;
     flex-direction: column;
@@ -95,30 +109,13 @@
     border: 1px solid var(--gd-inputs-border);
     border-radius: 15px;
     padding: 30px 50px;
-    gap: 12px;
+    gap: 15px;
 }
 
-.ds-group > p {
+.ds-group p{
     color: var(--gd-text-muted);
 }
-/* -- Option Cards styling ---------------------------------------------------------------------------- */
-.ds-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
 
-.ds-option {
-    background-color: #ffffff;
-    border: 1px solid var(--gd-inputs-border);
-    border-radius: 15px;
-    padding: 8px 20px;
-}
-
-.ds-option--selected {
-    background-color: var(--gd-blue);
-    color: #ffffff;
-}
 /* -- Navigation buttons at bottom of the page -------------------------------------------------------- */
 .ds-actions {
     display: flex;
@@ -126,6 +123,9 @@
     margin-bottom: 31px; /* leave space at the bottom of the page*/
 }
 
-.ds-group-description {
-    color: #666666;
+/* -- Small screens --------------------------------------------------------------- */
+@media (max-width: 640px) {
+    .ds-main {
+        width: 80vw;
+    }
 }

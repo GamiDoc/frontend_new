@@ -10,8 +10,13 @@
     padding: 14px 16px;
     border-radius: 8px;
     border: 1px solid var(--gd-border);
-    margin-top: 10px;
     font-size: 15px;
+}
+
+/* "*Additional information" labels are smaller */
+.ds-field-label[for$='additional-information'] {
+    font-size: 13px;
+    color: var(--gd-text-muted);
 }
 
 /* Compact input with dark focus border (project name/description, …) */
@@ -76,13 +81,10 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 12px;
-    margin-bottom: 14px;
 }
 
 /* ── Dynamic input list (text field + ✕ remove) ───── */
 .dynamic-inputs {
-    margin-top: 14px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -115,7 +117,7 @@
    FORM CONTROLS (SPECIFICALLY FOR DESIGN SYSTEM PAGES)
    ===================================================== */
 
-/* ── Text area styling ───── */
+/* -- Text area styling ------------------------------------------ */
 .ds-textarea {
     min-width: 100%;
     border: 1px solid var(--gd-inputs-border);
@@ -125,4 +127,155 @@
 
 .ds-textarea:invalid {
     color: var(--gd-text-muted);
+}
+
+/* Style placeholder text */
+.ds-page .ds-textarea::placeholder,
+.ds-page .ds-input::placeholder {
+    color: var(--gd-blue-text-disabled);
+}
+
+/* -- Checkbox styling ------------------------------------------ */
+.ds-check-input {
+    appearance: none;
+    border: #000 solid 0.18em;
+    border-radius: 0.25em;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* Styling of checked checkbox (specific mark) */
+.ds-check-input:checked::after {
+    display: flex;
+    content: '';
+    background-image: url('../../assets/icons/checkmark.svg');
+    background-size: 100% 100%;
+    height: 100%;
+    width: 100%;
+}
+
+/* -- TextArea styling --------------------------------------------- */
+.ds-input,
+.ds-select {
+    width: 100%;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 8px;
+    padding: 10px 18px;
+}
+
+/* -- Option Cards styling ---------------------------------------------------------------------------- */
+.ds-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ds-option {
+    background-color: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 8px 20px;
+}
+
+.ds-option--selected {
+    background-color: var(--gd-blue);
+    color: #ffffff;
+}
+
+/* "Other" chip and its text box */
+.ds-option--other {
+    gap: 5px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.ds-option-plus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid currentColor;
+    border-radius: 3px;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.ds-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* -- Style sliders ------------------------------------------------------------------------------ */
+.ds-field--slider {
+    flex-direction: row;
+    width: 80%;
+    padding-bottom: 20px;
+}
+
+.ds-field--slider .ds-field-label {
+    flex-basis: 30%;
+}
+
+.ds-field--slider input {
+    flex-basis: 60%;
+    -webkit-appearance: none; /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 6px; /* Specified height */
+    background: var(--gd-light-text); 
+    opacity: 0.8;
+    outline: none; 
+    border-radius: 3px;
+    border: none;
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+
+.ds-field--slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    background: var(--gd-blue-hover);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px #bbb;
+}
+
+.ds-field--slider input::-moz-range-thumb {
+    width: 17px;
+    height: 17px;
+    background: var(--gd-blue-hover);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px #bbb;
+}
+
+/* Color track */
+
+.ds-field--slider input::-webkit-slider-runnable-track {
+    background: linear-gradient(var(--gd-blue-hover) 0 0) scroll no-repeat
+        center / 100% calc(7px);
+    border-radius: 10px;
+    height: 100%;
+}
+
+.ds-field--slider input::-moz-range-progress {
+    background: var(--gd-blue-hover);
+    opacity: 0.8;
+    border-radius: 10px;
+    height: 100%;
+}
+
+.ds-field--slider .ds-range-value {
+    flex-basis: 10%;
+    text-align: center;
+    font-weight: 600;
 }

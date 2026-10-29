@@ -7,6 +7,10 @@
     min-height: 238px;
 }
 
+.ds-page--spark .ds-group-description {
+    margin: 0;
+}
+
 /* -- Buttons in text area section (Save as draft, Let AI anlyze & continue) -------------- */
 .ds-spark-ai-options {
     display: flex;

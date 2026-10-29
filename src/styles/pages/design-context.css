@@ -6,12 +6,6 @@
    layout/ds-page.css and ui/buttons.css.
    ===================================================== */
 
-/* -- Introduction under the title ------------------------------------------------- */
-.ds-page--context .ds-intro {
-    font-size: 17px;
-    line-height: 1.45;
-    margin: 0;
-}
 
 /* -- Card header (title + description) -------------------------------------------- */
 .ds-page--context .ds-group-header {
@@ -41,63 +35,10 @@
     grid-column: auto;
 }
 
-.ds-page--context .ds-field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ds-page--context .ds-field-label {
-    font-size: 16px;
-    margin: 0;
-}
-
-/* "*Additional information" labels are smaller */
-.ds-page--context .ds-field-label[for$='additional-information'] {
-    font-size: 13px;
-    color: var(--gd-text-muted);
-}
-
 .ds-page--context .ds-textarea {
     min-height: 80px;
     padding: 12px 18px;
     resize: vertical;
-}
-
-.ds-page--context .ds-input,
-.ds-page--context .ds-select {
-    width: 100%;
-    border: 1px solid var(--gd-inputs-border);
-    border-radius: 8px;
-    padding: 10px 18px;
-}
-
-.ds-page--context .ds-textarea::placeholder,
-.ds-page--context .ds-input::placeholder {
-    color: var(--gd-blue-text-disabled);
-}
-
-/* -- "Other" chip and its text box ----------------------------------------------- */
-.ds-page--context .ds-option {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.ds-page--context .ds-option-plus {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border: 1.5px solid currentColor;
-    border-radius: 3px;
-    font-size: 14px;
-    line-height: 1;
-}
-
-.ds-page--context .ds-other-input {
-    margin-top: 4px;
 }
 
 /* -- Constraints checklist (two columns) -----------------------------------------
@@ -120,15 +61,6 @@
     align-items: center;
     gap: 14px;
     cursor: pointer;
-}
-
-.ds-page--context .ds-check-input {
-    width: 20px;
-    height: 20px;
-    margin: 0;
-    flex-shrink: 0;
-    cursor: pointer;
-    accent-color: var(--gd-blue);
 }
 
 /* -- Small screens --------------------------------------------------------------- */

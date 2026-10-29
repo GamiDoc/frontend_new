@@ -1,0 +1,36 @@
+/* =====================================================
+   DESIGN SECTION — pages/DesignSection.jsx, section 1
+   Styling for every other page in the form that is one of the main steps (excluding context & section )
+   ===================================================== */
+
+/* -- The experience timeline styling ------------------------------------------*/
+
+/* Checkbox text (title + explaination) */
+.ds-checks {
+    /* contains all checkboxes + labels */
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.ds-check {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.ds-check-text {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style only the "titles" that have a following description */
+.ds-check-text .ds-check-title:has(+ .ds-check-description) {
+    font-weight: 600;
+}
+
+.ds-check-text .ds-check-description {
+    font-size: 16px;
+    color: var(--gd-text-muted);
+}

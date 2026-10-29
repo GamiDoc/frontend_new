@@ -53,7 +53,7 @@ function DesignField({ field, values, onChange }) {
 
     const heading = (field.title || field.hint) && (
         <div className="ds-field-heading">
-            {field.title && <h3 className="ds-field-title">{field.title}</h3>}
+            {field.title && <span className="ds-field-title">{field.title}</span>}
             {field.hint && <p className="ds-field-hint">{field.hint}</p>}
         </div>
     );

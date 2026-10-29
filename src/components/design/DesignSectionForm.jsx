@@ -25,7 +25,6 @@ function DesignSectionForm({ section, values, onChange }) {
                 />
             ));
     }
-
     return (
         <div className={`ds-section-form ds-section-form--${section.id}`}>
             {section.groups.map((group) => {
