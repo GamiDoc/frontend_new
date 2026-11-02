@@ -12,8 +12,8 @@
     background: #eeede8;
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 60vw; /* same width as .ds-main */
+    gap: 0.63rem;
+    width: 60%; /* same width as .ds-main */
     font-size: 12px;
     color: var(--gd-blue-text-disabled);
     padding: 14px 0 18px;
@@ -23,7 +23,7 @@
 .ds-step-progress {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
     padding-right: 20px;
     flex: 1;
     min-width: 0;
@@ -46,7 +46,7 @@
 /* -- Step Bars on top ---------------------------------------------------*/
 .ds-step-segments {
     display: flex;
-    gap: 15px;
+    gap: 0.94rem;
 }
 
 .ds-step-segment {
@@ -86,5 +86,12 @@
     }
     to {
         width: 100%;
+    }
+}
+
+/* -- Small screens --------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .ds-step-header {
+        width: 80%;
     }
 }

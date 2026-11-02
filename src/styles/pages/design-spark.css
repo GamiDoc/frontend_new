@@ -4,7 +4,7 @@
    ===================================================== */
 /* -- Form -------------------------------------------------------------------------------- */
 #ds-spark-text {
-    min-height: 238px;
+    min-height: 14.88rem;
 }
 
 .ds-page--spark .ds-group-description {
@@ -16,7 +16,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    gap: 30px;
+    gap: 1.88rem;
 }
 
 /* -- Error/Warning messages -------------------------------------------------------------- */

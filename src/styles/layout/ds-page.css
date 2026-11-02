@@ -7,7 +7,7 @@
 .ds-page {
     background: #eeede8;
     min-height: 100vh;
-    min-width: 100vw;
+    min-width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -19,8 +19,7 @@
     flex-direction: column;
     flex-basis: 100%;
     align-items: center;
-    min-width: 60vw;
-    max-width: 60vw;
+    width: 60%;
     gap: 20px;
 }
 
@@ -33,10 +32,9 @@
 }
 /* -- Login reminder ---------------------------------------------------------------------------------- */
 .ds-login-reminder {
-    display: flex;
-    justify-content: space-between;
-    max-width: 60vw;
-    min-width: 60vw;
+    display: grid;
+    grid-template-columns: 14fr 1fr;
+    width: 60%;
     background: var(--gd-purple-light);
     border: 1px solid var(--gd-purple);
     border-radius: 15px;
@@ -45,7 +43,7 @@
 }
 
 .ds-login-reminder > p {
-    margin: 0px;
+    margin: 0;
     align-content: center;
 }
 
@@ -55,16 +53,19 @@
     border: none;
     color: var(--gd-blue-hover);
     text-decoration: underline;
+    padding: 0;
+    text-align: left;
+    align-self: start;
 }
 
 /* Style closing button */
 .ds-login-reminder > .ds-btn--link[aria-label='Dismiss reminder'] {
     background: none;
     border: none;
-    font-size: 30px;
+    font-size: 1.25rem;
     color: var(--gd-purple-hover-accent);
     text-align: right;
-    flex-basis: 10%;
+    padding: 0;
 }
 /* -- Group sections (the main content the user has to fill/select/type) ------------------------------ 
     NOTES:
@@ -81,14 +82,14 @@
 .ds-section-form {
     display: flex;
     flex-direction: column;
-    gap: 27px;
+    gap: 1.7rem;
 }
 
 .ds-group-header,
 .ds-field-heading {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.6rem;
 }
 
 .ds-group-title,
@@ -109,10 +110,10 @@
     border: 1px solid var(--gd-inputs-border);
     border-radius: 15px;
     padding: 30px 50px;
-    gap: 15px;
+    gap: 0.9rem;
 }
 
-.ds-group p{
+.ds-group p {
     color: var(--gd-text-muted);
 }
 
@@ -124,8 +125,12 @@
 }
 
 /* -- Small screens --------------------------------------------------------------- */
-@media (max-width: 640px) {
+@media (max-width: 900px) {
     .ds-main {
-        width: 80vw;
+        width: 80%;
+    }
+
+    .ds-login-reminder {
+        width: 80%;
     }
 }

@@ -10,13 +10,13 @@
     /* contains all checkboxes + labels */
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 1.1rem;
 }
 
 .ds-check {
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: 0.63rem;
     align-items: center;
 }
 

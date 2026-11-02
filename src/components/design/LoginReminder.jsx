@@ -6,7 +6,7 @@ import { useDesign } from '../../context/DesignContext';
 const DISMISS_KEY = 'gamidoc.designLoginReminderDismissed';
 
 /** ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * LoginReminder — non blocking popup for guest users (FR-17)
  * ═══════════════════════════════════════════════════════════════════════════
  * Reminds users that without login, the work will be lost once the session ends. It appears
@@ -44,17 +44,17 @@ function LoginReminder({ onOpenLogin }) {
             <button
                 type="button"
                 className="ds-btn ds-btn--link"
-                onClick={onOpenLogin}
-            >
-                Log in
-            </button>
-            <button
-                type="button"
-                className="ds-btn ds-btn--link"
                 onClick={dismiss}
                 aria-label="Dismiss reminder"
             >
                 ×
+            </button>
+            <button
+                type="button"
+                className="ds-btn ds-btn--link"
+                onClick={onOpenLogin}
+            >
+                Log in
             </button>
         </aside>
     );

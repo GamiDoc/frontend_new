@@ -11,7 +11,7 @@
 .ds-page--context .ds-group-header {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 .ds-page--context .ds-group-description {
@@ -24,7 +24,7 @@
 .ds-page--context .ds-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 14px;
+    column-gap: 0.88rem;
 }
 
 .ds-page--context .ds-group > * {
@@ -36,7 +36,7 @@
 }
 
 .ds-page--context .ds-textarea {
-    min-height: 80px;
+    min-height: 5rem;
     padding: 12px 18px;
     resize: vertical;
 }
@@ -59,7 +59,7 @@
 .ds-page--context .ds-check {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 0.88rem;
     cursor: pointer;
 }
 
