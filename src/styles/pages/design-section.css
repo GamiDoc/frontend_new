@@ -34,3 +34,13 @@
     font-size: 16px;
     color: var(--gd-text-muted);
 }
+/* -- Sub-cards (groups with `parent`, e.g. Re-onboarding inside Onboarding) -- */
+.ds-group--nested {
+    margin-top: 0.6rem;
+    padding: 18px 24px;
+    border-radius: 12px;
+}
+
+.ds-group--collapsible > summary {
+    cursor: pointer;
+}
