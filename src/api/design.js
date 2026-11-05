@@ -18,6 +18,12 @@ export const designApi = {
     generatePDF: (scope) => api.post(`${base(scope)}/generate-pdf`, {}),
     faq: (scope, sectionNumber) =>
         api.get(`${base(scope)}/faq/${sectionNumber}`),
+    // PNG/JPEG up to 5 MB (multipart field "file") → { url }
+    uploadImage: (scope, file) => {
+        const body = new FormData();
+        body.append('file', file);
+        return api.upload(`${base(scope)}/images`, body);
+    },
 
     // Solo per i progetti
     reports: (projectId) => api.get(`/projects/${projectId}/design/reports`),

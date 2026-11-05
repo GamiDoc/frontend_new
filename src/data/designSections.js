@@ -14,7 +14,7 @@
      field    { key, label?, group, type, display?, options?, required, … }
        type     'single' | 'multi' | 'text' | 'list'
        display  options: 'chips' | 'cards' | 'checklist' | 'checks' | 'select' | 'slider'
-                text:    'textarea' (default) | 'input' | 'loop'
+                text:    'textarea' (default) | 'input' | 'loop' | 'image' (PNG/JPEG upload, value = URL)
        title / hint   sub-heading shown above the field (e.g. "Metrics / signals")
        other          adds an "Other" option; its free text is saved under `<key> · Other`
        columns        checklist laid out on N columns
@@ -855,8 +855,16 @@ export const DESIGN_SECTIONS = [
                 placeholder:
                     'New ambition: [goal]\nWhy it matters: [player motivation]\nReturn trigger: [what brings the player back]\nThe next cycle is different because: [difference]',
             },
-            // "*Attach a sketch or diagram of your loop" (PNG/JPEG upload) is not implemented:
-            // the design API has no file upload yet.
+            // The image is uploaded right away (POST …/design/images); the field value is its URL,
+            // which the backend prints as the image itself in the PDF.
+            {
+                key: 'Loop diagram',
+                label: 'Attach a sketch or diagram of your loop',
+                group: 'rules',
+                type: 'text',
+                display: 'image',
+                required: false,
+            },
             // One category open at a time, like tabs (prototype). The elements and mechanics
             // of the other categories stay saved (`keep`), they are only hidden.
             {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDesign } from '../../context/DesignContext';
 import {
     normalizeOptions,
     otherKey,
@@ -20,6 +21,8 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  * * Slider: <input type="range" class="ds-range"> + <output class="ds-range-value">. Until the user chooses, the range has `data-unset="true"` and the value shows "—"
  * * Text: <textarea class="ds-textarea"> or, for one-line fields, <input class="ds-input">
  * * Select: <select class="ds-select">
+ * * Image (display 'image'): drop zone `.ds-image-drop` (`--over` while dragging, `--busy` while uploading),
+ *   then the preview `.ds-image-preview` with <img> and `.ds-image-remove`; errors in `.ds-image-error`
  * * Game loop (display 'loop'): clickable row `.ds-loop` with `.ds-loop-badge` and `.ds-loop-description`;
  *   it opens <dialog class="ds-popup"> with `.ds-popup-title`, `.ds-popup-intro` and the loop's questions
  * * List (repeatable blocks, e.g. feedback components): `.ds-list`, tabs `.ds-list-tab` (`--active`),
@@ -140,6 +143,22 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                     </div>
                 </div>
             </>
+        );
+    }
+
+    // -- Image upload (value = URL of the uploaded file) ----------------
+    if (field.display === 'image') {
+        return (
+            <div className={className}>
+                {heading}
+                {label}
+                <ImageField
+                    id={id}
+                    field={field}
+                    value={value}
+                    onChange={set}
+                />
+            </div>
         );
     }
 
@@ -472,6 +491,154 @@ function DesignList({ field, items, onChange }) {
                 </div>
             )}
         </div>
+    );
+}
+
+/* PNG/JPEG drop zone: the file is uploaded at once and the field keeps its URL.
+   Click or drag & drop; the preview has a "Remove" button (the file stays on the server).
+   Before the upload the image is compressed in the browser (see compressImage). */
+const IMAGE_TYPES = ['image/png', 'image/jpeg'];
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // same limit as the backend
+const MAX_IMAGE_SIDE = 2000; // px: plenty for a sketch, the PDF prints it at 17 cm
+const KEEP_AS_IS_BYTES = 500 * 1024; // small enough: uploaded untouched
+const JPEG_QUALITY = 0.85;
+
+/* Shrinks the image to MAX_IMAGE_SIDE and re-encodes it: JPEG for photos and opaque
+   images, PNG when it has transparency (JPEG would lose it). Small images, and results
+   that would not be lighter, keep the original file. */
+async function compressImage(file) {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(
+        1,
+        MAX_IMAGE_SIDE / Math.max(bitmap.width, bitmap.height),
+    );
+    if (scale === 1 && file.size <= KEEP_AS_IS_BYTES) {
+        bitmap.close();
+        return file;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+
+    const transparent =
+        file.type === 'image/png' && hasTransparency(ctx, canvas);
+    const type = transparent ? 'image/png' : 'image/jpeg';
+    if (type === 'image/jpeg') {
+        // JPEG has no alpha: paint a white background under the image
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, type, JPEG_QUALITY),
+    );
+    if (!blob || (scale === 1 && blob.size >= file.size)) return file;
+
+    const name =
+        file.name.replace(/\.\w+$/, '') + (transparent ? '.png' : '.jpg');
+    return new File([blob], name, { type });
+}
+
+function hasTransparency(ctx, canvas) {
+    const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 3; i < data.length; i += 4) if (data[i] < 255) return true;
+    return false;
+}
+
+function ImageField({ id, field, value, onChange }) {
+    const { uploadImage } = useDesign();
+    const [over, setOver] = useState(false);
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState(null);
+
+    async function handleFile(original) {
+        if (!original) return;
+        if (!IMAGE_TYPES.includes(original.type)) {
+            setError('Only PNG and JPEG images are accepted.');
+            return;
+        }
+        setError(null);
+        setBusy(true);
+        try {
+            let file = original;
+            try {
+                file = await compressImage(original);
+            } catch {
+                // the browser could not decode it: try the original file
+            }
+            if (file.size > MAX_IMAGE_BYTES) {
+                setError('The image is larger than 5 MB, even compressed.');
+                return;
+            }
+            onChange(await uploadImage(file));
+        } catch (e) {
+            setError(e.message || 'Upload failed. Please try again.');
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    if (value) {
+        return (
+            <div className="ds-image-preview">
+                <img src={value} alt={field.label || field.key} />
+                <button
+                    type="button"
+                    className="ds-image-remove"
+                    onClick={() => onChange('')}
+                >
+                    Remove
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <>
+            <label
+                htmlFor={id}
+                className={`ds-image-drop${over ? ' ds-image-drop--over' : ''}${busy ? ' ds-image-drop--busy' : ''}`}
+                onDragOver={(e) => {
+                    e.preventDefault();
+                    setOver(true);
+                }}
+                onDragLeave={() => setOver(false)}
+                onDrop={(e) => {
+                    e.preventDefault();
+                    setOver(false);
+                    handleFile(e.dataTransfer.files[0]);
+                }}
+            >
+                <span className="ds-image-drop-title">
+                    {busy
+                        ? 'Uploading…'
+                        : 'Drop an image here or click to choose'}
+                </span>
+                <span className="ds-image-drop-hint">
+                    PNG or JPEG, up to 5 MB
+                </span>
+                <input
+                    id={id}
+                    type="file"
+                    accept="image/png,image/jpeg"
+                    hidden
+                    disabled={busy}
+                    onChange={(e) => {
+                        handleFile(e.target.files[0]);
+                        e.target.value = '';
+                    }}
+                />
+            </label>
+            {error && (
+                <p className="ds-image-error" role="alert">
+                    {error}
+                </p>
+            )}
+        </>
     );
 }
 

@@ -472,6 +472,80 @@ input[type='range']:focus-visible {
     border-color: var(--gd-danger-hover);
 }
 
+/* -- Image upload (e.g. loop sketch) ------------------------------------------------------------- */
+.ds-image-drop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 120px;
+    padding: 20px;
+    border: 1.5px dashed var(--gd-inputs-border);
+    border-radius: 15px;
+    background: #fafaf8;
+    text-align: center;
+    cursor: pointer;
+    transition:
+        border-color 0.15s,
+        background 0.15s;
+}
+
+.ds-image-drop:hover,
+.ds-image-drop--over {
+    border-color: var(--gd-blue);
+    background: var(--gd-light-text);
+}
+
+.ds-image-drop--busy {
+    cursor: progress;
+    opacity: 0.7;
+}
+
+.ds-image-drop-title {
+    color: var(--gd-blue);
+    font-weight: 500;
+}
+
+.ds-image-drop-hint {
+    font-size: 14px;
+    color: var(--gd-blue-text-disabled);
+}
+
+.ds-image-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.ds-image-preview img {
+    max-width: 100%;
+    max-height: 320px;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 8px;
+}
+
+.ds-image-remove {
+    background: none;
+    border: 1px solid var(--gd-error);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font: inherit;
+    color: var(--gd-error);
+    cursor: pointer;
+}
+
+.ds-image-remove:hover {
+    background: var(--gd-error-light);
+}
+
+.ds-image-error {
+    margin: 0;
+    font-size: 14px;
+    color: var(--gd-error);
+}
+
 /* -- Error message under a form / page ----------------------------------------------------------- */
 .ds-error {
     margin: 0;

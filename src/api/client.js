@@ -48,9 +48,12 @@ export async function refreshAccessToken() {
 async function request(path, options = {}) {
     let res;
     try {
+        const headers = { ...getHeaders(), ...options.headers };
+        // FormData (file upload): the browser sets the multipart Content-Type itself
+        if (options.body instanceof FormData) delete headers['Content-Type'];
         res = await fetch(`${BASE_URL}${path}`, {
             ...options,
-            headers: { ...getHeaders(), ...options.headers },
+            headers,
             credentials: 'include',
         });
     } catch {
@@ -122,6 +125,8 @@ async function request(path, options = {}) {
 
 export const api = {
     get: (path) => request(path, { method: 'GET' }),
+    // body = FormData (multipart upload, e.g. images)
+    upload: (path, body) => request(path, { method: 'POST', body }),
     post: (path, body) =>
         request(path, { method: 'POST', body: JSON.stringify(body) }),
     put: (path, body) =>

@@ -625,6 +625,13 @@ export function DesignProvider({ children }) {
     // ── Report PDF (FR-22…FR-27) ─────────────────────────────────────────────
     // Una richiesta genera entrambe le versioni: { standard: { url, … }, enhanced: { url, … } }.
     // La versione AI-Enhanced la produce il backend: nel frontend non c'è logica AI.
+    // Uploads a PNG/JPEG for an 'image' field and returns its URL (saved as the field value).
+    // Errors are thrown: the field shows them next to the drop zone.
+    const uploadImage = useCallback(async (file) => {
+        const { url } = await designApi.uploadImage(scopeRef.current, file);
+        return url;
+    }, []);
+
     const generateReports = useCallback(async () => {
         setSaving(true);
         setError(null);
@@ -758,6 +765,7 @@ export function DesignProvider({ children }) {
                 generateReports,
                 loadReportHistory,
                 saveAsDraft,
+                uploadImage,
             }}
         >
             {children}
