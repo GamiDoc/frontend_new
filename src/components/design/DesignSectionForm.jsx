@@ -17,14 +17,19 @@ import { isFieldVisible } from '../../data/designSections';
  * */
 function DesignSectionForm({ section, values, onChange }) {
     function renderFields(groupId) {
+        // Fields with `loop` are not shown here: they are inside their loop's pop-up.
         return section.fields
-            .filter((f) => f.group === groupId && isFieldVisible(f, values))
+            .filter(
+                (f) =>
+                    f.group === groupId && !f.loop && isFieldVisible(f, values),
+            )
             .map((f) => (
                 <DesignField
                     key={f.key}
                     field={f}
                     values={values}
                     onChange={onChange}
+                    popupFields={section.fields.filter((p) => p.loop === f.key)}
                 />
             ));
     }

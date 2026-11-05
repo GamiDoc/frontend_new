@@ -20,7 +20,8 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  * * Slider: <input type="range" class="ds-range"> + <output class="ds-range-value">. Until the user chooses, the range has `data-unset="true"` and the value shows "—"
  * * Text: <textarea class="ds-textarea"> or, for one-line fields, <input class="ds-input">
  * * Select: <select class="ds-select">
- * * Game loop (display 'loop'): <details class="ds-loop"> with `.ds-loop-badge` and `.ds-loop-description` in the summary
+ * * Game loop (display 'loop'): clickable row `.ds-loop` with `.ds-loop-badge` and `.ds-loop-description`;
+ *   it opens <dialog class="ds-popup"> with `.ds-popup-title`, `.ds-popup-intro` and the loop's questions
  * * List (repeatable blocks, e.g. feedback components): `.ds-list`, tabs `.ds-list-tab` (`--active`),
  *   add button `.ds-list-add`, the open item `.ds-list-item` with `.ds-list-item-name` and `.ds-list-remove`
  * * Field Label: `.ds-field-label`
@@ -38,8 +39,9 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  *
  * `values` holds all the values of the section: the field reads `values[field.key]` and,
  * for "Other", `values[otherKey(field)]`. Changes go to `onChange(key, value)`.
+ * `popupFields` ('loop' display only) are the questions shown inside the loop's pop-up.
  */
-function DesignField({ field, values, onChange }) {
+function DesignField({ field, values, onChange, popupFields = [] }) {
     const id = `ds-field-${field.key.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
     const className = [
         'ds-field',
@@ -75,7 +77,7 @@ function DesignField({ field, values, onChange }) {
         );
     }
 
-    // -- Game loop: expandable row with a free-text description --------
+    // -- Game loop: row that opens a pop-up with the loop's questions ----
     if (field.display === 'loop') {
         // Function to show/hide pop up
         const openPopup = (key) => {
@@ -95,20 +97,26 @@ function DesignField({ field, values, onChange }) {
                 >
                     <div>
                         <button
+                            type="button"
                             className="ds-btn ds-btn-popup--close top-popup-btn"
                             onClick={() => closePopup(id)}
                         >
                             &lt;&lt;&nbsp;&nbsp;Back to the Gameful Core
                         </button>
-                        <textarea
-                            id={id}
-                            className="ds-textarea"
-                            aria-label={field.badge}
-                            value={value || ''}
-                            placeholder="Type here"
-                            onChange={(e) => set(e.target.value)}
-                        />
+                        <h2 className="ds-popup-title">{field.badge}</h2>
+                        {field.popupIntro && (
+                            <p className="ds-popup-intro">{field.popupIntro}</p>
+                        )}
+                        {popupFields.map((f) => (
+                            <DesignField
+                                key={f.key}
+                                field={f}
+                                values={values}
+                                onChange={onChange}
+                            />
+                        ))}
                         <button
+                            type="button"
                             className="ds-btn ds-btn-popup--close bottom-popup-btn"
                             onClick={() => closePopup(id)}
                         >

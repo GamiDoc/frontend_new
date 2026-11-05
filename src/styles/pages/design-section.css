@@ -74,6 +74,44 @@
     padding: 20px 40px;
 }
 
+/* Long pop-ups (several questions) scroll inside the box */
+.ds-popup {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.ds-popup-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.ds-popup .ds-popup-intro {
+    margin: -0.9rem 0 0; /* closer to the title than the other blocks */
+    font-size: 17px;
+    color: var(--gd-blue-text-disabled);
+}
+
+/* Questions (Figma: Body/sm-semi-bold, 15px between blocks) */
+.ds-popup .ds-field {
+    gap: 15px;
+}
+
+.ds-popup .ds-field-label {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    color: #000000;
+}
+
+.ds-popup .ds-textarea {
+    min-height: 104px;
+    border-color: #e6e6e6;
+    padding: 10px 3px 3px 15px;
+    font-size: 14px;
+    line-height: 18px;
+}
+
 .ds-popup::backdrop {
     background: rgba(0, 0, 0, 0.5);
 }

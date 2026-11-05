@@ -20,6 +20,8 @@
        half           input or select shown at half width (two side by side)
        showIf         { key, includes } → field shown only if that multi field contains the value
        badge / description   ('loop' display) label and explanation of a game loop
+       popupIntro     ('loop' display) text under the title of the loop's pop-up
+       loop           key of the loop whose pop-up shows this field (instead of the card)
        itemLabel / itemFields   ('list') repeatable block, e.g. feedback components
        required       counts for the section percentage and the "Complete" state
        provisional    not (fully) defined by the mockups yet: to be confirmed
@@ -761,8 +763,9 @@ export const DESIGN_SECTIONS = [
                 placeholder:
                     "e.g. Players earn 1 point per completed task, lose points if a task is skipped 3 days in a row, and can't advance to the next level until they've completed all core tasks in the current one.",
             },
-            // "Game loops" sits in the Game rules card in the mockup. What opens on click is
-            // not defined yet: each loop is a free-text description.
+            // "Game loops" sits in the Game rules card in the mockup. Each loop is a row that
+            // opens a pop-up: its questions are the fields below with `loop: '<loop key>'`
+            // (saved as normal text fields, so they are counted and printed in the PDF).
             {
                 key: 'Core loop',
                 title: 'Game loops',
@@ -773,8 +776,39 @@ export const DESIGN_SECTIONS = [
                 badge: 'Core loop',
                 description:
                     "The basic action a player repeats every few seconds to a couple of minutes. It's the fundamental verb of the game.",
+                popupIntro:
+                    "The core loop has to feel good on its own, over and over, because the player will do it thousands of times. If this loop isn't satisfying, no amount of long-term progression will save the game.",
+                required: false,
+            },
+            {
+                key: 'Core loop · Action sequence',
+                label: 'Describe the smallest meaningful sequence of player actions that repeats during ordinary gameplay.',
+                loop: 'Core loop',
+                group: 'rules',
+                type: 'text',
                 required: true,
-                provisional: true,
+                placeholder:
+                    '[Action 1] → [Action 2] → [Action 3]\nDuration: [seconds/minutes]',
+            },
+            {
+                key: 'Core loop · Immediate result',
+                label: 'What immediate result does the player receive, and how does the game communicate it?',
+                loop: 'Core loop',
+                group: 'rules',
+                type: 'text',
+                required: false,
+                placeholder:
+                    'Player does: [action]\nSystem produces: [outcome]\nPlayer perceives: [feedback]',
+            },
+            {
+                key: 'Core loop · Meaningful choice',
+                label: 'After receiving the result, what meaningful choice does the player make before repeating or changing the loop?',
+                loop: 'Core loop',
+                group: 'rules',
+                type: 'text',
+                required: false,
+                placeholder:
+                    'Result: [outcome]\nPlayer chooses between: [A] / [B] / [C]\nTrade-off: [risk, cost, time, reward, information]\nNext loop changes because: [consequence]',
             },
             {
                 key: 'Long loop',
@@ -784,8 +818,39 @@ export const DESIGN_SECTIONS = [
                 badge: 'Long loop',
                 description:
                     "The larger structure that gives the short loop purpose over minutes, hours, or the whole game. It's built from many repetitions of the short loop and typically involves progression, rewards, or strategic decisions.",
+                popupIntro:
+                    "Describe how repeated gameplay leads to long-term progress, changes the player's future possibilities, and creates the next reason to play.",
+                required: false,
+            },
+            {
+                key: 'Long loop · Long-term goal',
+                label: 'What does the player work toward across multiple sessions, and what concrete milestone marks progress?',
+                loop: 'Long loop',
+                group: 'rules',
+                type: 'text',
                 required: true,
-                provisional: true,
+                placeholder:
+                    'Repeated Core Loops produce: [progress/resource]\nLong-term goal: [goal]\nMilestone: [observable achievement]\nExpected timeframe: [time period]',
+            },
+            {
+                key: 'Long loop · Change in future play',
+                label: 'How does reaching the milestone change future play?',
+                loop: 'Long loop',
+                group: 'rules',
+                type: 'text',
+                required: false,
+                placeholder:
+                    'Milestone: [achievement]\nUnlocks or changes: [system/content/capability]\nCore Loop now differs because: [specific change]\nNew strategic possibility: [possibility]',
+            },
+            {
+                key: 'Long loop · Reason to return',
+                label: 'After the milestone, what new goal, challenge, social context, or unresolved desire motivates the player to re-enter the Core Loop?',
+                loop: 'Long loop',
+                group: 'rules',
+                type: 'text',
+                required: false,
+                placeholder:
+                    'New ambition: [goal]\nWhy it matters: [player motivation]\nReturn trigger: [what brings the player back]\nThe next cycle is different because: [difference]',
             },
             // "*Attach a sketch or diagram of your loop" (PNG/JPEG upload) is not implemented:
             // the design API has no file upload yet.
