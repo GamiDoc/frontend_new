@@ -36,9 +36,9 @@
     --bs-btn-border-width: 1px;
     --bs-btn-border-color: var(--gd-yellow-accent);
 
-    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-color: var(--gd-text);
     --bs-btn-hover-bg: var(--gd-yellow-hover);
-    --bs-btn-hover-border-color: var(--gd-yellow-hover-accent);
+    --bs-btn-hover-border-color: var(--gd-yellow-hover);
 
     --bs-btn-active-color: var(--gd-text);
     --bs-btn-active-bg: var(--gd-yellow-hover);
