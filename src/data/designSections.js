@@ -18,7 +18,9 @@
        other          adds an "Other" option; its free text is saved under `<key> · Other`
        columns        checklist laid out on N columns
        half           input or select shown at half width (two side by side)
-       showIf         { key, includes } → field shown only if that multi field contains the value
+       showIf         { key, includes, keep? } → field shown only if that field contains the value
+                      (multi: array includes it · single: equals it). keep: true = hidden only
+                      on screen, its value is still saved (used for tabs)
        badge / description   ('loop' display) label and explanation of a game loop
        popupIntro     ('loop' display) text under the title of the loop's pop-up
        loop           key of the loop whose pop-up shows this field (instead of the card)
@@ -854,10 +856,12 @@ export const DESIGN_SECTIONS = [
             },
             // "*Attach a sketch or diagram of your loop" (PNG/JPEG upload) is not implemented:
             // the design API has no file upload yet.
+            // One category open at a time, like tabs (prototype). The elements and mechanics
+            // of the other categories stay saved (`keep`), they are only hidden.
             {
                 key: 'Game element categories',
                 group: 'mechanics',
-                type: 'multi',
+                type: 'single',
                 display: 'chips',
                 required: true,
                 options: [
@@ -897,6 +901,7 @@ export const DESIGN_SECTIONS = [
                     showIf: {
                         key: 'Game element categories',
                         includes: category,
+                        keep: true,
                     },
                     options: elements,
                 },
@@ -910,6 +915,7 @@ export const DESIGN_SECTIONS = [
                     showIf: {
                         key: 'Game element categories',
                         includes: category,
+                        keep: true,
                     },
                 },
             ]),
@@ -1313,7 +1319,8 @@ function itemKey(field, index, sub) {
 export function isFieldVisible(field, values) {
     if (!field.showIf) return true;
     const source = values?.[field.showIf.key];
-    return Array.isArray(source) && source.includes(field.showIf.includes);
+    if (Array.isArray(source)) return source.includes(field.showIf.includes);
+    return source === field.showIf.includes;
 }
 
 /* true if the field has a value (non-empty array, non-empty string, list with content). */
@@ -1391,7 +1398,7 @@ export function contentToValues(section, content) {
 
 /* Form values → `content` for the backend: schema fields first in their order (empty ones
    are left out, an "Other" text right after its field), then the unknown keys, so nothing
-   is lost. Hidden fields (`showIf`) are not sent. */
+   is lost. Hidden fields (`showIf`) are not sent, unless they have `keep`. */
 export function valuesToContent(section, values) {
     const content = {};
     const known = new Set();
@@ -1402,7 +1409,7 @@ export function valuesToContent(section, values) {
     for (const field of section.fields) {
         known.add(field.key);
         if (field.other) known.add(otherKey(field));
-        if (!isFieldVisible(field, values)) continue;
+        if (!isFieldVisible(field, values) && !field.showIf?.keep) continue;
         if (field.type === 'list') {
             const items = (values[field.key] || []).filter((item) =>
                 isFilled(field, [item]),
