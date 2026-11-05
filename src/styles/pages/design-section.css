@@ -34,3 +34,123 @@
     font-size: 16px;
     color: var(--gd-text-muted);
 }
+
+/* -- Gameful Core Sections -------------------------------------------------*/
+.ds-loop {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 25px;
+    padding: 30px 50px;
+}
+
+.ds-loop:hover {
+    border-color: var(--gd-blue-hover);
+}
+
+.ds-loop-badge {
+    background: var(--gd-light-text);
+    border-color: var(--gd-blue-hover);
+    color: var(--gd-blue-hover);
+}
+
+.ds-loop:hover .ds-loop-badge {
+    background: var(--gd-blue-medium);
+    color: #fff;
+}
+
+/* Pop ups */
+.ds-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    min-height: 50%;
+    background: #fff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 20px 40px;
+}
+
+.ds-popup::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.ds-popup div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.7rem;
+    height: 100%;
+}
+
+.ds-loop-badge {
+    min-width: 25%;
+    height: fit-content;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.top-popup-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    text-align: left;
+}
+
+.top-popup-btn:hover {
+    color: var(--gd-blue-hover);
+}
+
+.bottom-popup-btn {
+    background: none;
+    border-color: var(--gd-blue);
+    color: var(--gd-blue);
+    width: fit-content;
+}
+
+.bottom-popup-btn:hover {
+    border-color: var(--gd-blue-hover);
+    color: var(--gd-blue-hover);
+}
+
+/* Progression Section checkboxes */
+#ds-group-progression .ds-check {
+    flex: 1 1 0;
+}
+
+#ds-group-progression .ds-field-title {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+#ds-group-progression .ds-check-text {
+    width: max-content;
+}
+
+#ds-group-progression .ds-checks {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    /* Add bottom border */
+    border-bottom: 1px solid var(--gd-inputs-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* -- Responsive for smaller screen --------------------------------------------------- */
+@media (max-width: 900px) {
+    .ds-loop {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .ds-loop-badge {
+        width: 100%;
+    }
+
+    .ds-popup {
+        width: 70%;
+    }
+}

@@ -10,6 +10,8 @@ const base = ({ kind, id }) =>
 
 export const designApi = {
     get: (scope) => api.get(base(scope)),
+    // TODO: reevaluate if this field is needed after integrating the AI feature
+    setPath: (scope, { path }) => api.post(`${base(scope)}/path`, { path }),
     saveSpark: (scope, spark) => api.put(`${base(scope)}/spark`, { spark }),
     // body: { content?, complete?, skip? }
     saveSection: (scope, sectionNumber, body) =>

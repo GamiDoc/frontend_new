@@ -53,7 +53,9 @@ function DesignField({ field, values, onChange }) {
 
     const heading = (field.title || field.hint) && (
         <div className="ds-field-heading">
-            {field.title && <span className="ds-field-title">{field.title}</span>}
+            {field.title && (
+                <span className="ds-field-title">{field.title}</span>
+            )}
             {field.hint && <p className="ds-field-hint">{field.hint}</p>}
         </div>
     );
@@ -75,26 +77,61 @@ function DesignField({ field, values, onChange }) {
 
     // -- Game loop: expandable row with a free-text description --------
     if (field.display === 'loop') {
+        // Function to show/hide pop up
+        const openPopup = (key) => {
+            const dialog = document.getElementById(`ds-popup-${key}`);
+            dialog.showModal();
+        };
+        const closePopup = (key) => {
+            const dialog = document.getElementById(`ds-popup-${key}`);
+            dialog.close();
+        };
         return (
-            <div className={className}>
-                {heading}
-                <details className="ds-loop">
-                    <summary>
-                        <span className="ds-loop-badge">{field.badge}</span>
+            <>
+                <dialog
+                    className="ds-popup"
+                    id={`ds-popup-${id}`}
+                    popover="auto"
+                >
+                    <div>
+                        <button
+                            className="ds-btn ds-btn-popup--close top-popup-btn"
+                            onClick={() => closePopup(id)}
+                        >
+                            &lt;&lt;&nbsp;&nbsp;Back to the Gameful Core
+                        </button>
+                        <textarea
+                            id={id}
+                            className="ds-textarea"
+                            aria-label={field.badge}
+                            value={value || ''}
+                            placeholder="Type here"
+                            onChange={(e) => set(e.target.value)}
+                        />
+                        <button
+                            className="ds-btn ds-btn-popup--close bottom-popup-btn"
+                            onClick={() => closePopup(id)}
+                        >
+                            &lt;&nbsp;&nbsp;Back
+                        </button>
+                    </div>
+                </dialog>
+                <div className={className}>
+                    {heading}
+                    <div
+                        className="ds-loop"
+                        onClick={() => openPopup(id)}
+                        popoverTarget={`ds-popup-${id}`}
+                    >
+                        <span className="ds-loop-badge ds-btn">
+                            {field.badge}
+                        </span>
                         <span className="ds-loop-description">
                             {field.description}
                         </span>
-                    </summary>
-                    <textarea
-                        id={id}
-                        className="ds-textarea"
-                        aria-label={field.badge}
-                        value={value || ''}
-                        placeholder="Type here"
-                        onChange={(e) => set(e.target.value)}
-                    />
-                </details>
-            </div>
+                    </div>
+                </div>
+            </>
         );
     }
 
@@ -248,6 +285,57 @@ function DesignField({ field, values, onChange }) {
         );
     }
 
+    if (field.display == 'cards') {
+        return (
+            <div className={className}>
+                {heading}
+                {label}
+                <div
+                    className="ds-options"
+                    role={multi ? 'group' : 'radiogroup'}
+                    aria-label={field.title || field.label || field.key}
+                >
+                    {all.map((o) => (
+                        <button
+                            key={o.value}
+                            type="button"
+                            className={`ds-option${isOn(o.value) ? ' ds-option--selected' : ''}${o.other ? ' ds-option--other' : ''}`}
+                            role={multi ? undefined : 'radio'}
+                            aria-pressed={multi ? isOn(o.value) : undefined}
+                            aria-checked={multi ? undefined : isOn(o.value)}
+                            onClick={() => toggle(o.value)}
+                        >
+                            <span className="ds-option-outer-icon">
+                                <span className="ds-option-inner-icon"></span>
+                            </span>
+
+                            {o.other && (
+                                <span
+                                    className="ds-option-plus"
+                                    aria-hidden="true"
+                                >
+                                    +
+                                </span>
+                            )}
+                            <span className="ds-option-content">
+                                <span className="ds-option-title">
+                                    {o.value}
+                                </span>
+                                {info(o)}
+                                {o.description && (
+                                    <span className="ds-option-description">
+                                        {o.description}
+                                    </span>
+                                )}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+                {otherInput}
+            </div>
+        );
+    }
+
     return (
         <div className={className}>
             {heading}
@@ -267,18 +355,15 @@ function DesignField({ field, values, onChange }) {
                         aria-checked={multi ? undefined : isOn(o.value)}
                         onClick={() => toggle(o.value)}
                     >
-                        {o.other && (
-                            <span className="ds-option-plus" aria-hidden="true">
-                                +
-                            </span>
-                        )}
-                        <span className="ds-option-title">{o.value}</span>
-                        {info(o)}
-                        {o.description && (
-                            <span className="ds-option-description">
-                                {o.description}
-                            </span>
-                        )}
+                        <span className="ds-option-content">
+                            <span className="ds-option-title">{o.value}</span>
+                            {info(o)}
+                            {o.description && (
+                                <span className="ds-option-description">
+                                    {o.description}
+                                </span>
+                            )}
+                        </span>
                     </button>
                 ))}
             </div>

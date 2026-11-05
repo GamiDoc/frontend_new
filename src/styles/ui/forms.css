@@ -181,7 +181,7 @@
 }
 
 .ds-option--selected {
-    background-color: var(--gd-blue);
+    background-color: var(--gd-blue-medium);
     color: #ffffff;
 }
 
@@ -296,13 +296,68 @@ input[type='range']:focus-visible {
     text-align: center;
     font-weight: 600;
 }
+/* Cards */
+.ds-field--cards .ds-option {
+    width: 48%;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    border-color: var(--gd-blue-hover);
+    border-radius: 25px;
+    padding: 10px 20px;
+}
+
+/* Container of checkmark for cards */
+.ds-option-outer-icon {
+    display: flex;
+    min-width: 20px;
+    height: 20px;
+    background: none;
+    border: solid 1px #000;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+}
+
+.ds-option-inner-icon {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.ds-field--cards .ds-option-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    text-align: left;
+}
+
+.ds-field--cards .ds-option-title {
+    font-weight: 600;
+}
+
+/* Hover look */
+.ds-field--cards .ds-option--selected {
+    color: #fff;
+    background: var(--gd-blue-medium);
+}
+
+.ds-field--cards .ds-option--selected .ds-option-outer-icon {
+    border-color: #fff;
+}
+
+.ds-field--cards .ds-option--selected .ds-option-inner-icon {
+    background: #fff;
+}
 
 /* -- Responsive for smaller screen --------------------------------------------------- */
 @media (max-width: 900px) {
     .ds-field--slider .ds-field-label {
         flex-basis: 0;
     }
-    
+
     .ds-field--slider {
         display: flex;
         flex-direction: column;
@@ -313,5 +368,10 @@ input[type='range']:focus-visible {
     .ds-field--slider input {
         flex-basis: 0;
         width: 80%;
+    }
+    
+    /* Adapt card layout*/
+    .ds-field--cards .ds-option {
+        width: 100%;
     }
 }

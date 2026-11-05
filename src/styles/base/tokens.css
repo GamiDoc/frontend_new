@@ -47,6 +47,7 @@
     --gd-purple-hover-accent: #521c7b; /* darker color for checkboxes, selected borders, stepper */
     --gd-purple-accent: #a876ce; /* checkboxes, selected borders, stepper */
     --gd-blue: #547194; /* blue primary buttons */
+    --gd-blue-medium: #768DA9;
     --gd-blue-hover: #405166;
     --gd-blue-disabled: #e6e6e6;
 
