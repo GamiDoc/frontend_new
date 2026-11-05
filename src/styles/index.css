@@ -68,6 +68,7 @@
 @import './pages/design-spark.css';
 @import './pages/design-context.css';
 @import './pages/design-section.css';
+@import './pages/design-dashboard.css';
 
 /* ── Modals ───────────────────────────────────────────
    Kept last on purpose: some modals render inside page

@@ -1,0 +1,267 @@
+/* =====================================================
+   DESIGN DASHBOARD — pages/design/DesignDashboard.jsx
+   "Your project overview": section bar, overall progress,
+   one card per section, export buttons and report history.
+   ===================================================== */
+
+/* -- Section bar under the navbar ------------------------------------------- */
+.ds-dashboard-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 60%;
+    margin: 20px 0 30px;
+}
+
+.ds-dashboard-nav-item {
+    background: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 6px 16px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--gd-blue);
+    cursor: pointer;
+}
+
+.ds-dashboard-nav-item:hover {
+    border-color: var(--gd-blue-hover);
+    color: var(--gd-blue-hover);
+}
+
+/* -- Header: title + overall progress --------------------------------------- */
+.ds-dashboard-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.ds-dashboard-header h1 {
+    font-weight: 600;
+    margin: 0;
+}
+
+.ds-dashboard-header p {
+    margin: 0;
+    color: var(--gd-text-muted);
+}
+
+.ds-dashboard-overall {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.ds-dashboard-percent {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--gd-blue);
+}
+
+/* -- Progress bars (overall + every card) ----------------------------------- */
+.ds-progress {
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border: none;
+    border-radius: 3px;
+    background-color: var(--gd-inputs-border);
+    overflow: hidden;
+}
+
+.ds-progress::-webkit-progress-bar {
+    background-color: var(--gd-inputs-border);
+    border-radius: 3px;
+}
+
+.ds-progress::-webkit-progress-value {
+    background-color: var(--gd-blue);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.ds-progress::-moz-progress-bar {
+    background-color: var(--gd-blue);
+    border-radius: 3px;
+}
+
+/* -- Section cards ---------------------------------------------------------- */
+.ds-dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Grid: title + badge on the first row, bar, summary, percentage at the bottom */
+.ds-dashboard-card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        'title   status'
+        'bar     bar'
+        'summary summary'
+        'percent percent';
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 24px 28px;
+    font: inherit;
+    text-align: left;
+    color: var(--gd-text);
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.ds-dashboard-card:hover {
+    border-color: var(--gd-blue-hover);
+}
+
+.ds-card-title {
+    grid-area: title;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.ds-card-status {
+    grid-area: status;
+    border-radius: 15px;
+    padding: 3px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+    background: var(--gd-blue-disabled);
+    color: var(--gd-text-muted);
+}
+
+.ds-dashboard-card .ds-progress {
+    grid-area: bar;
+}
+
+.ds-card-summary {
+    grid-area: summary;
+    font-size: 14px;
+    color: var(--gd-text-muted);
+}
+
+.ds-card-percent {
+    grid-area: percent;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gd-blue);
+}
+
+/* Badge colour by state */
+.ds-dashboard-card--complete .ds-card-status {
+    background: var(--gd-success-bg);
+    color: var(--gd-success-text);
+}
+
+.ds-dashboard-card--in_progress .ds-card-status {
+    background: var(--gd-light-text);
+    color: var(--gd-blue-hover);
+}
+
+.ds-dashboard-card--current {
+    border-color: var(--gd-purple-accent);
+}
+
+.ds-dashboard-card--current .ds-card-status {
+    background: var(--gd-purple-light);
+    color: var(--gd-purple-hover-accent);
+}
+
+.ds-dashboard-card--complete .ds-progress::-webkit-progress-value {
+    background-color: var(--gd-success);
+}
+
+.ds-dashboard-card--complete .ds-progress::-moz-progress-bar {
+    background-color: var(--gd-success);
+}
+
+/* -- Bottom buttons: wrap on narrow screens --------------------------------- */
+.ds-page--dashboard .ds-actions {
+    flex-wrap: wrap;
+}
+
+/* -- Reports (last generated + history) ------------------------------------- */
+.ds-reports-latest,
+.ds-reports-history {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 24px 28px;
+    margin-bottom: 31px;
+}
+
+.ds-reports-latest {
+    background: var(--gd-success-bg);
+    border-color: var(--gd-success);
+}
+
+.ds-reports-latest h2,
+.ds-reports-history h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.ds-reports-latest a,
+.ds-reports-history a {
+    color: var(--gd-blue);
+}
+
+.ds-reports-latest a:hover,
+.ds-reports-history a:hover {
+    color: var(--gd-blue-hover);
+}
+
+.ds-reports-history ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+/* -- Locked page: message + Continue, centred ------------------------------- */
+.ds-page--locked .ds-main {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.ds-page--locked .ds-main > * {
+    min-width: 0;
+}
+
+.ds-page--locked .ds-main p {
+    max-width: 480px;
+    font-size: 17px;
+    color: var(--gd-text-muted);
+}
+
+/* -- Small screens ---------------------------------------------------------- */
+@media (max-width: 900px) {
+    .ds-dashboard-nav {
+        width: 80%;
+    }
+
+    .ds-dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-dashboard-card {
+        padding: 20px;
+    }
+}

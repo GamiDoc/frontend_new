@@ -352,6 +352,136 @@ input[type='range']:focus-visible {
     background: #fff;
 }
 
+/* -- Small helpers next to the options ----------------------------------------------------------- */
+/* Hint under a field title */
+.ds-field-hint {
+    margin: 0;
+    font-size: 15px;
+    color: var(--gd-text-muted);
+}
+
+/* Short description inside a chip (cards have their own rules) */
+.ds-option-description {
+    display: block;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Info icon (ⓘ) next to an option: the text shows on hover (title attribute) */
+.ds-info {
+    margin-left: 6px;
+    font-size: 14px;
+    color: var(--gd-blue-medium);
+    cursor: help;
+}
+
+.ds-option--selected .ds-info {
+    color: inherit;
+}
+
+/* Text box shown when "Other" is selected */
+.ds-other-input {
+    margin-top: 4px;
+}
+
+/* -- Repeatable blocks (e.g. feedback components) --------------------------------------------------
+   Tabs on top (one per item + "add"), then the open item in a light box. */
+.ds-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ds-list-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ds-list-tab,
+.ds-list-add {
+    font: inherit;
+    font-size: 15px;
+    border-radius: 15px;
+    padding: 6px 16px;
+    cursor: pointer;
+}
+
+.ds-list-tab {
+    background: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    color: var(--gd-text);
+}
+
+.ds-list-tab:hover {
+    border-color: var(--gd-blue-hover);
+}
+
+.ds-list-tab--active {
+    background-color: var(--gd-blue-medium);
+    border-color: var(--gd-blue-medium);
+    color: #ffffff;
+}
+
+.ds-list-add {
+    background: none;
+    border: 1px dashed var(--gd-blue);
+    color: var(--gd-blue);
+}
+
+.ds-list-add:hover {
+    border-style: solid;
+    color: var(--gd-blue-hover);
+    border-color: var(--gd-blue-hover);
+}
+
+.ds-list-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    background: #fafaf8;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 15px;
+    padding: 24px;
+}
+
+.ds-list-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.ds-list-item-name {
+    flex: 1;
+    font-weight: 600;
+}
+
+.ds-list-remove {
+    background: none;
+    border: 1px solid var(--gd-error);
+    border-radius: 8px;
+    padding: 8px 15px;
+    font: inherit;
+    color: var(--gd-error);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.ds-list-remove:hover {
+    background: var(--gd-error-light);
+    border-color: var(--gd-danger-hover);
+}
+
+/* -- Error message under a form / page ----------------------------------------------------------- */
+.ds-error {
+    margin: 0;
+    padding: 10px 18px;
+    border: 1px solid var(--gd-error-dark);
+    border-radius: 8px;
+    background: var(--gd-error-light);
+    color: var(--gd-error);
+}
+
 /* -- Responsive for smaller screen --------------------------------------------------- */
 @media (max-width: 900px) {
     .ds-field--slider .ds-field-label {
@@ -373,5 +503,9 @@ input[type='range']:focus-visible {
     /* Adapt card layout*/
     .ds-field--cards .ds-option {
         width: 100%;
+    }
+
+    .ds-list-item {
+        padding: 16px;
     }
 }

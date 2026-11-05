@@ -176,6 +176,11 @@
     transform: translateY(25%) rotate(-135deg);
 }
 
+/* Closed card: no gap under the title (the hidden content still counts in the flex gap) */
+.ds-group--collapsible:not([open]) {
+    gap: 0;
+}
+
 /* -- Responsive for smaller screen --------------------------------------------------- */
 @media (max-width: 900px) {
     .ds-loop {
