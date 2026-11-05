@@ -139,6 +139,43 @@
     margin-bottom: 1rem;
 }
 
+/* -- Sub-sections (groups with `parent`, e.g. Re-onboarding inside Onboarding):
+      a plain collapsible row inside the parent card, no border of its own -- */
+.ds-group--nested {
+    margin-top: 0.6rem;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: none;
+}
+
+.ds-group--collapsible > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    list-style: none; /* hide the default ▶ marker */
+}
+
+.ds-group--collapsible > summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Chevron: points down when closed, up when open */
+.ds-group--collapsible > summary::before {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-25%) rotate(45deg);
+    transition: transform 0.15s;
+}
+
+.ds-group--collapsible[open] > summary::before {
+    transform: translateY(25%) rotate(-135deg);
+}
+
 /* -- Responsive for smaller screen --------------------------------------------------- */
 @media (max-width: 900px) {
     .ds-loop {
