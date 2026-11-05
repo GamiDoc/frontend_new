@@ -328,11 +328,6 @@ export function DesignProvider({ children }) {
             if (sectionNumber) setCurrentSection(sectionNumber);
             storeLastPage(scopeRef.current, target, sectionNumber);
             setPage(PAGE_FOR[target]);
-            // Solve temporary bug due to missing AI feature: always set path to A when going to a section
-            if (sectionNumber == 2) {
-                console.log('Setting path to A');
-                setDefaultPath();
-            }
         },
         [setPage],
     );
@@ -488,16 +483,8 @@ export function DesignProvider({ children }) {
         [applyStatus, go, handleError],
     );
 
-    const skipSpark = useCallback(async () => {
-        (go('section', 1), [go]);
-    });
+    const skipSpark = useCallback(() => go('section', 1), [go]);
 
-    // TODO: only to solve temporary bug due to missing AI feature
-    const setDefaultPath = useCallback(async (path) => {
-        const result = await designApi.setPath(scopeRef.current, {
-            path: 'A',
-        });
-    });
     // ── Sezioni ──────────────────────────────────────────────────────────────
     const updateField = useCallback(
         (sectionNumber, key, value) => {
