@@ -17,22 +17,22 @@ COMMENTS FOR STYLING TO BE LATER MOVED TO APPROPRIATE SECTIONS
    - Incipit: `.ds-dashboard-header`, big percentage `.ds-dashboard-percent`, <progress class="ds-progress">
    - Card: <button class="ds-dashboard-card ds-dashboard-card--<stato>"> with state
        complete · in_progress · current · not_started
-     Inside: `.ds-card-title`, `.ds-card-status` (badge), <progress class="ds-progress">,
+     Inside: `.ds-card-title` (+ `.ds-optional-tag` for optional sections), `.ds-card-status` (badge), <progress class="ds-progress">,
      `.ds-card-summary`, `.ds-card-percent`
    - Report: `.ds-reports-latest` (last generated) e `.ds-reports-history` (history)
  */
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * `ds-dashboard`Page — "Your project overview" (FR-11…FR-15, FR-22…FR-27)
  * ═══════════════════════════════════════════════════════════════════════════
- * 
+ *
  * This page can be reached only after a first viewing of all sections with at least one of them filled.
  * At first it shows a message and then "Continue".
- * 
+ *
  * * Clicking on a card opens the section
  * * "Export summary" generates 2 PDF (Standard e AI-Enhanced) and shows the links
- * * "Continue where I left off" 
+ * * "Continue where I left off"
  * * "Previous reports" shows the history of the generated PDFs (FR-27)
  * */
 function DesignDashboard({ onOpenLogin, onOpenSignup }) {
@@ -145,7 +145,14 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                                 className={`ds-dashboard-card ds-dashboard-card--${s.status}`}
                                 onClick={() => goToSection(s.number)}
                             >
-                                <span className="ds-card-title">{s.title}</span>
+                                <span className="ds-card-title">
+                                    {s.title}
+                                    {s.optional && (
+                                        <span className="ds-optional-tag">
+                                            Optional
+                                        </span>
+                                    )}
+                                </span>
                                 <span className="ds-card-status">
                                     {STATUS_LABEL[s.status]}
                                 </span>

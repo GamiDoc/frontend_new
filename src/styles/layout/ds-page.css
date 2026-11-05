@@ -117,6 +117,25 @@
     color: var(--gd-text-muted);
 }
 
+/* -- Optional sections (e.g. Technical requirements): tag next to the title + note -------------------- */
+.ds-optional-tag {
+    display: inline-block;
+    margin-left: 12px;
+    padding: 2px 10px;
+    border: 1px solid var(--gd-blue-medium);
+    border-radius: 15px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gd-blue);
+    vertical-align: middle;
+}
+
+.ds-optional-note {
+    margin: 0;
+    font-size: 15px;
+    color: var(--gd-blue);
+}
+
 /* -- Navigation buttons at bottom of the page -------------------------------------------------------- */
 .ds-actions {
     display: flex;

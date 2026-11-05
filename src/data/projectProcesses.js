@@ -11,7 +11,7 @@
      label  short text for badges, e.g. "Step 2 of 4", "40%"
    ===================================================== */
 import {
-    DESIGN_SECTIONS,
+    REQUIRED_SECTIONS,
     contentToValues,
     sectionProgress,
 } from './designSections';
@@ -46,20 +46,20 @@ export function evaluationSummary(project) {
 }
 
 /* Design System, from the design status returned by the backend.
-   Percent = average completion of the 6 sections (same rule as the
-   Design System overview); complete = every section complete. */
+   Percent = average completion of the required sections (same rule as the
+   Design System overview); complete = every required section complete. */
 export function designSummary(designStatus) {
     if (!designStatus) {
         return { state: 'not_started', label: 'Not started', percent: 0 };
     }
-    const progresses = DESIGN_SECTIONS.map((section) => {
+    const progresses = REQUIRED_SECTIONS.map((section) => {
         const content =
             designStatus.sections?.[String(section.number)]?.content;
         return sectionProgress(section, contentToValues(section, content));
     });
     const percent = Math.round(
         progresses.reduce((sum, p) => sum + p.percent, 0) /
-            DESIGN_SECTIONS.length,
+            REQUIRED_SECTIONS.length,
     );
     const started =
         Boolean(designStatus.spark) || designStatus.cursor > 0 || percent > 0;

@@ -584,6 +584,7 @@ export function DesignProvider({ children }) {
                     number: section.number,
                     title: section.navName,
                     summary: section.summary,
+                    optional: Boolean(section.optional),
                     status: state,
                     percent: p.percent,
                 };
@@ -591,14 +592,15 @@ export function DesignProvider({ children }) {
         [progress, drafts, currentSection],
     );
 
+    // Optional sections (Technical requirements) are left out of the totals.
     const overall = useMemo(() => {
-        const total = dashboardSections.reduce((sum, s) => sum + s.percent, 0);
+        const counted = dashboardSections.filter((s) => !s.optional);
+        const total = counted.reduce((sum, s) => sum + s.percent, 0);
         return {
-            percent: Math.round(total / DESIGN_SECTIONS.length),
-            completeCount: dashboardSections.filter(
-                (s) => s.status === 'complete',
-            ).length,
-            sectionCount: DESIGN_SECTIONS.length,
+            percent: Math.round(total / counted.length),
+            completeCount: counted.filter((s) => s.status === 'complete')
+                .length,
+            sectionCount: counted.length,
         };
     }, [dashboardSections]);
 

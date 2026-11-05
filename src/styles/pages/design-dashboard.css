@@ -130,6 +130,12 @@
     font-weight: 600;
 }
 
+/* "Optional" tag on its own line under the card title */
+.ds-card-title .ds-optional-tag {
+    display: table;
+    margin: 6px 0 0;
+}
+
 .ds-card-status {
     grid-area: status;
     border-radius: 15px;

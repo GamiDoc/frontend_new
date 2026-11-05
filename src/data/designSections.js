@@ -7,8 +7,9 @@
    Mockups: Figma "GamiDoc Framework 2.0", page Flow 2.0.
 
    Structure
-     section  { number, id, title, navLabel, navName, description, summary, groups[], fields[] }
+     section  { number, id, title, navLabel, navName, description, summary, optional?, groups[], fields[] }
                 navLabel → stepper / overview label · navName → "Back to the …" / "Go to the …"
+                optional → not counted in the overall percentage / "complete" of the design
      group    { id, title, description?, collapsible?, provisional? }   → one card in the page
      field    { key, label?, group, type, display?, options?, required, … }
        type     'single' | 'multi' | 'text' | 'list'
@@ -1251,6 +1252,7 @@ export const DESIGN_SECTIONS = [
         number: 6,
         id: 'technical',
         title: 'Technical requirements',
+        optional: true,
         navLabel: 'Technical Requirements',
         navName: 'Technical requirements',
         summary: 'Platforms, Engine, Performance, Data',
@@ -1291,6 +1293,9 @@ export const DESIGN_SECTIONS = [
         })),
     },
 ];
+
+/* Sections counted in the overall percentage and in "complete" (optional ones excluded). */
+export const REQUIRED_SECTIONS = DESIGN_SECTIONS.filter((s) => !s.optional);
 
 /* Number of steps in "STEP n OF N": the sections (the Spark is not counted). */
 export const TOTAL_STEPS = DESIGN_SECTIONS.length;

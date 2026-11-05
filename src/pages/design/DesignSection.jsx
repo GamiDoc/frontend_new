@@ -16,7 +16,8 @@ import {
  * ═══════════════════════════════════════════════════════════════════════════
  *
  * Components in the page:
- * * Title and introduction of the section (`.ds-intro`)
+ * * Title and introduction of the section (`.ds-intro`); optional sections add the tag
+ *   `.ds-optional-tag` next to the title and the note `.ds-optional-note`
  * * "Back to the …": previous section (or the Spark)
  * * "Go to the …": saves & proceeds to the next section (or the Overview after the last one)
  * Modifications to already seen sections are automatically saved (auto-save).
@@ -78,7 +79,18 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
             <LoginReminder onOpenLogin={onOpenLogin} />
 
             <main className="ds-main">
-                <h1>{section.title}</h1>
+                <h1>
+                    {section.title}
+                    {section.optional && (
+                        <span className="ds-optional-tag">Optional</span>
+                    )}
+                </h1>
+                {section.optional && (
+                    <p className="ds-optional-note">
+                        You can skip this section: it does not count towards
+                        your project's completion.
+                    </p>
+                )}
                 {section.description && (
                     <p className="ds-intro">{section.description}</p>
                 )}
