@@ -148,13 +148,15 @@
 }
 
 /* Styling of checked checkbox (specific mark) */
-.ds-check-input:checked::after {
-    display: flex;
+.ds-check-input:checked::before {
     content: '';
-    background-image: url('../../assets/icons/checkmark.svg');
-    background-size: 100% 100%;
-    height: 100%;
-    width: 100%;
+    display: block;
+    width: 15px;
+    height: 15px;
+    clip-path: polygon(14% 54%, 0 65%, 50% 100%, 100% 16%, 90% 0%, 45% 72%);
+    transform-origin: bottom left;
+    transition: 120ms transform ease-in-out;
+    background-color: #000;
 }
 
 /* -- TextArea styling --------------------------------------------- */
@@ -410,6 +412,7 @@ input[type='range']:focus-visible {
 .ds-list-tab {
     background: #ffffff;
     border: 1px solid var(--gd-inputs-border);
+    border-radius: 5px;
     color: var(--gd-text);
 }
 
@@ -421,55 +424,20 @@ input[type='range']:focus-visible {
     background-color: var(--gd-blue-medium);
     border-color: var(--gd-blue-medium);
     color: #ffffff;
+    box-shadow: var(--gd-inputs-border) 0px 5px 5px;
 }
 
 .ds-list-add {
     background: none;
-    border: 1px dashed var(--gd-blue);
-    color: var(--gd-blue);
+    border: 1px solid var(--gd-light-blue);
+    border-radius: 5px;
+    color: var(--gd-light-blue);
 }
 
 .ds-list-add:hover {
     border-style: solid;
     color: var(--gd-blue-hover);
     border-color: var(--gd-blue-hover);
-}
-
-.ds-list-item {
-    display: flex;
-    flex-direction: column;
-    gap: 1.4rem;
-    background: #fafaf8;
-    border: 1px solid var(--gd-inputs-border);
-    border-radius: 15px;
-    padding: 24px;
-}
-
-.ds-list-item-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.ds-list-item-name {
-    flex: 1;
-    font-weight: 600;
-}
-
-.ds-list-remove {
-    background: none;
-    border: 1px solid var(--gd-error);
-    border-radius: 8px;
-    padding: 8px 15px;
-    font: inherit;
-    color: var(--gd-error);
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.ds-list-remove:hover {
-    background: var(--gd-error-light);
-    border-color: var(--gd-danger-hover);
 }
 
 /* -- Image upload (e.g. loop sketch) ------------------------------------------------------------- */
@@ -573,7 +541,7 @@ input[type='range']:focus-visible {
         flex-basis: 0;
         width: 80%;
     }
-    
+
     /* Adapt card layout*/
     .ds-field--cards .ds-option {
         width: 100%;

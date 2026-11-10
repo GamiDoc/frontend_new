@@ -48,13 +48,20 @@
     --gd-purple-accent: #a876ce; /* checkboxes, selected borders, stepper */
     --gd-blue: #547194; /* blue primary buttons */
     --gd-blue-medium: #768DA9;
+    --gd-light-blue: #BBC6D4;
     --gd-blue-hover: #405166;
     --gd-blue-disabled: #e6e6e6;
 
     --gd-light-text: #dde3ea; /* text on blue background */
     --gd-blue-text-disabled: #999999;
+    --gd-grey-text: #777;
 
     --gd-purple-light: #E3D2EF;
     --gd-error-light: #FCDFD9;
     --gd-error-dark: #F06449;
+
+    /* Icon sizing */
+    --gd-icon-size-medium: 25px;
+    --gd-icon-size-small: 20px;
+    --gd-icon-size-extra-small: 15px;
 }

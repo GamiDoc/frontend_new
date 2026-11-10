@@ -5,6 +5,7 @@ import {
     otherKey,
     emptyItem,
 } from '../../data/designSections';
+import Icon from '../IconDesign';
 
 /*
 FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
@@ -451,21 +452,32 @@ function DesignList({ field, items, onChange }) {
             {item && (
                 <div className="ds-list-item" role="tabpanel">
                     <div className="ds-list-item-header">
-                        <input
-                            className="ds-input ds-list-item-name"
-                            aria-label="Component name"
-                            placeholder={field.itemLabel}
-                            value={item.Name || ''}
-                            onChange={(e) =>
-                                update(active, 'Name', e.target.value)
-                            }
-                        />
+                        <span id="feedback-name-container">
+                            <input
+                                className="ds-input ds-list-item-name"
+                                aria-label="Component name"
+                                placeholder={field.itemLabel}
+                                maxLength="60"
+                                value={item.Name || ''}
+                                onChange={(e) =>
+                                    update(active, 'Name', e.target.value)
+                                }
+                            />
+
+                            {Icon('pen', 'pen-icon', {
+                                strokeWidth: 0,
+                                fill: 'var(--gd-blue)',
+                            })}
+                        </span>
                         <button
                             type="button"
                             className="ds-list-remove"
                             onClick={() => remove(active)}
                         >
-                            Delete
+                            {Icon('trash', 'trash-icon', {
+                                strokeWidth: 0,
+                                fill: 'var(--gd-grey-text)',
+                            })}
                         </button>
                     </div>
                     {field.itemFields.map((sub) => {

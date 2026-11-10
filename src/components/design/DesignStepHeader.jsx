@@ -1,7 +1,7 @@
 import { useDesign } from '../../context/DesignContext';
 import { TOTAL_STEPS } from '../../data/designSections';
-import chatIcon from '../../assets/icons/chat_icon.svg';
 import { useState } from 'react';
+import Icon from '../IconDesign';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -66,16 +66,7 @@ function DesignStepHeader({ stepNumber, label }) {
                 Overview
             </button>
             <span className="ds-chat-btn" title={'Chat Feature'}>
-                <svg height="40" width="40">
-                    <circle r="20" cx="20" cy="20" fill="#547194" />
-                    <image
-                        x="7.5"
-                        y="7.5"
-                        width="25"
-                        height="25"
-                        href={chatIcon}
-                    />
-                </svg>
+                {Icon('chat', '', {fill: '#fff', size: 40} )}
             </span>
         </header>
     );

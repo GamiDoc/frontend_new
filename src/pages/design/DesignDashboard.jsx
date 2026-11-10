@@ -103,16 +103,24 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
             <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
 
             <nav className="ds-dashboard-nav" aria-label="Sections">
-                {DESIGN_SECTIONS.map((s) => (
-                    <button
-                        key={s.number}
-                        type="button"
-                        className="ds-dashboard-nav-item"
-                        onClick={() => goToSection(s.number)}
-                    >
-                        {s.navLabel}
-                    </button>
-                ))}
+                <progress
+                    id="overview-nav-progress"
+                    className="ds-progress"
+                    max={100}
+                    value={overall.percent}
+                ></progress>
+                <div id="overview-nav-sections">
+                    {DESIGN_SECTIONS.map((s) => (
+                        <button
+                            key={s.number}
+                            type="button"
+                            className="ds-dashboard-nav-item"
+                            onClick={() => goToSection(s.number)}
+                        >
+                            {s.navLabel}
+                        </button>
+                    ))}
+                </div>
             </nav>
 
             <main className="ds-main">

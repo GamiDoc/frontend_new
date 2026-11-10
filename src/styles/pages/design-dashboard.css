@@ -4,30 +4,38 @@
    one card per section, export buttons and report history.
    ===================================================== */
 
-/* -- Section bar under the navbar ------------------------------------------- */
+/* Styling for overview section */
 .ds-dashboard-nav {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 60%;
-    margin: 20px 0 30px;
+    flex-direction: column;
+    gap: 1.8rem;
+    padding: 34px 200px;
+    margin-bottom: 40px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+#overview-nav-progress {
+    min-height: 3px;
+    max-height: 3px;
+    min-width: 0;
+    border-radius: 3px;
+}
+
+#overview-nav-sections {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .ds-dashboard-nav-item {
-    background: #ffffff;
-    border: 1px solid var(--gd-inputs-border);
-    border-radius: 15px;
-    padding: 6px 16px;
-    font: inherit;
-    font-size: 14px;
-    color: var(--gd-blue);
-    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--gd-grey-text);
 }
 
 .ds-dashboard-nav-item:hover {
-    border-color: var(--gd-blue-hover);
-    color: var(--gd-blue-hover);
+    text-decoration: underline;
 }
 
 /* -- Header: title + overall progress --------------------------------------- */
