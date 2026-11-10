@@ -268,8 +268,9 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
     );
     const info = (o) =>
         o.info && (
-            <span className="ds-info" title={o.info} aria-label={o.info}>
+            <span className="ds-info" aria-label={o.info}>
                 ⓘ
+                <span className='ds-tooltip'>{o.info}</span>
             </span>
         );
 
