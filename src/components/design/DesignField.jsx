@@ -21,7 +21,8 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  * * "Other" option: `.ds-option--other`; when selected, an input `.ds-other-input` appears below
  * * Checkboxes (checklist / checks): <label class="ds-check"> with <input type="checkbox" class="ds-check-input">,
  *   `.ds-check-title` and optional `.ds-check-description`. Checklist columns: `.ds-checks--cols-<n>`
- * * Info icon (ⓘ) next to an option: `.ds-info`; the text is in `data-tooltip`, shown on hover by CSS
+ * * Info icon (ⓘ) next to an option: `.ds-info`; the text is in `data-tooltip`, shown on hover by CSS.
+ *   On touch screens a tap on ⓘ shows the text under the options in `.ds-info-panel` (another tap hides it)
  * * Slider: <input type="range" class="ds-range"> + <output class="ds-range-value">. Until the user chooses, the range has `data-unset="true"` and the value shows "—"
  * * Text: <textarea class="ds-textarea"> or, for one-line fields, <input class="ds-input">
  * * Select: <select class="ds-select">
@@ -64,6 +65,8 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
         .join(' ');
     const value = values[field.key];
     const set = (v) => onChange(field.key, v);
+    // Info text opened by tapping an ⓘ (touch screens have no hover): shown under the options
+    const [openInfo, setOpenInfo] = useState(null);
 
     const heading = (field.title || field.hint) && (
         <div className="ds-field-heading">
@@ -302,10 +305,26 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
     );
     const info = (o) =>
         o.info && (
-            <span className="ds-info" data-tooltip={o.info} aria-label={o.info}>
+            <span
+                className={`ds-info${openInfo === o.info ? ' ds-info--open' : ''}`}
+                data-tooltip={o.info}
+                aria-label={o.info}
+                role="button"
+                onClick={(e) => {
+                    // only show the text: do not select the option it sits in
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpenInfo(openInfo === o.info ? null : o.info);
+                }}
+            >
                 ⓘ
             </span>
         );
+    const infoPanel = openInfo && (
+        <p className="ds-info-panel" role="note">
+            {openInfo}
+        </p>
+    );
 
     if (field.display === 'checklist' || field.display === 'checks') {
         return (
@@ -342,6 +361,7 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                         </label>
                     ))}
                 </div>
+                {infoPanel}
                 {otherInput}
             </div>
         );
@@ -393,6 +413,7 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                         </button>
                     ))}
                 </div>
+                {infoPanel}
                 {otherInput}
             </div>
         );
@@ -429,6 +450,7 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                     </button>
                 ))}
             </div>
+            {infoPanel}
             {otherInput}
         </div>
     );

@@ -382,6 +382,34 @@ input[type='range']:focus-visible {
     color: inherit;
 }
 
+/* Info text opened by a tap (touch screens), under the options; same look as the tooltip */
+.ds-info-panel {
+    margin: 0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background: var(--gd-blue-hover);
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+/* With a mouse the tooltip is enough: no panel, and no tooltip on touch screens */
+@media (hover: hover) {
+    .ds-info-panel {
+        display: none;
+    }
+}
+
+@media (hover: none) {
+    .ds-info[data-tooltip]:hover::after {
+        content: none;
+    }
+
+    .ds-info--open {
+        color: var(--gd-blue-hover);
+    }
+}
+
 /* Tooltip (mockup: 176 px box, #405166, 12/16 white text), shown on hover */
 .ds-info[data-tooltip]:hover::after {
     content: attr(data-tooltip);
