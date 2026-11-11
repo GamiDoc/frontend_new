@@ -298,22 +298,63 @@
 }
 
 /* -- Small screens ---------------------------------------------------------- */
+/* Small screens: progress bar + chat on the first row, then "Overview" and the section
+   names in one line that scrolls sideways (fading out on the right) */
 @media (max-width: 900px) {
     .ds-dashboard-nav {
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+            'bar bar chat'
+            'overview sections sections';
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        margin-bottom: 24px;
     }
 
     .ds-dashboard-nav-main {
-        flex-basis: 100%;
+        display: contents;
+    }
+
+    #overview-nav-progress {
+        grid-area: bar;
+    }
+
+    .ds-dashboard-nav .ds-chat-btn {
+        grid-area: chat;
+    }
+
+    .ds-dashboard-nav .ds-chat-btn svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .ds-dashboard-nav-overview {
+        grid-area: overview;
+        padding: 3px 14px;
+        font-size: 14px;
     }
 
     #overview-nav-sections {
+        grid-area: sections;
+        flex-wrap: nowrap;
         justify-content: flex-start;
+        gap: 16px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+        mask-image: linear-gradient(to right, #000 85%, transparent);
+        padding-right: 24px;
+    }
+
+    #overview-nav-sections::-webkit-scrollbar {
+        display: none;
     }
 
     .ds-dashboard-nav-item {
-        white-space: normal;
-        text-align: left;
+        flex-shrink: 0;
+        font-size: 14px;
     }
 
     .ds-dashboard-cards {
