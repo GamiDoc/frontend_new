@@ -371,6 +371,7 @@ input[type='range']:focus-visible {
 
 /* Info icon (ⓘ) next to an option: the text shows on hover (title attribute) */
 .ds-info {
+    position: relative;
     margin-left: 6px;
     font-size: 14px;
     color: var(--gd-blue-medium);
@@ -379,6 +380,27 @@ input[type='range']:focus-visible {
 
 .ds-option--selected .ds-info {
     color: inherit;
+}
+
+/* Tooltip (mockup: 176 px box, #405166, 12/16 white text), shown on hover */
+.ds-info[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 176px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    background: var(--gd-blue-hover);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    text-align: left;
+    white-space: normal;
+    pointer-events: none;
 }
 
 /* Text box shown when "Other" is selected */
@@ -530,6 +552,60 @@ input[type='range']:focus-visible {
     margin: 0;
     font-size: 14px;
     color: var(--gd-error);
+}
+
+/* -- Stacked list (SDKs, risks): one card per item, half fields side by side ------------------- */
+.ds-list--stack {
+    gap: 12px;
+}
+
+.ds-list-item.ds-list-item--stack {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px 16px;
+    padding: 20px 56px 20px 24px; /* room on the right for the bin */
+    background: #ffffff;
+    border: 1.5px solid var(--gd-blue-medium);
+    border-radius: 8px;
+}
+
+.ds-list-item.ds-list-item--stack > .ds-field {
+    grid-column: 1 / -1;
+}
+
+.ds-list-item.ds-list-item--stack > .ds-field--half {
+    grid-column: auto;
+    align-self: end;
+}
+
+.ds-list-item.ds-list-item--stack > .ds-list-remove {
+    position: absolute;
+    right: 16px;
+    bottom: 20px;
+    border: none;
+    padding: 4px;
+    background: none;
+}
+
+.ds-list-add--link {
+    align-self: flex-start;
+    border: none;
+    padding: 0;
+    background: none;
+    color: var(--gd-text-muted);
+    text-decoration: underline;
+}
+
+.ds-list-add--link:hover {
+    border: none;
+    color: var(--gd-blue-hover);
+}
+
+@media (max-width: 900px) {
+    .ds-list-item.ds-list-item--stack > .ds-field--half {
+        grid-column: 1 / -1;
+    }
 }
 
 /* -- Error message under a form / page ----------------------------------------------------------- */

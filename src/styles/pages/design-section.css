@@ -318,3 +318,17 @@
         width: 70%;
     }
 }
+
+/* -- Technical requirements · Runtime and controls / Content pipeline: small bold titles,
+      a divider under each chip group (mockup) ----------------------------------------- */
+#ds-group-runtime .ds-field-title,
+#ds-group-pipeline .ds-field-title,
+.ds-list-item--stack .ds-field-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#ds-group-runtime .ds-field--chips {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gd-inputs-border);
+}

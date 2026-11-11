@@ -225,7 +225,14 @@ export function DesignProvider({ children }) {
                     const hasLocalEdits =
                         savedRef.current[n] !== undefined &&
                         isDirty(section, prev[n]);
-                    if (force || !hasLocalEdits) merged[n] = fresh[n];
+                    // Same content as on the server: keep the local values, which may hold
+                    // things that are never saved (e.g. a list item just added, still empty).
+                    const sameContent =
+                        prev[n] !== undefined &&
+                        serialize(section, prev[n]) ===
+                            serialize(section, fresh[n]);
+                    if (force || (!hasLocalEdits && !sameContent))
+                        merged[n] = fresh[n];
                 }
                 return merged;
             });
