@@ -4,6 +4,9 @@ import {
     normalizeOptions,
     otherKey,
     emptyItem,
+    gameMechanics,
+    mechanicName,
+    nextItemName,
 } from '../../data/designSections';
 import Icon from '../IconDesign';
 
@@ -22,6 +25,9 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  * * Slider: <input type="range" class="ds-range"> + <output class="ds-range-value">. Until the user chooses, the range has `data-unset="true"` and the value shows "—"
  * * Text: <textarea class="ds-textarea"> or, for one-line fields, <input class="ds-input">
  * * Select: <select class="ds-select">
+ * * Mechanics (display 'mechanics'): chips `.ds-option` built from the mechanics described in
+ *   Gameful Core; with none yet, the hint `.ds-mechanics-empty`; with `collapsed`, first the
+ *   button `.ds-mechanics-open` ("Link to another mechanic")
  * * Image (display 'image'): drop zone `.ds-image-drop` (`--over` while dragging, `--busy` while uploading),
  *   then the preview `.ds-image-preview` with <img> and `.ds-image-remove`; errors in `.ds-image-error`
  * * Game loop (display 'loop'): clickable row `.ds-loop` with `.ds-loop-badge` and `.ds-loop-description`;
@@ -144,6 +150,17 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                     </div>
                 </div>
             </>
+        );
+    }
+
+    // -- Link to game mechanics chosen in Gameful Core -----------------
+    if (field.display === 'mechanics') {
+        return (
+            <div className={className}>
+                {heading}
+                {label}
+                <MechanicPicker field={field} value={value} onChange={set} />
+            </div>
         );
     }
 
@@ -417,7 +434,9 @@ function DesignList({ field, items, onChange }) {
     }
 
     function add() {
-        onChange([...items, emptyItem(field)]);
+        const item = emptyItem(field);
+        if (field.numbered) item.Name = nextItemName(field, items);
+        onChange([...items, item]);
         setSelected(items.length);
     }
 
@@ -428,6 +447,11 @@ function DesignList({ field, items, onChange }) {
 
     const item = items[active];
     const prefix = `${field.key} ${active + 1}`;
+    // `numbered` lists (game mechanics) call an unnamed item "<itemLabel> <n>"
+    const nameOf = (it, i) =>
+        field.numbered
+            ? mechanicName(field.itemLabel, it, i)
+            : it.Name || field.itemLabel;
 
     return (
         <div className="ds-list">
@@ -441,11 +465,11 @@ function DesignList({ field, items, onChange }) {
                         className={`ds-list-tab${i === active ? ' ds-list-tab--active' : ''}`}
                         onClick={() => setSelected(i)}
                     >
-                        {it.Name || field.itemLabel}
+                        {nameOf(it, i)}
                     </button>
                 ))}
                 <button type="button" className="ds-list-add" onClick={add}>
-                    + {field.itemLabel}
+                    + {field.addLabel || field.itemLabel}
                 </button>
             </div>
 
@@ -456,7 +480,7 @@ function DesignList({ field, items, onChange }) {
                             <input
                                 className="ds-input ds-list-item-name"
                                 aria-label="Component name"
-                                placeholder={field.itemLabel}
+                                placeholder={nameOf({}, active)}
                                 maxLength="60"
                                 value={item.Name || ''}
                                 onChange={(e) =>
@@ -485,7 +509,11 @@ function DesignList({ field, items, onChange }) {
                         return (
                             <DesignField
                                 key={key}
-                                field={{ ...sub, key }}
+                                field={{
+                                    ...sub,
+                                    key,
+                                    itemName: nameOf(item, active),
+                                }}
                                 values={{
                                     [key]: item[sub.key],
                                     [`${key} · Other`]: item[otherKey(sub)],
@@ -651,6 +679,77 @@ function ImageField({ id, field, value, onChange }) {
                 </p>
             )}
         </>
+    );
+}
+
+/* Chips with the game mechanics described in Gameful Core (section 4), read from the
+   drafts of the context so they are always the current ones. A value whose mechanic was
+   removed or renamed there stays selected (and visible) until the user deselects it.
+   Inside a mechanic (`field.itemName`) the mechanic itself is left out. With `collapsed`
+   and nothing linked yet, only the button `.ds-mechanics-open` is shown. */
+function MechanicPicker({ field, value, onChange }) {
+    const { drafts } = useDesign();
+    const [open, setOpen] = useState(false);
+    const selected = Array.isArray(value) ? value : [];
+    const available = gameMechanics(drafts[4]).filter(
+        (m) => m.value !== field.itemName,
+    );
+    const missing = selected
+        .filter((v) => !available.some((m) => m.value === v))
+        .map((v) => ({ value: v, category: null }));
+    const all = [...available, ...missing];
+
+    if (field.collapsed && !open && selected.length === 0) {
+        return (
+            <button
+                type="button"
+                className="ds-mechanics-open"
+                onClick={() => setOpen(true)}
+            >
+                + {field.buttonLabel || 'Link to another mechanic'}
+            </button>
+        );
+    }
+
+    if (all.length === 0) {
+        return (
+            <p className="ds-field-hint ds-mechanics-empty">
+                No mechanics yet: describe them in Gameful Core (Gamification
+                &amp; Mechanics) and they will appear here.
+            </p>
+        );
+    }
+
+    const toggle = (v) =>
+        onChange(
+            selected.includes(v)
+                ? selected.filter((x) => x !== v)
+                : [...selected, v],
+        );
+
+    return (
+        <div
+            className="ds-options"
+            role="group"
+            aria-label={field.title || field.label || field.key}
+        >
+            {all.map((m) => (
+                <button
+                    key={m.value}
+                    type="button"
+                    className={`ds-option${selected.includes(m.value) ? ' ds-option--selected' : ''}`}
+                    aria-pressed={selected.includes(m.value)}
+                    title={
+                        m.element ? `${m.element} · ${m.category}` : undefined
+                    }
+                    onClick={() => toggle(m.value)}
+                >
+                    <span className="ds-option-content">
+                        <span className="ds-option-title">{m.value}</span>
+                    </span>
+                </button>
+            ))}
+        </div>
     );
 }
 

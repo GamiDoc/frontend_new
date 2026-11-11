@@ -440,6 +440,24 @@ input[type='range']:focus-visible {
     border-color: var(--gd-blue-hover);
 }
 
+/* -- "Link to another mechanic" button (mechanics picker, collapsed) ----------------------------- */
+.ds-mechanics-open {
+    align-self: flex-start;
+    background: #ffffff;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--gd-text-muted);
+    cursor: pointer;
+}
+
+.ds-mechanics-open:hover {
+    border-color: var(--gd-blue-hover);
+    color: var(--gd-blue-hover);
+}
+
 /* -- Image upload (e.g. loop sketch) ------------------------------------------------------------- */
 .ds-image-drop {
     display: flex;

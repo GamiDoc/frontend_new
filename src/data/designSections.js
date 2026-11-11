@@ -15,13 +15,16 @@
        type     'single' | 'multi' | 'text' | 'list'
        display  options: 'chips' | 'cards' | 'checklist' | 'checks' | 'select' | 'slider'
                 text:    'textarea' (default) | 'input' | 'loop' | 'image' (PNG/JPEG upload, value = URL)
+                multi:   also 'mechanics' → picks among the game mechanics chosen in Gameful Core
        title / hint   sub-heading shown above the field (e.g. "Metrics / signals")
        other          adds an "Other" option; its free text is saved under `<key> · Other`
        columns        checklist laid out on N columns
        half           input or select shown at half width (two side by side)
-       showIf         { key, includes, keep? } → field shown only if that field contains the value
-                      (multi: array includes it · single: equals it). keep: true = hidden only
-                      on screen, its value is still saved (used for tabs)
+       showIf         { key, includes, keep? } (or an array of them, all must hold) → field shown
+                      only if that field contains the value (multi: array includes it · single:
+                      equals it). keep: true = hidden only on screen, its value is still saved (tabs)
+       numbered / addLabel   ('list') a new item is named "<itemLabel> <n>" (saved, so links to it
+                      stay valid) · text of the add button
        badge / description   ('loop' display) label and explanation of a game loop
        popupIntro     ('loop' display) text under the title of the loop's pop-up
        loop           key of the loop whose pop-up shows this field (instead of the card)
@@ -51,9 +54,58 @@ export const SPARK_STEP = {
 
 export const OVERVIEW_STEP = { navName: 'Overview' };
 
-/* Game element taxonomy used by "Gamification & Mechanics" (Toda et al.). */
+/* The mechanics of one game element (Gameful Core → Gamification & Mechanics): a list of
+   named blocks ("Points 1", …) shown when its category and the element itself are open.
+   Hidden lists keep their values (`keep`): the user fills several elements one at a time. */
+function mechanicField(category, element) {
+    return {
+        key: `${element} mechanics`,
+        title: element,
+        group: 'mechanics',
+        type: 'list',
+        itemLabel: element,
+        numbered: true,
+        addLabel: 'Add another mechanic',
+        required: false,
+        showIf: [
+            { key: 'Game element categories', includes: category, keep: true },
+            { key: `${category} elements`, includes: element, keep: true },
+        ],
+        itemFields: [
+            {
+                key: 'Trigger',
+                title: 'Trigger: what does the player do?',
+                type: 'text',
+                placeholder: 'e.g. Player completes a daily quest...',
+            },
+            {
+                key: 'System response',
+                title: 'System response: what happens in return?',
+                type: 'text',
+                placeholder: 'e.g. +15 points added to weekly score...',
+            },
+            {
+                key: 'Goal supported',
+                title: 'Goal supported: what goal does this bring the player closer to?',
+                type: 'text',
+                placeholder: 'e.g. Encourages daily engagement...',
+            },
+            {
+                key: 'Linked mechanics',
+                type: 'multi',
+                display: 'mechanics',
+                collapsed: true,
+                buttonLabel: 'Link to another mechanic',
+            },
+        ],
+    };
+}
+
+/* Game element taxonomy used by "Gamification & Mechanics" (Toda et al.).
+   Performance follows the mockup; the other categories are not in the mockup yet.
+   Element names must be unique: each one gets a "<element> mechanics" list. */
 const GAME_ELEMENTS = {
-    Performance: ['Acknowledgement', 'Level', 'Progression', 'Points', 'Stats'],
+    Performance: ['Points', 'Level', 'Progression', 'Status', 'Achievement'],
     Social: ['Competition', 'Cooperation', 'Reputation', 'Social pressure'],
     Personal: ['Novelty', 'Objectives', 'Puzzles', 'Renovation', 'Sensation'],
     Fictional: ['Narrative', 'Storytelling'],
@@ -876,7 +928,7 @@ export const DESIGN_SECTIONS = [
                 options: [
                     {
                         value: 'Performance',
-                        info: 'Elements that give the player feedback on how they are doing: acknowledgement, levels, progression, points, stats.',
+                        info: 'Elements that give the player feedback on how they are doing: points, levels, progression, status, achievements.',
                     },
                     {
                         value: 'Social',
@@ -896,17 +948,16 @@ export const DESIGN_SECTIONS = [
                     },
                 ],
             },
-            // The game elements of each category are not in the mockup: they follow the
-            // taxonomy by Toda et al., the same the categories come from.
+            // Inside the open category, one element open at a time (tabs again). Each element
+            // has its own list of mechanics ("Points 1", "Points 2", …), see mechanicFields.
             ...Object.entries(GAME_ELEMENTS).flatMap(([category, elements]) => [
                 {
                     key: `${category} elements`,
-                    title: `${category} elements`,
+                    title: `${category} game elements`,
                     group: 'mechanics',
-                    type: 'multi',
+                    type: 'single',
                     display: 'chips',
                     required: false,
-                    provisional: true,
                     showIf: {
                         key: 'Game element categories',
                         includes: category,
@@ -914,19 +965,7 @@ export const DESIGN_SECTIONS = [
                     },
                     options: elements,
                 },
-                {
-                    key: `${category} mechanics`,
-                    label: 'Describe the mechanics behind each element:',
-                    group: 'mechanics',
-                    type: 'text',
-                    required: false,
-                    provisional: true,
-                    showIf: {
-                        key: 'Game element categories',
-                        includes: category,
-                        keep: true,
-                    },
-                },
+                ...elements.map((element) => mechanicField(category, element)),
             ]),
             {
                 key: 'Primary progression type',
@@ -1128,19 +1167,10 @@ export const DESIGN_SECTIONS = [
         title: 'Feedback and Evaluation',
         navLabel: 'Evaluation and Feedback loop',
         navName: 'Feedback and Evaluation',
-        summary: 'Feedback components, Evaluation',
+        summary: 'Feedback components',
         description:
             "Close the loop: define how the system communicates with players, then how you'll know if it's working. Work through these in order — each answer builds on the last.",
-        groups: [
-            { id: 'feedback', title: 'Feedback components' },
-            // The mockup shows only the feedback components: the evaluation part
-            // mentioned in the section description is not defined yet.
-            {
-                id: 'evaluation',
-                title: 'Evaluation',
-                provisional: true,
-            },
-        ],
+        groups: [{ id: 'feedback', title: 'Feedback components' }],
         fields: [
             {
                 key: 'Feedback component',
@@ -1217,14 +1247,12 @@ export const DESIGN_SECTIONS = [
                         display: 'chips',
                         options: ['Visual', 'Audio', 'Haptic', 'Textual'],
                     },
-                    // "Link with specific game element" opens a picker that is not in the
-                    // mockups yet: for now the element is written as text.
+                    // Picks among the game mechanics chosen in Gameful Core (see gameMechanics).
                     {
-                        key: 'Game element',
+                        key: 'Linked game mechanics',
                         title: 'What is the best game element that can support feedback?',
-                        type: 'text',
-                        display: 'input',
-                        provisional: true,
+                        type: 'multi',
+                        display: 'mechanics',
                     },
                     {
                         key: 'Presentation',
@@ -1241,14 +1269,6 @@ export const DESIGN_SECTIONS = [
                             'e.g. Fires from DetectionSystem.onSpotted(); suppress if player is already in combat state',
                     },
                 ],
-            },
-            {
-                key: 'Evaluation',
-                label: 'How will you know if the system is working?',
-                group: 'evaluation',
-                type: 'text',
-                required: false,
-                provisional: true,
             },
         ],
     },
@@ -1305,6 +1325,42 @@ export const DESIGN_SECTIONS = [
 /* Sections counted in the overall percentage and in "complete" (optional ones excluded). */
 export const REQUIRED_SECTIONS = DESIGN_SECTIONS.filter((s) => !s.optional);
 
+/* Name of a mechanic: the one it was given (see nextItemName), or "<element> <n>". */
+export function mechanicName(element, item, index) {
+    return item?.Name?.trim() || `${element} ${index + 1}`;
+}
+
+/* Name for a new item of a `numbered` list: "<itemLabel> <n>", with n one more than
+   the highest number already used, so names never repeat after a deletion. */
+export function nextItemName(field, items) {
+    const pattern = new RegExp(`^${field.itemLabel} (\\d+)$`);
+    const used = items.map((it) =>
+        Number(it?.Name?.trim().match(pattern)?.[1] || 0),
+    );
+    return `${field.itemLabel} ${Math.max(items.length, ...used) + 1}`;
+}
+
+/* Game mechanics described in Gameful Core (section 4): every block of every
+   "<element> mechanics" list, also of elements not open right now. Used by the
+   'mechanics' picker: "Link to another mechanic" there and the game element in Feedback.
+   A link is saved as the mechanic's name, so renaming a mechanic leaves old links as text. */
+export function gameMechanics(gamefulValues = {}) {
+    return Object.entries(GAME_ELEMENTS).flatMap(([category, elements]) =>
+        elements.flatMap((element) =>
+            (gamefulValues[`${element} mechanics`] || [])
+                // only mechanics with some content: empty ones are not saved
+                .filter((item) =>
+                    isFilled(mechanicField(category, element), [item]),
+                )
+                .map((item, i) => ({
+                    value: mechanicName(element, item, i),
+                    category,
+                    element,
+                })),
+        ),
+    );
+}
+
 /* Number of steps in "STEP n OF N": the sections (the Spark is not counted). */
 export const TOTAL_STEPS = DESIGN_SECTIONS.length;
 
@@ -1328,12 +1384,24 @@ function itemKey(field, index, sub) {
     return `${field.key} ${index + 1} · ${sub.key}`;
 }
 
+function conditionsOf(field) {
+    if (!field.showIf) return [];
+    return Array.isArray(field.showIf) ? field.showIf : [field.showIf];
+}
+
 /* true if the field is shown with the current values (see `showIf`). */
 export function isFieldVisible(field, values) {
-    if (!field.showIf) return true;
-    const source = values?.[field.showIf.key];
-    if (Array.isArray(source)) return source.includes(field.showIf.includes);
-    return source === field.showIf.includes;
+    return conditionsOf(field).every(({ key, includes }) => {
+        const source = values?.[key];
+        if (Array.isArray(source)) return source.includes(includes);
+        return source === includes;
+    });
+}
+
+/* true if a hidden field still keeps (and sends) its value: tabs, see `showIf.keep`. */
+function keepsWhenHidden(field) {
+    const conditions = conditionsOf(field);
+    return conditions.length > 0 && conditions.every((c) => c.keep);
 }
 
 /* true if the field has a value (non-empty array, non-empty string, list with content). */
@@ -1422,7 +1490,7 @@ export function valuesToContent(section, values) {
     for (const field of section.fields) {
         known.add(field.key);
         if (field.other) known.add(otherKey(field));
-        if (!isFieldVisible(field, values) && !field.showIf?.keep) continue;
+        if (!isFieldVisible(field, values) && !keepsWhenHidden(field)) continue;
         if (field.type === 'list') {
             const items = (values[field.key] || []).filter((item) =>
                 isFilled(field, [item]),
