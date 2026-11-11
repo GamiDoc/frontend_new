@@ -673,3 +673,24 @@ input[type='range']:focus-visible {
         padding: 16px;
     }
 }
+
+/* -- AI suggestion under a field title (prefill from the Spark) ---------------------------------- */
+.ds-ai-note {
+    margin: 0.25rem 0 0;
+    padding: 0.4rem 0.6rem;
+    border-left: 3px solid var(--gd-purple-accent);
+    border-radius: 4px;
+    background: var(--gd-yellow-bg-notice);
+    font-size: 14px;
+    color: var(--gd-text-muted);
+}
+
+.ds-ai-note-badge {
+    font-weight: 600;
+    color: var(--gd-purple-hover-accent);
+}
+
+/* Low confidence = the AI assumed it: ask for a check */
+.ds-ai-note--low {
+    border-left-color: var(--gd-error-dark);
+}

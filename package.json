@@ -8,6 +8,7 @@
         "build": "node node_modules/vite/bin/vite.js build",
         "postinstall": "chmod +x node_modules/.bin/* 2>/dev/null || true",
         "lint": "eslint .",
+        "export-schema": "node scripts/export-design-schema.mjs",
         "preview": "vite preview"
     },
     "dependencies": {

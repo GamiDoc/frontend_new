@@ -38,6 +38,8 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  * * List (repeatable blocks, e.g. feedback components): `.ds-list`, tabs `.ds-list-tab` (`--active`),
  *   add button `.ds-list-add`, the open item `.ds-list-item` with `.ds-list-item-name` and `.ds-list-remove`
  * * Field Label: `.ds-field-label`
+ * * AI suggestion (prefill from the Spark): `.ds-ai-note` (+ `--low|--medium|--high` confidence) in the
+ *   field heading, with `.ds-ai-note-badge` and `.ds-ai-note-reason`; it disappears once the field is edited
  */
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -67,13 +69,17 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
     const set = (v) => onChange(field.key, v);
     // Info text opened by tapping an ⓘ (touch screens have no hover): shown under the options
     const [openInfo, setOpenInfo] = useState(null);
+    // Why the AI chose this value (prefill from the Spark); gone once the user edits the field.
+    const { aiNoteFor } = useDesign();
+    const aiNote = aiNoteFor?.(field.key);
 
-    const heading = (field.title || field.hint) && (
+    const heading = (field.title || field.hint || aiNote) && (
         <div className="ds-field-heading">
             {field.title && (
                 <span className="ds-field-title">{field.title}</span>
             )}
             {field.hint && <p className="ds-field-hint">{field.hint}</p>}
+            {aiNote && <AiNote note={aiNote} />}
         </div>
     );
     const label = field.label && (
@@ -859,6 +865,24 @@ function MechanicPicker({ field, value, onChange }) {
                 </button>
             ))}
         </div>
+    );
+}
+
+const CONFIDENCE_LABEL = {
+    high: 'from your Spark',
+    medium: 'inferred from your Spark',
+    low: 'AI assumption: please check',
+};
+
+/* Note of a value suggested by the AI prefill: why it was chosen and how sure the AI is. */
+function AiNote({ note }) {
+    return (
+        <p className={`ds-ai-note ds-ai-note--${note.confidence}`} role="note">
+            <span className="ds-ai-note-badge">
+                ✦ AI · {CONFIDENCE_LABEL[note.confidence] || 'suggestion'}
+            </span>{' '}
+            <span className="ds-ai-note-reason">{note.reason}</span>
+        </p>
     );
 }
 
