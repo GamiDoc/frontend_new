@@ -594,8 +594,12 @@ input[type='range']:focus-visible {
     gap: 12px 16px;
     padding: 20px 56px 20px 24px; /* room on the right for the bin */
     background: #ffffff;
-    border: 1.5px solid var(--gd-blue-medium);
+    border: 2px solid var(--gd-light-blue);
     border-radius: 8px;
+}
+
+.ds-list-item.ds-list-item--stack:focus-within {
+    box-shadow: 0px 2px 10px var(--gd-light-blue);
 }
 
 .ds-list-item.ds-list-item--stack > .ds-field {
@@ -605,6 +609,12 @@ input[type='range']:focus-visible {
 .ds-list-item.ds-list-item--stack > .ds-field--half {
     grid-column: auto;
     align-self: end;
+    height: 100%;
+}
+
+.ds-field select{
+    background: none;
+    height: 100%;
 }
 
 .ds-list-item.ds-list-item--stack > .ds-list-remove {

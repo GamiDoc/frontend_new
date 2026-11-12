@@ -108,20 +108,3 @@
         display: none;
     }
 }
-
-/* DESIGN EVALUATION PART ------------------------------------------------------------------- */
-
-.ds-tooltip {
-    background-color: var(--gd-blue-hover);
-    color: #fff;
-    display: none;
-    position: absolute;
-    width: 176px;
-    z-index: 9999;
-    padding: 10px 15px;
-    border-radius: 5px;
-}
-
-.ds-info:hover .ds-tooltip {
-    display: block;
-}

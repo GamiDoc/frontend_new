@@ -324,7 +324,6 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                 }}
             >
                 ⓘ
-                <span className='ds-tooltip'>{o.info}</span>
             </span>
         );
     const infoPanel = openInfo && (

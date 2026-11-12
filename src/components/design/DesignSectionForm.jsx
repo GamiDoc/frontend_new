@@ -44,6 +44,7 @@ function DesignSectionForm({ section, values, onChange }) {
     function renderGroup(group, nested = false) {
         const className = `ds-group ds-group--${group.id}${nested ? ' ds-group--nested' : ''}`;
         if (group.collapsible) {
+            /* N.B: The span detail-content is necessary to properly format the contents with flex  */
             return (
                 <details
                     key={group.id}
@@ -51,13 +52,15 @@ function DesignSectionForm({ section, values, onChange }) {
                     className={`${className} ds-group--collapsible`}
                 >
                     <summary className="ds-group-title">{group.title}</summary>
-                    {group.description && (
-                        <p className="ds-group-description">
-                            {group.description}
-                        </p>
-                    )}
-                    {renderFields(group.id)}
-                    {renderChildren(group.id)}
+                    <span className="details-content">
+                        {group.description && (
+                            <p className="ds-group-description">
+                                {group.description}
+                            </p>
+                        )}
+                        {renderFields(group.id)}
+                        {renderChildren(group.id)}
+                    </span>
                 </details>
             );
         }
