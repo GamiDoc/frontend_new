@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar';
 import SaveDraftButton from '../../components/design/SaveDraftButton';
 import { useDesign } from '../../context/DesignContext';
 import { DESIGN_SECTIONS } from '../../data/designSections';
+import { REPORT_FORMATS, reportLabel } from '../../data/designReports';
 import Icon from '../../components/IconDesign';
 
 // Badge text for each card status
@@ -22,7 +23,9 @@ COMMENTS FOR STYLING TO BE LATER MOVED TO APPROPRIATE SECTIONS
        complete · in_progress · current · not_started
      Inside: `.ds-card-title` (+ `.ds-optional-tag` for optional sections), `.ds-card-status` (badge), <progress class="ds-progress">,
      `.ds-card-summary`, `.ds-card-percent`
-   - Report: `.ds-reports-latest` (last generated) e `.ds-reports-history` (history)
+   - Documents: `.ds-reports` with one `.ds-report-option` per format (`.ds-report-option-title`,
+     `.ds-report-option-description`, button); status `.ds-report-status` (role status) and
+     `.ds-reports-latest` (link to the last generated); `.ds-reports-history` (history)
  */
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -34,7 +37,8 @@ COMMENTS FOR STYLING TO BE LATER MOVED TO APPROPRIATE SECTIONS
  * At first it shows a message and then "Continue".
  *
  * * Clicking on a card opens the section
- * * "Export summary" generates 2 PDF (Standard e AI-Enhanced) and shows the links
+ * * "Export your design": two documents to choose from (Design report, Game Design Document),
+ *   written by the AI on the backend in 1–3 minutes; the page shows the progress and the link
  * * "Continue where I left off"
  * * "Previous reports" shows the history of the generated PDFs (FR-27)
  * */
@@ -46,13 +50,13 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
         loadDashboard,
         goToSection,
         continueWhereLeftOff,
-        generateReports,
+        generateReport,
         loadReportHistory,
-        saving,
+        reportJob,
+        reportRunning,
         error,
     } = useDesign();
     const [backendLocked, setBackendLocked] = useState(false);
-    const [latest, setLatest] = useState(null);
     const [history, setHistory] = useState([]);
 
     // The backend confirms whether the dashboard should be accessible; in the meantime a report history is loaded.
@@ -71,14 +75,15 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
         };
     }, [loadDashboard, loadReportHistory]);
 
-    async function handleExport() {
-        const result = await generateReports();
-        if (!result) return;
-        setLatest(result);
+    // A document just finished: refresh the history.
+    const finishedReportId =
+        reportJob?.state === 'done' ? reportJob.report?.reportId : null;
+    useEffect(() => {
+        if (!finishedReportId) return;
         loadReportHistory()
             .then(setHistory)
             .catch(() => {});
-    }
+    }, [finishedReportId, loadReportHistory]);
 
     if (backendLocked || !dashboardUnlocked) {
         return (
@@ -203,14 +208,6 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                     <SaveDraftButton onOpenLogin={onOpenLogin} />
                     <button
                         type="button"
-                        className="ds-btn ds-btn--secondary"
-                        onClick={handleExport}
-                        disabled={saving}
-                    >
-                        {saving ? 'Generating…' : 'Export summary'}
-                    </button>
-                    <button
-                        type="button"
                         className="ds-btn ds-btn--primary"
                         onClick={continueWhereLeftOff}
                     >
@@ -218,25 +215,66 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                     </button>
                 </div>
 
-                {latest && (
-                    <section className="ds-reports-latest" aria-live="polite">
-                        <h2>Your reports are ready</h2>
-                        <a
-                            href={latest.standard.url}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            Standard version (PDF)
-                        </a>
-                        <a
-                            href={latest.enhanced.url}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            AI-Enhanced version (PDF)
-                        </a>
-                    </section>
-                )}
+                <section
+                    className="ds-reports"
+                    aria-labelledby="ds-reports-title"
+                >
+                    <h2 id="ds-reports-title">Export your design</h2>
+                    <p className="ds-group-description">
+                        Choose the document you prefer. The AI writes it from
+                        your sections; it usually takes 1–3 minutes, and you can
+                        keep working meanwhile.
+                    </p>
+                    <div className="ds-report-options">
+                        {REPORT_FORMATS.map((format) => (
+                            <div key={format.id} className="ds-report-option">
+                                <h3 className="ds-report-option-title">
+                                    {format.title}
+                                </h3>
+                                <p className="ds-report-option-description">
+                                    {format.description}
+                                </p>
+                                <button
+                                    type="button"
+                                    className="ds-btn ds-btn--primary"
+                                    onClick={() => generateReport(format.id)}
+                                    disabled={reportRunning}
+                                >
+                                    {reportRunning &&
+                                    reportJob?.format === format.id
+                                        ? 'Writing…'
+                                        : format.button}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {reportRunning && (
+                        <p className="ds-report-status" role="status">
+                            The AI is writing your{' '}
+                            {reportLabel(reportJob.format)}… this usually takes
+                            1–3 minutes.
+                        </p>
+                    )}
+                    {reportJob?.state === 'done' && reportJob.report && (
+                        <p className="ds-reports-latest" aria-live="polite">
+                            Your {reportLabel(reportJob.format)} is ready:{' '}
+                            <a
+                                href={reportJob.report.url}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                open the PDF
+                            </a>
+                        </p>
+                    )}
+                    {reportJob?.state === 'failed' && (
+                        <p className="ds-error" role="alert">
+                            The {reportLabel(reportJob.format)} could not be
+                            generated. Please try again.
+                        </p>
+                    )}
+                </section>
 
                 {history.length > 0 && (
                     <section className="ds-reports-history">
@@ -249,10 +287,7 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        {r.version === 'enhanced'
-                                            ? 'AI-Enhanced'
-                                            : 'Standard'}{' '}
-                                        ·{' '}
+                                        {reportLabel(r.version)} ·{' '}
                                         {new Date(r.createdAt).toLocaleString()}
                                     </a>
                                 </li>

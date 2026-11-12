@@ -15,7 +15,10 @@ export const designApi = {
     saveSection: (scope, sectionNumber, body) =>
         api.put(`${base(scope)}/section/${sectionNumber}`, body),
     dashboard: (scope) => api.get(`${base(scope)}/dashboard`),
-    generatePDF: (scope) => api.post(`${base(scope)}/generate-pdf`, {}),
+    // format: 'report' (reasoned design report) | 'gdd' (Game Design Document).
+    // The document is generated in the background: progress in status.reportJob.
+    generatePDF: (scope, format) =>
+        api.post(`${base(scope)}/generate-pdf`, { format }),
     faq: (scope, sectionNumber) =>
         api.get(`${base(scope)}/faq/${sectionNumber}`),
     // PNG/JPEG up to 5 MB (multipart field "file") → { url }

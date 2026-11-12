@@ -1,3 +1,4 @@
+import { reportLabel } from '../data/designReports';
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -209,7 +210,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
         ...designReports.map((r) => ({
             id: r.reportId,
             process: 'design',
-            name: `Design Report — ${r.version === 'enhanced' ? 'AI-Enhanced' : 'Standard'}`,
+            name: reportLabel(r.version),
             date: r.createdAt,
             url: r.url,
         })),

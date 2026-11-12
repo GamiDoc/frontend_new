@@ -66,6 +66,9 @@ import {
                        { state: 'running'|'done'|'failed', currentSection, completedSections,
                          failedSections, skippedSections, analysis, notes }
      prefillRunning    true mentre l'AI sta compilando le sezioni
+     reportJob         ultima generazione di un documento finale (status.reportJob), o null:
+                       { format, state: 'running'|'done'|'failed', report: { url, … } }
+     reportRunning     true mentre un documento finale viene generato
      awaitingPrefill   true se la pagina Spark aspetta la fine del pre-riempimento
 
    Helper di navigazione
@@ -84,7 +87,7 @@ import {
      retryPrefill()     rilancia l'AI sulla stessa Spark: compila solo le sezioni ancora vuote
      prefillMissing     sezioni che l'AI non è riuscita a compilare e che sono ancora vuote
      loadDashboard() · goToDashboard() · continueWhereLeftOff()
-     generateReports() · loadReportHistory()
+     generateReport(format) · loadReportHistory()   format: 'report' | 'gdd'
      saveAsDraft()  → 'needs-auth' | true | false
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -526,11 +529,13 @@ export function DesignProvider({ children }) {
     // ── Pre-riempimento AI (job in background sul backend) ───────────────────
     const prefill = status?.prefill || null;
     const prefillRunning = prefill?.state === 'running';
+    const reportJob = status?.reportJob || null;
+    const reportRunning = reportJob?.state === 'running';
 
     // Finché il job gira, lo stato viene riletto: ogni sezione compilata compare subito
     // (applyStatus non tocca le sezioni con modifiche locali non salvate).
     useEffect(() => {
-        if (!prefillRunning || !scope) return undefined;
+        if ((!prefillRunning && !reportRunning) || !scope) return undefined;
         let cancelled = false;
         const timer = setTimeout(async () => {
             try {
@@ -558,7 +563,15 @@ export function DesignProvider({ children }) {
             cancelled = true;
             clearTimeout(timer);
         };
-    }, [prefillRunning, scope, status, applyStatus, go, setAwaitingPrefill]);
+    }, [
+        prefillRunning,
+        reportRunning,
+        scope,
+        status,
+        applyStatus,
+        go,
+        setAwaitingPrefill,
+    ]);
 
     // go() also stops the wait.
     const continueWithoutWaiting = useCallback(() => go('section', 1), [go]);
@@ -748,8 +761,8 @@ export function DesignProvider({ children }) {
     }, [progress, go]);
 
     // ── Report PDF (FR-22…FR-27) ─────────────────────────────────────────────
-    // Una richiesta genera entrambe le versioni: { standard: { url, … }, enhanced: { url, … } }.
-    // La versione AI-Enhanced la produce il backend: nel frontend non c'è logica AI.
+    // Due documenti a scelta: 'report' (report ragionato) e 'gdd' (Game Design Document),
+    // scritti dall'AI sul backend: nel frontend non c'è logica AI.
     // Uploads a PNG/JPEG for an 'image' field and returns its URL (saved as the field value).
     // Errors are thrown: the field shows them next to the drop zone.
     const uploadImage = useCallback(async (file) => {
@@ -757,18 +770,25 @@ export function DesignProvider({ children }) {
         return url;
     }, []);
 
-    const generateReports = useCallback(async () => {
-        setSaving(true);
-        setError(null);
-        try {
-            return await designApi.generatePDF(scopeRef.current);
-        } catch (e) {
-            await handleError(e, 'Report generation failed.');
-            return null;
-        } finally {
-            setSaving(false);
-        }
-    }, [handleError]);
+    // Avvia la generazione di un documento finale (l'AI lo scrive sul backend, 1–3 minuti):
+    // l'avanzamento arriva in status.reportJob, riletto dal polling.
+    const generateReport = useCallback(
+        async (format) => {
+            setError(null);
+            try {
+                const result = await designApi.generatePDF(
+                    scopeRef.current,
+                    format,
+                );
+                applyStatus(result.designStatus);
+                return result.reportJob;
+            } catch (e) {
+                await handleError(e, 'Document generation failed.');
+                return null;
+            }
+        },
+        [applyStatus, handleError],
+    );
 
     // Storico dei report (più recenti prima): dal backend per un progetto, dallo stato per un ospite.
     const loadReportHistory = useCallback(async () => {
@@ -871,6 +891,8 @@ export function DesignProvider({ children }) {
                 prefill,
                 prefillRunning,
                 prefillMissing,
+                reportJob,
+                reportRunning,
                 awaitingPrefill,
                 // helper di navigazione
                 canOpenSection,
@@ -894,7 +916,7 @@ export function DesignProvider({ children }) {
                 loadDashboard,
                 goToDashboard,
                 continueWhereLeftOff,
-                generateReports,
+                generateReport,
                 loadReportHistory,
                 saveAsDraft,
                 uploadImage,

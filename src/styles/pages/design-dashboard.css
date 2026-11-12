@@ -365,3 +365,45 @@
         padding: 20px;
     }
 }
+
+/* -- Export your design: one option per document format ---------------------------------- */
+.ds-reports {
+    margin-top: 2rem;
+}
+
+.ds-report-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.ds-report-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.ds-report-option-title {
+    margin: 0;
+    font-size: 1.15rem;
+}
+
+.ds-report-option-description {
+    flex: 1;
+    margin: 0;
+    color: var(--gd-text-muted);
+}
+
+.ds-report-option .ds-btn {
+    align-self: flex-start;
+}
+
+.ds-report-status {
+    color: var(--gd-blue);
+    font-weight: 600;
+}
