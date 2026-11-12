@@ -49,6 +49,26 @@
     gap: 0.94rem;
 }
 
+/* Each bar sits in a slot; the slot is taller than the bar so it is easy to click */
+.ds-step-slot {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    padding: 6px 0;
+    margin: -6px 0;
+    border: none;
+    background: none;
+}
+
+.ds-step-slot--link {
+    cursor: pointer;
+}
+
+.ds-step-slot--link:hover .ds-step-segment,
+.ds-step-slot--link:focus-visible .ds-step-segment {
+    background-color: var(--gd-blue-hover);
+}
+
 .ds-step-segment {
     min-height: 3px;
     max-height: 3px;

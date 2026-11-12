@@ -4,6 +4,9 @@ import {
     normalizeOptions,
     otherKey,
     emptyItem,
+    gameMechanics,
+    mechanicName,
+    nextItemName,
 } from '../../data/designSections';
 import Icon from '../IconDesign';
 
@@ -18,17 +21,25 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  * * "Other" option: `.ds-option--other`; when selected, an input `.ds-other-input` appears below
  * * Checkboxes (checklist / checks): <label class="ds-check"> with <input type="checkbox" class="ds-check-input">,
  *   `.ds-check-title` and optional `.ds-check-description`. Checklist columns: `.ds-checks--cols-<n>`
- * * Info icon (ⓘ) next to an option: `.ds-info` (the text is in the `title` attribute)
+ * * Info icon (ⓘ) next to an option: `.ds-info`; the text is in `data-tooltip`, shown on hover by CSS.
+ *   On touch screens a tap on ⓘ shows the text under the options in `.ds-info-panel` (another tap hides it)
  * * Slider: <input type="range" class="ds-range"> + <output class="ds-range-value">. Until the user chooses, the range has `data-unset="true"` and the value shows "—"
  * * Text: <textarea class="ds-textarea"> or, for one-line fields, <input class="ds-input">
  * * Select: <select class="ds-select">
+ * * Mechanics (display 'mechanics'): chips `.ds-option` built from the mechanics described in
+ *   Gameful Core; with none yet, the hint `.ds-mechanics-empty`; with `collapsed`, first the
+ *   button `.ds-mechanics-open` ("Link to another mechanic")
  * * Image (display 'image'): drop zone `.ds-image-drop` (`--over` while dragging, `--busy` while uploading),
  *   then the preview `.ds-image-preview` with <img> and `.ds-image-remove`; errors in `.ds-image-error`
  * * Game loop (display 'loop'): clickable row `.ds-loop` with `.ds-loop-badge` and `.ds-loop-description`;
  *   it opens <dialog class="ds-popup"> with `.ds-popup-title`, `.ds-popup-intro` and the loop's questions
+ * * Stacked list (`layout: 'stack'`, e.g. SDKs, risks): `.ds-list--stack`, one `.ds-list-item--stack` card per
+ *   item with its `.ds-list-remove`, then the link `.ds-list-add--link`
  * * List (repeatable blocks, e.g. feedback components): `.ds-list`, tabs `.ds-list-tab` (`--active`),
  *   add button `.ds-list-add`, the open item `.ds-list-item` with `.ds-list-item-name` and `.ds-list-remove`
  * * Field Label: `.ds-field-label`
+ * * AI suggestion (prefill from the Spark): `.ds-ai-note` (+ `--low|--medium|--high` confidence) in the
+ *   field heading, with `.ds-ai-note-badge` and `.ds-ai-note-reason`; it disappears once the field is edited
  */
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -56,13 +67,19 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
         .join(' ');
     const value = values[field.key];
     const set = (v) => onChange(field.key, v);
+    // Info text opened by tapping an ⓘ (touch screens have no hover): shown under the options
+    const [openInfo, setOpenInfo] = useState(null);
+    // Why the AI chose this value (prefill from the Spark); gone once the user edits the field.
+    const { aiNoteFor } = useDesign();
+    const aiNote = aiNoteFor?.(field.key);
 
-    const heading = (field.title || field.hint) && (
+    const heading = (field.title || field.hint || aiNote) && (
         <div className="ds-field-heading">
             {field.title && (
                 <span className="ds-field-title">{field.title}</span>
             )}
             {field.hint && <p className="ds-field-hint">{field.hint}</p>}
+            {aiNote && <AiNote note={aiNote} />}
         </div>
     );
     const label = field.label && (
@@ -76,7 +93,19 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
         return (
             <div className={className}>
                 {heading}
-                <DesignList field={field} items={value || []} onChange={set} />
+                {field.layout === 'stack' ? (
+                    <DesignStack
+                        field={field}
+                        items={value || []}
+                        onChange={set}
+                    />
+                ) : (
+                    <DesignList
+                        field={field}
+                        items={value || []}
+                        onChange={set}
+                    />
+                )}
             </div>
         );
     }
@@ -147,6 +176,17 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
         );
     }
 
+    // -- Link to game mechanics chosen in Gameful Core -----------------
+    if (field.display === 'mechanics') {
+        return (
+            <div className={className}>
+                {heading}
+                {label}
+                <MechanicPicker field={field} value={value} onChange={set} />
+            </div>
+        );
+    }
+
     // -- Image upload (value = URL of the uploaded file) ----------------
     if (field.display === 'image') {
         return (
@@ -197,6 +237,9 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                 <select
                     id={id}
                     className="ds-select"
+                    aria-label={
+                        field.label ? undefined : field.title || field.key
+                    }
                     value={value || ''}
                     onChange={(e) => set(e.target.value)}
                 >
@@ -268,11 +311,27 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
     );
     const info = (o) =>
         o.info && (
-            <span className="ds-info" aria-label={o.info}>
+            <span
+                className={`ds-info${openInfo === o.info ? ' ds-info--open' : ''}`}
+                data-tooltip={o.info}
+                aria-label={o.info}
+                role="button"
+                onClick={(e) => {
+                    // only show the text: do not select the option it sits in
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpenInfo(openInfo === o.info ? null : o.info);
+                }}
+            >
                 ⓘ
                 <span className='ds-tooltip'>{o.info}</span>
             </span>
         );
+    const infoPanel = openInfo && (
+        <p className="ds-info-panel" role="note">
+            {openInfo}
+        </p>
+    );
 
     if (field.display === 'checklist' || field.display === 'checks') {
         return (
@@ -309,6 +368,7 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                         </label>
                     ))}
                 </div>
+                {infoPanel}
                 {otherInput}
             </div>
         );
@@ -360,6 +420,7 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                         </button>
                     ))}
                 </div>
+                {infoPanel}
                 {otherInput}
             </div>
         );
@@ -396,6 +457,7 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                     </button>
                 ))}
             </div>
+            {infoPanel}
             {otherInput}
         </div>
     );
@@ -418,7 +480,9 @@ function DesignList({ field, items, onChange }) {
     }
 
     function add() {
-        onChange([...items, emptyItem(field)]);
+        const item = emptyItem(field);
+        if (field.numbered) item.Name = nextItemName(field, items);
+        onChange([...items, item]);
         setSelected(items.length);
     }
 
@@ -429,6 +493,11 @@ function DesignList({ field, items, onChange }) {
 
     const item = items[active];
     const prefix = `${field.key} ${active + 1}`;
+    // `numbered` lists (game mechanics) call an unnamed item "<itemLabel> <n>"
+    const nameOf = (it, i) =>
+        field.numbered
+            ? mechanicName(field.itemLabel, it, i)
+            : it.Name || field.itemLabel;
 
     return (
         <div className="ds-list">
@@ -442,11 +511,11 @@ function DesignList({ field, items, onChange }) {
                         className={`ds-list-tab${i === active ? ' ds-list-tab--active' : ''}`}
                         onClick={() => setSelected(i)}
                     >
-                        {it.Name || field.itemLabel}
+                        {nameOf(it, i)}
                     </button>
                 ))}
                 <button type="button" className="ds-list-add" onClick={add}>
-                    + {field.itemLabel}
+                    + {field.addLabel || field.itemLabel}
                 </button>
             </div>
 
@@ -457,7 +526,7 @@ function DesignList({ field, items, onChange }) {
                             <input
                                 className="ds-input ds-list-item-name"
                                 aria-label="Component name"
-                                placeholder={field.itemLabel}
+                                placeholder={nameOf({}, active)}
                                 maxLength="60"
                                 value={item.Name || ''}
                                 onChange={(e) =>
@@ -486,7 +555,11 @@ function DesignList({ field, items, onChange }) {
                         return (
                             <DesignField
                                 key={key}
-                                field={{ ...sub, key }}
+                                field={{
+                                    ...sub,
+                                    key,
+                                    itemName: nameOf(item, active),
+                                }}
                                 values={{
                                     [key]: item[sub.key],
                                     [`${key} · Other`]: item[otherKey(sub)],
@@ -503,6 +576,76 @@ function DesignList({ field, items, onChange }) {
                     })}
                 </div>
             )}
+        </div>
+    );
+}
+
+/* List shown as cards one under the other (no tabs), e.g. SDKs and technical risks.
+   With no items yet it shows one empty card, so the user can start typing right away:
+   it becomes a real item at the first change. */
+function DesignStack({ field, items, onChange }) {
+    const shown = items.length > 0 ? items : [emptyItem(field)];
+
+    function update(index, key, value) {
+        onChange(
+            shown.map((item, i) =>
+                i === index ? { ...item, [key]: value } : item,
+            ),
+        );
+    }
+
+    return (
+        <div className="ds-list ds-list--stack">
+            {shown.map((item, index) => {
+                const prefix = `${field.key} ${index + 1}`;
+                return (
+                    <div
+                        key={index}
+                        className="ds-list-item ds-list-item--stack"
+                    >
+                        {field.itemFields.map((sub) => {
+                            const key = `${prefix} · ${sub.key}`;
+                            return (
+                                <DesignField
+                                    key={key}
+                                    field={{ ...sub, key }}
+                                    values={{
+                                        [key]: item[sub.key],
+                                        [`${key} · Other`]: item[otherKey(sub)],
+                                    }}
+                                    onChange={(k, value) =>
+                                        update(
+                                            index,
+                                            k === key ? sub.key : otherKey(sub),
+                                            value,
+                                        )
+                                    }
+                                />
+                            );
+                        })}
+                        <button
+                            type="button"
+                            className="ds-list-remove"
+                            aria-label={`Remove ${field.itemLabel} ${index + 1}`}
+                            onClick={() =>
+                                onChange(shown.filter((_, i) => i !== index))
+                            }
+                        >
+                            {Icon('trash', 'trash-icon', {
+                                strokeWidth: 0,
+                                fill: 'var(--gd-grey-text)',
+                            })}
+                        </button>
+                    </div>
+                );
+            })}
+            <button
+                type="button"
+                className="ds-list-add ds-list-add--link"
+                onClick={() => onChange([...shown, emptyItem(field)])}
+            >
+                + {field.addLabel || field.itemLabel}
+            </button>
         </div>
     );
 }
@@ -652,6 +795,95 @@ function ImageField({ id, field, value, onChange }) {
                 </p>
             )}
         </>
+    );
+}
+
+/* Chips with the game mechanics described in Gameful Core (section 4), read from the
+   drafts of the context so they are always the current ones. A value whose mechanic was
+   removed or renamed there stays selected (and visible) until the user deselects it.
+   Inside a mechanic (`field.itemName`) the mechanic itself is left out. With `collapsed`
+   and nothing linked yet, only the button `.ds-mechanics-open` is shown. */
+function MechanicPicker({ field, value, onChange }) {
+    const { drafts } = useDesign();
+    const [open, setOpen] = useState(false);
+    const selected = Array.isArray(value) ? value : [];
+    const available = gameMechanics(drafts[4]).filter(
+        (m) => m.value !== field.itemName,
+    );
+    const missing = selected
+        .filter((v) => !available.some((m) => m.value === v))
+        .map((v) => ({ value: v, category: null }));
+    const all = [...available, ...missing];
+
+    if (field.collapsed && !open && selected.length === 0) {
+        return (
+            <button
+                type="button"
+                className="ds-mechanics-open"
+                onClick={() => setOpen(true)}
+            >
+                + {field.buttonLabel || 'Link to another mechanic'}
+            </button>
+        );
+    }
+
+    if (all.length === 0) {
+        return (
+            <p className="ds-field-hint ds-mechanics-empty">
+                No mechanics yet: describe them in Gameful Core (Gamification
+                &amp; Mechanics) and they will appear here.
+            </p>
+        );
+    }
+
+    const toggle = (v) =>
+        onChange(
+            selected.includes(v)
+                ? selected.filter((x) => x !== v)
+                : [...selected, v],
+        );
+
+    return (
+        <div
+            className="ds-options"
+            role="group"
+            aria-label={field.title || field.label || field.key}
+        >
+            {all.map((m) => (
+                <button
+                    key={m.value}
+                    type="button"
+                    className={`ds-option${selected.includes(m.value) ? ' ds-option--selected' : ''}`}
+                    aria-pressed={selected.includes(m.value)}
+                    title={
+                        m.element ? `${m.element} · ${m.category}` : undefined
+                    }
+                    onClick={() => toggle(m.value)}
+                >
+                    <span className="ds-option-content">
+                        <span className="ds-option-title">{m.value}</span>
+                    </span>
+                </button>
+            ))}
+        </div>
+    );
+}
+
+const CONFIDENCE_LABEL = {
+    high: 'from your Spark',
+    medium: 'inferred from your Spark',
+    low: 'AI assumption: please check',
+};
+
+/* Note of a value suggested by the AI prefill: why it was chosen and how sure the AI is. */
+function AiNote({ note }) {
+    return (
+        <p className={`ds-ai-note ds-ai-note--${note.confidence}`} role="note">
+            <span className="ds-ai-note-badge">
+                ✦ AI · {CONFIDENCE_LABEL[note.confidence] || 'suggestion'}
+            </span>{' '}
+            <span className="ds-ai-note-reason">{note.reason}</span>
+        </p>
     );
 }
 

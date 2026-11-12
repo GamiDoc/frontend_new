@@ -21,6 +21,7 @@ import {
  * * "Back to the …": previous section (or the Spark)
  * * "Go to the …": saves & proceeds to the next section (or the Overview after the last one)
  * Modifications to already seen sections are automatically saved (auto-save).
+ * `.ds-prefill-notice`: banner while the AI prefill runs, or when the section was drafted by it.
  * */
 function DesignSection({ onOpenLogin, onOpenSignup }) {
     const {
@@ -37,6 +38,10 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
         goToSection,
         saving,
         error,
+        prefill,
+        prefillRunning,
+        prefillMissing,
+        retryPrefill,
     } = useDesign();
 
     const section = getSection(currentSection);
@@ -94,6 +99,39 @@ function DesignSection({ onOpenLogin, onOpenSignup }) {
                 {section.description && (
                     <p className="ds-intro">{section.description}</p>
                 )}
+                {prefillRunning && (
+                    <p className="ds-prefill-notice" role="status">
+                        ✦ The AI is still drafting your sections from the Spark:
+                        empty sections fill in as they are ready.
+                    </p>
+                )}
+                {prefillMissing.length > 0 && (
+                    <div className="ds-prefill-notice ds-prefill-notice--retry">
+                        <span>
+                            ✦ The AI could not draft:{' '}
+                            {prefillMissing
+                                .map((n) => getSection(n).navName)
+                                .join(', ')}
+                            .
+                        </span>
+                        <button
+                            type="button"
+                            className="ds-btn ds-btn--secondary"
+                            onClick={retryPrefill}
+                            disabled={saving}
+                        >
+                            Retry with AI
+                        </button>
+                    </div>
+                )}
+                {!prefillRunning &&
+                    prefill?.notes?.[String(currentSection)]?.length > 0 && (
+                        <p className="ds-prefill-notice">
+                            ✦ This section was drafted by the AI from your
+                            Spark. Review each suggestion: the notes explain why
+                            it was chosen and disappear once you edit the field.
+                        </p>
+                    )}
 
                 <DesignSectionForm
                     section={section}

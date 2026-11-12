@@ -62,6 +62,11 @@ import {
      designInProgress  true se il design caricato è iniziato (banner "unfinished design")
      pendingDraftSave  true se "Save as a draft" aspetta il login
      draftSavedAt      timestamp dell'ultimo "Save as a draft" riuscito
+     prefill           stato del pre-riempimento AI avviato dalla Spark (status.prefill), o null:
+                       { state: 'running'|'done'|'failed', currentSection, completedSections,
+                         failedSections, skippedSections, analysis, notes }
+     prefillRunning    true mentre l'AI sta compilando le sezioni
+     awaitingPrefill   true se la pagina Spark aspetta la fine del pre-riempimento
 
    Helper di navigazione
      canOpenSection(n)  la sezione n si può aprire adesso?
@@ -73,6 +78,11 @@ import {
      startDesign() · openDesignProject(id) · resumeDesign() · discardDesign()
      submitSpark(testo, { navigate }) · skipSpark()
      updateField(n, chiave, valore) · goToSection(n) · continueFrom(n, { skip }) · goBackFrom(n)
+     aiNoteFor(chiave)  nota AI ({ field, reason, confidence }) del campo nella sezione aperta,
+                        finché l'utente non modifica quel campo; altrimenti null
+     continueWithoutWaiting()  lascia la Spark mentre l'AI continua a compilare
+     retryPrefill()     rilancia l'AI sulla stessa Spark: compila solo le sezioni ancora vuote
+     prefillMissing     sezioni che l'AI non è riuscita a compilare e che sono ancora vuote
      loadDashboard() · goToDashboard() · continueWhereLeftOff()
      generateReports() · loadReportHistory()
      saveAsDraft()  → 'needs-auth' | true | false
@@ -92,6 +102,8 @@ const DEFAULT_PROJECT_NAME = 'Untitled design project';
 const FLOW_ERRORS = ['SECTION_LOCKED', 'DASHBOARD_LOCKED'];
 // localStorage: ultima pagina visitata di ogni design, per "riprendi" (chiave + scope).
 const LAST_PAGE_KEY = 'gamidoc.designLastPage';
+// Intervallo di polling dello stato mentre l'AI compila le sezioni (il job gira sul backend).
+const PREFILL_POLL_INTERVAL = 2000;
 // Ordine delle sezioni nel primo passaggio (lo stesso del backend, internal/design).
 const ORDER = DESIGN_SECTIONS.map((s) => s.number);
 
@@ -183,6 +195,15 @@ export function DesignProvider({ children }) {
     const [error, setError] = useState(null);
     const [pendingDraftSave, setPendingDraftSave] = useState(false);
     const [draftSavedAt, setDraftSavedAt] = useState(null);
+    // La Spark resta aperta finché l'AI non finisce (poi si va a Context).
+    const [awaitingPrefill, setAwaitingPrefillState] = useState(false);
+    const awaitingPrefillRef = useRef(false);
+    const setAwaitingPrefill = useCallback((value) => {
+        awaitingPrefillRef.current = value;
+        setAwaitingPrefillState(value);
+    }, []);
+    // Campi modificati dall'utente dopo il pre-riempimento: "<jobId>|<sezione>|<chiave>".
+    const [touchedFields, setTouchedFields] = useState(() => new Set());
 
     // Le azioni sono asincrone: i ref garantiscono che leggano sempre i valori più recenti.
     const scopeRef = useRef(null);
@@ -218,14 +239,25 @@ export function DesignProvider({ children }) {
             statusRef.current = next;
             setStatus(next);
             const fresh = valuesFromStatus(next);
+            // What was saved BEFORE this status: React may run the updater below only at the
+            // next render, after savedRef has already been set to the new server content (that
+            // would make every section changed on the server look like a local edit).
+            const savedBefore = { ...savedRef.current };
             setDraftsAndRef((prev) => {
                 const merged = { ...prev };
                 for (const section of DESIGN_SECTIONS) {
                     const n = section.number;
                     const hasLocalEdits =
-                        savedRef.current[n] !== undefined &&
-                        isDirty(section, prev[n]);
-                    if (force || !hasLocalEdits) merged[n] = fresh[n];
+                        savedBefore[n] !== undefined &&
+                        serialize(section, prev[n]) !== savedBefore[n];
+                    // Same content as on the server: keep the local values, which may hold
+                    // things that are never saved (e.g. a list item just added, still empty).
+                    const sameContent =
+                        prev[n] !== undefined &&
+                        serialize(section, prev[n]) ===
+                            serialize(section, fresh[n]);
+                    if (force || (!hasLocalEdits && !sameContent))
+                        merged[n] = fresh[n];
                 }
                 return merged;
             });
@@ -236,7 +268,7 @@ export function DesignProvider({ children }) {
                 );
             }
         },
-        [setDraftsAndRef, isDirty],
+        [setDraftsAndRef],
     );
 
     const reset = useCallback(() => {
@@ -247,7 +279,8 @@ export function DesignProvider({ children }) {
         setDraftsAndRef(() => valuesFromStatus(null));
         setCurrentSection(1);
         setPendingDraftSave(false);
-    }, [setScope, setDraftsAndRef]);
+        setAwaitingPrefill(false);
+    }, [setScope, setDraftsAndRef, setAwaitingPrefill]);
 
     // Trasforma un errore del backend in un messaggio. Se il backend rifiuta un passo del
     // flusso, ricarica lo stato così l'interfaccia torna allineata.
@@ -325,11 +358,13 @@ export function DesignProvider({ children }) {
     // Ogni cambio di pagina viene ricordato, così "riprendi" torna esattamente lì.
     const go = useCallback(
         (target, sectionNumber) => {
+            // Leaving the Spark: stop waiting for the AI prefill there.
+            if (target !== 'spark') setAwaitingPrefill(false);
             if (sectionNumber) setCurrentSection(sectionNumber);
             storeLastPage(scopeRef.current, target, sectionNumber);
             setPage(PAGE_FOR[target]);
         },
-        [setPage],
+        [setPage, setAwaitingPrefill],
     );
 
     // Dove aprire un design appena caricato: l'ultima pagina visitata, se si può ancora
@@ -471,7 +506,10 @@ export function DesignProvider({ children }) {
                     text,
                 );
                 applyStatus(result.designStatus);
-                if (navigate) go('section', 1);
+                // Con il pre-riempimento AI avviato si resta sulla Spark (che mostra l'avanzamento)
+                // e si passa a Context quando l'AI ha finito.
+                if (navigate && result.prefillStarted) setAwaitingPrefill(true);
+                else if (navigate) go('section', 1);
                 return result;
             } catch (e) {
                 await handleError(e, 'Unable to save your notes.');
@@ -480,10 +518,89 @@ export function DesignProvider({ children }) {
                 setSaving(false);
             }
         },
-        [applyStatus, go, handleError],
+        [applyStatus, go, handleError, setAwaitingPrefill],
     );
 
     const skipSpark = useCallback(() => go('section', 1), [go]);
+
+    // ── Pre-riempimento AI (job in background sul backend) ───────────────────
+    const prefill = status?.prefill || null;
+    const prefillRunning = prefill?.state === 'running';
+
+    // Finché il job gira, lo stato viene riletto: ogni sezione compilata compare subito
+    // (applyStatus non tocca le sezioni con modifiche locali non salvate).
+    useEffect(() => {
+        if (!prefillRunning || !scope) return undefined;
+        let cancelled = false;
+        const timer = setTimeout(async () => {
+            try {
+                const next = await designApi.get(scope);
+                if (cancelled) return;
+                applyStatus(next);
+                // Finito il job la Spark in attesa passa a Context, se l'AI ha compilato
+                // almeno una sezione; altrimenti resta sulla Spark con un errore (si può riprovare).
+                const done = next?.prefill?.state !== 'running';
+                if (done && awaitingPrefillRef.current) {
+                    if (next?.prefill?.completedSections?.length)
+                        go('section', 1);
+                    else {
+                        setAwaitingPrefill(false);
+                        setError(
+                            'The AI could not draft your design this time. Press "Let AI analyze & continue" to try again, or skip this step.',
+                        );
+                    }
+                }
+            } catch {
+                /* si riprova al prossimo giro */
+            }
+        }, PREFILL_POLL_INTERVAL);
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [prefillRunning, scope, status, applyStatus, go, setAwaitingPrefill]);
+
+    // go() also stops the wait.
+    const continueWithoutWaiting = useCallback(() => go('section', 1), [go]);
+
+    // Sezioni che l'ultimo pre-riempimento non è riuscito a compilare e che sono ancora vuote.
+    const prefillMissing = useMemo(() => {
+        if (!prefill || prefillRunning) return [];
+        return (prefill.failedSections || []).filter(
+            (n) => !hasAnyValue(getSection(n), drafts[n]),
+        );
+    }, [prefill, prefillRunning, drafts]);
+
+    // Stessa Spark rimandata: il backend riavvia l'AI solo sulle sezioni vuote (quelle
+    // compilate, dall'utente o dall'AI, restano). Si resta sulla pagina corrente.
+    const retryPrefill = useCallback(async () => {
+        setSaving(true);
+        setError(null);
+        try {
+            const result = await designApi.saveSpark(
+                scopeRef.current,
+                statusRef.current?.spark || '',
+            );
+            applyStatus(result.designStatus);
+            return result.prefillStarted;
+        } catch (e) {
+            await handleError(e, 'Unable to restart the AI draft.');
+            return false;
+        } finally {
+            setSaving(false);
+        }
+    }, [applyStatus, handleError]);
+
+    const aiNoteFor = useCallback(
+        (key) => {
+            if (!prefill?.notes) return null;
+            if (touchedFields.has(`${prefill.jobId}|${currentSection}|${key}`))
+                return null;
+            const notes = prefill.notes[String(currentSection)] || [];
+            return notes.find((note) => note.field === key) || null;
+        },
+        [prefill, currentSection, touchedFields],
+    );
 
     // ── Sezioni ──────────────────────────────────────────────────────────────
     const updateField = useCallback(
@@ -492,6 +609,14 @@ export function DesignProvider({ children }) {
                 ...prev,
                 [sectionNumber]: { ...prev[sectionNumber], [key]: value },
             }));
+            // Una modifica dell'utente "conferma" il campo: la sua nota AI sparisce.
+            const jobId = statusRef.current?.prefill?.jobId;
+            if (jobId) {
+                const touched = `${jobId}|${sectionNumber}|${key.replace(/ · Other$/, '')}`;
+                setTouchedFields((prev) =>
+                    prev.has(touched) ? prev : new Set(prev).add(touched),
+                );
+            }
         },
         [setDraftsAndRef],
     );
@@ -743,6 +868,10 @@ export function DesignProvider({ children }) {
                 ),
                 pendingDraftSave,
                 draftSavedAt,
+                prefill,
+                prefillRunning,
+                prefillMissing,
+                awaitingPrefill,
                 // helper di navigazione
                 canOpenSection,
                 stepNumberOf,
@@ -756,6 +885,9 @@ export function DesignProvider({ children }) {
                 submitSpark,
                 skipSpark,
                 updateField,
+                aiNoteFor,
+                continueWithoutWaiting,
+                retryPrefill,
                 goToSection,
                 continueFrom,
                 goBackFrom,

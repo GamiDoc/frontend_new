@@ -15,13 +15,17 @@
        type     'single' | 'multi' | 'text' | 'list'
        display  options: 'chips' | 'cards' | 'checklist' | 'checks' | 'select' | 'slider'
                 text:    'textarea' (default) | 'input' | 'loop' | 'image' (PNG/JPEG upload, value = URL)
+                multi:   also 'mechanics' → picks among the game mechanics chosen in Gameful Core
        title / hint   sub-heading shown above the field (e.g. "Metrics / signals")
        other          adds an "Other" option; its free text is saved under `<key> · Other`
        columns        checklist laid out on N columns
        half           input or select shown at half width (two side by side)
-       showIf         { key, includes, keep? } → field shown only if that field contains the value
-                      (multi: array includes it · single: equals it). keep: true = hidden only
-                      on screen, its value is still saved (used for tabs)
+       showIf         { key, includes, keep? } (or an array of them, all must hold) → field shown
+                      only if that field contains the value (multi: array includes it · single:
+                      equals it). keep: true = hidden only on screen, its value is still saved (tabs)
+       layout: 'stack' ('list') every item is a card one under the other, no tabs (SDKs, risks)
+       numbered / addLabel   ('list') a new item is named "<itemLabel> <n>" (saved, so links to it
+                      stay valid) · text of the add button
        badge / description   ('loop' display) label and explanation of a game loop
        popupIntro     ('loop' display) text under the title of the loop's pop-up
        loop           key of the loop whose pop-up shows this field (instead of the card)
@@ -51,9 +55,58 @@ export const SPARK_STEP = {
 
 export const OVERVIEW_STEP = { navName: 'Overview' };
 
-/* Game element taxonomy used by "Gamification & Mechanics" (Toda et al.). */
+/* The mechanics of one game element (Gameful Core → Gamification & Mechanics): a list of
+   named blocks ("Points 1", …) shown when its category and the element itself are open.
+   Hidden lists keep their values (`keep`): the user fills several elements one at a time. */
+function mechanicField(category, element) {
+    return {
+        key: `${element} mechanics`,
+        title: element,
+        group: 'mechanics',
+        type: 'list',
+        itemLabel: element,
+        numbered: true,
+        addLabel: 'Add another mechanic',
+        required: false,
+        showIf: [
+            { key: 'Game element categories', includes: category, keep: true },
+            { key: `${category} elements`, includes: element, keep: true },
+        ],
+        itemFields: [
+            {
+                key: 'Trigger',
+                title: 'Trigger: what does the player do?',
+                type: 'text',
+                placeholder: 'e.g. Player completes a daily quest...',
+            },
+            {
+                key: 'System response',
+                title: 'System response: what happens in return?',
+                type: 'text',
+                placeholder: 'e.g. +15 points added to weekly score...',
+            },
+            {
+                key: 'Goal supported',
+                title: 'Goal supported: what goal does this bring the player closer to?',
+                type: 'text',
+                placeholder: 'e.g. Encourages daily engagement...',
+            },
+            {
+                key: 'Linked mechanics',
+                type: 'multi',
+                display: 'mechanics',
+                collapsed: true,
+                buttonLabel: 'Link to another mechanic',
+            },
+        ],
+    };
+}
+
+/* Game element taxonomy used by "Gamification & Mechanics" (Toda et al.).
+   Performance follows the mockup; the other categories are not in the mockup yet.
+   Element names must be unique: each one gets a "<element> mechanics" list. */
 const GAME_ELEMENTS = {
-    Performance: ['Acknowledgement', 'Level', 'Progression', 'Points', 'Stats'],
+    Performance: ['Points', 'Level', 'Progression', 'Status', 'Achievement'],
     Social: ['Competition', 'Cooperation', 'Reputation', 'Social pressure'],
     Personal: ['Novelty', 'Objectives', 'Puzzles', 'Renovation', 'Sensation'],
     Fictional: ['Narrative', 'Storytelling'],
@@ -213,7 +266,8 @@ export const DESIGN_SECTIONS = [
                 title: 'Re-onboarding',
                 parent: 'onboarding', // sub-card inside the Onboarding card
                 collapsible: true,
-                provisional: true,
+                description:
+                    "Returning users may need a refresher, not a full tutorial. Describe how you'll re-orient them without repeating the full onboarding experience.",
             },
             {
                 id: 'updates',
@@ -271,14 +325,39 @@ export const DESIGN_SECTIONS = [
                 placeholder:
                     'e.g., First 30 seconds: safe tutorial room to practice movement. Tooltips pop up only on first interaction…',
             },
-            // The mockup shows "Re-onboarding" collapsed: its content is not defined yet.
             {
-                key: 'Re-onboarding',
-                label: 'How are returning users re-introduced to the system?',
+                key: 'Re-onboarding methods',
+                group: 're-onboarding',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    'Video recap',
+                    'Chat Bot',
+                    'Guided assistant',
+                    '"What\'s new" summary',
+                    'Reminder of core mechanics',
+                    'Learn-by-doing',
+                    'In-app tooltips',
+                ],
+            },
+            {
+                key: 'Re-onboarding steps and goals',
+                label: 'Outline the main steps and goals of your re-onboarding:',
                 group: 're-onboarding',
                 type: 'text',
                 required: false,
-                provisional: true,
+                placeholder:
+                    "e.g., After 14 days of inactivity, show a 'here's what changed' summary. After a major update, highlight only the new feature",
+            },
+            {
+                key: 'No re-onboarding needed',
+                group: 're-onboarding',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: ['No re-onboarding needed'],
             },
             {
                 key: 'Update frequency',
@@ -583,15 +662,15 @@ export const DESIGN_SECTIONS = [
                 options: [
                     {
                         value: 'Dynamic difficulty adjustment (DDA)',
-                        info: 'The game raises or lowers the challenge in real time based on how the player is performing.',
+                        info: 'The game scales challenge based on performance',
                     },
                     {
                         value: 'Procedural content generation',
-                        info: 'Levels, items or events are generated by algorithms instead of being hand-made, so each session can differ.',
+                        info: 'Levels, quests, or loot generated based on player behavior or preferences',
                     },
                     {
                         value: 'Narrative branching',
-                        info: "The story changes direction depending on the player's choices or actions.",
+                        info: "Story adapts to the user's choices",
                     },
                 ],
             },
@@ -614,19 +693,19 @@ export const DESIGN_SECTIONS = [
                 options: [
                     {
                         value: 'Recommendation systems',
-                        info: 'Suggest content, quests or items based on what the player and similar players did before.',
+                        info: "Suggests content (missions, cosmetics, events) based on a player's play history.",
                     },
                     {
                         value: 'Behavioral segmentation',
-                        info: 'Group players by how they behave and give each group a different experience.',
+                        info: 'Groups players by play style to tailor content or onboarding per group.',
                     },
                     {
                         value: 'Live-ops targeting',
-                        info: 'Offer events, rewards or messages to specific player groups after launch.',
+                        info: 'Delivers personalized offers, notifications, or events based on engagement patterns.',
                     },
                     {
                         value: 'Personalized matchmaking',
-                        info: 'Match players with others based on skill, behavior or preferences.',
+                        info: 'Pairs players using accumulated data like skill, latency, or behavior history — not just current lobby state.',
                     },
                 ],
             },
@@ -876,7 +955,7 @@ export const DESIGN_SECTIONS = [
                 options: [
                     {
                         value: 'Performance',
-                        info: 'Elements that give the player feedback on how they are doing: acknowledgement, levels, progression, points, stats.',
+                        info: 'Elements that give the player feedback on how they are doing: points, levels, progression, status, achievements.',
                     },
                     {
                         value: 'Social',
@@ -896,17 +975,16 @@ export const DESIGN_SECTIONS = [
                     },
                 ],
             },
-            // The game elements of each category are not in the mockup: they follow the
-            // taxonomy by Toda et al., the same the categories come from.
+            // Inside the open category, one element open at a time (tabs again). Each element
+            // has its own list of mechanics ("Points 1", "Points 2", …), see mechanicFields.
             ...Object.entries(GAME_ELEMENTS).flatMap(([category, elements]) => [
                 {
                     key: `${category} elements`,
-                    title: `${category} elements`,
+                    title: `${category} game elements`,
                     group: 'mechanics',
-                    type: 'multi',
+                    type: 'single',
                     display: 'chips',
                     required: false,
-                    provisional: true,
                     showIf: {
                         key: 'Game element categories',
                         includes: category,
@@ -914,19 +992,7 @@ export const DESIGN_SECTIONS = [
                     },
                     options: elements,
                 },
-                {
-                    key: `${category} mechanics`,
-                    label: 'Describe the mechanics behind each element:',
-                    group: 'mechanics',
-                    type: 'text',
-                    required: false,
-                    provisional: true,
-                    showIf: {
-                        key: 'Game element categories',
-                        includes: category,
-                        keep: true,
-                    },
-                },
+                ...elements.map((element) => mechanicField(category, element)),
             ]),
             {
                 key: 'Primary progression type',
@@ -1128,19 +1194,10 @@ export const DESIGN_SECTIONS = [
         title: 'Feedback and Evaluation',
         navLabel: 'Evaluation and Feedback loop',
         navName: 'Feedback and Evaluation',
-        summary: 'Feedback components, Evaluation',
+        summary: 'Feedback components',
         description:
             "Close the loop: define how the system communicates with players, then how you'll know if it's working. Work through these in order — each answer builds on the last.",
-        groups: [
-            { id: 'feedback', title: 'Feedback components' },
-            // The mockup shows only the feedback components: the evaluation part
-            // mentioned in the section description is not defined yet.
-            {
-                id: 'evaluation',
-                title: 'Evaluation',
-                provisional: true,
-            },
-        ],
+        groups: [{ id: 'feedback', title: 'Feedback components' }],
         fields: [
             {
                 key: 'Feedback component',
@@ -1217,14 +1274,12 @@ export const DESIGN_SECTIONS = [
                         display: 'chips',
                         options: ['Visual', 'Audio', 'Haptic', 'Textual'],
                     },
-                    // "Link with specific game element" opens a picker that is not in the
-                    // mockups yet: for now the element is written as text.
+                    // Picks among the game mechanics chosen in Gameful Core (see gameMechanics).
                     {
-                        key: 'Game element',
+                        key: 'Linked game mechanics',
                         title: 'What is the best game element that can support feedback?',
-                        type: 'text',
-                        display: 'input',
-                        provisional: true,
+                        type: 'multi',
+                        display: 'mechanics',
                     },
                     {
                         key: 'Presentation',
@@ -1242,20 +1297,11 @@ export const DESIGN_SECTIONS = [
                     },
                 ],
             },
-            {
-                key: 'Evaluation',
-                label: 'How will you know if the system is working?',
-                group: 'evaluation',
-                type: 'text',
-                required: false,
-                provisional: true,
-            },
         ],
     },
 
     /* ── 6 · Technical requirements ──────────────────────────────────────── */
-    // The mockup shows the nine panels collapsed: their content is not defined yet,
-    // so each one holds a single free-text field.
+    // Nine collapsible panels, as in the mockup. The section is optional.
     {
         number: 6,
         id: 'technical',
@@ -1267,43 +1313,493 @@ export const DESIGN_SECTIONS = [
         description:
             "Ground your design in what's actually feasible to build — the platforms, engine, and constraints your team is working within.",
         groups: [
-            ['platforms', 'Platforms'],
-            ['engine', 'Engine and technology stack'],
-            ['runtime', 'Runtime and controls'],
-            ['display', 'Display, audio, haptics'],
-            ['performance', 'Performance budgets'],
-            ['data', 'Data, save and online'],
-            ['sdks', 'External SDKs and integrations'],
-            ['pipeline', 'Content pipeline'],
-            ['risks', 'Technical risks'],
-        ].map(([id, title]) => ({
+            [
+                'platforms',
+                'Platforms',
+                'Select your target platforms — each one comes with its own constraints on your design.',
+            ],
+            [
+                'engine',
+                'Engine and technology stack',
+                'Define your engine and technology stack; your choice of architecture dictates your production constraints.',
+            ],
+            [
+                'runtime',
+                'Runtime and controls',
+                'Define where and how your game runs, and what players use to control it — this shapes both performance and what mechanics are possible.',
+            ],
+            [
+                'display',
+                'Display, audio, haptics',
+                "Define how players interact physically with your system and note any accessibility options you're supporting.",
+            ],
+            [
+                'performance',
+                'Performance budgets',
+                "Set concrete numbers now, so you're not redesigning around them later.",
+            ],
+            [
+                'data',
+                'Data, save and online',
+                'Describe how progress is stored and recovered — lost progress is the fastest way to lose a player.',
+            ],
+            [
+                'sdks',
+                'External SDKs and integrations',
+                'List every third-party SDK you depend on, so each risk is visible before it becomes a problem.',
+            ],
+            [
+                'pipeline',
+                'Content pipeline',
+                'Describe your production tools and conventions, so ambitious content stays realistic to produce.',
+            ],
+            [
+                'risks',
+                'Technical risks',
+                'Log technical unknowns as they come up — untracked risk is what causes late surprises.',
+            ],
+        ].map(([id, title, description]) => ({
             id,
             title,
+            description,
             collapsible: true,
-            provisional: true,
         })),
         fields: [
-            ['platforms', 'Platforms'],
-            ['engine', 'Engine and technology stack'],
-            ['runtime', 'Runtime and controls'],
-            ['display', 'Display, audio, haptics'],
-            ['performance', 'Performance budgets'],
-            ['data', 'Data, save and online'],
-            ['sdks', 'External SDKs and integrations'],
-            ['pipeline', 'Content pipeline'],
-            ['risks', 'Technical risks'],
-        ].map(([group, key]) => ({
-            key,
-            group,
-            type: 'text',
-            required: false,
-            provisional: true,
-        })),
+            // -- Platforms
+            {
+                key: 'Platforms',
+                group: 'platforms',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    'PC',
+                    'PlayStation 5',
+                    'Meta Quest 3',
+                    'Mobile',
+                    'Web',
+                    'Xbox / Switch',
+                ],
+            },
+            {
+                key: 'Notes per platform',
+                label: 'Notes per platform (min/recommended device, orientation, mode):',
+                group: 'platforms',
+                type: 'text',
+                required: false,
+                placeholder:
+                    'e.g. PC: GTX 1060 min, RTX 3060 recommended. Quest: standalone, seated or standing',
+            },
+            // -- Engine and technology stack
+            {
+                key: 'Engine and version',
+                label: 'Engine and version:',
+                group: 'engine',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. Unreal Engine 5.4',
+            },
+            {
+                key: 'Programming split',
+                label: 'Programming split:',
+                group: 'engine',
+                type: 'text',
+                required: false,
+                placeholder:
+                    'e.g. C++ for core systems, Blueprints for gameplay scripting',
+            },
+            {
+                key: 'Version control and build tooling',
+                label: 'Version control and build tooling:',
+                group: 'engine',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. Perforce, Jenkins',
+            },
+            // -- Runtime and controls
+            {
+                key: 'Target OS',
+                title: 'Target OS:',
+                group: 'runtime',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: ['Windows', 'Console OS', 'Android', 'iOS', 'Web'],
+            },
+            {
+                key: 'Target frame rate',
+                title: 'Target frame rate:',
+                group: 'runtime',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: ['30 fps', '60 fps', '90 fps', '120 fps'],
+            },
+            {
+                key: 'Session mode',
+                title: 'Session mode:',
+                group: 'runtime',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: ['Single-player', 'Co-op', 'Dedicated server'],
+            },
+            {
+                key: 'Input devices',
+                title: 'Input devices:',
+                group: 'runtime',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    'Keyboard + mouse',
+                    'Gamepad',
+                    'Touch',
+                    'VR controllers',
+                ],
+            },
+            {
+                key: 'Accessibility',
+                title: 'Accessibility:',
+                group: 'runtime',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    'Remapping',
+                    'Sensitivity/dead zones',
+                    'One-handed mode',
+                    'Subtitles',
+                    'Colorblind support',
+                ],
+            },
+            {
+                key: 'Runtime and controls · Additional information',
+                label: '*Additional information',
+                group: 'runtime',
+                type: 'text',
+                required: false,
+            },
+            // -- Display, audio, haptics
+            {
+                key: 'Per-platform minimums',
+                label: 'Per-platform minimums:',
+                group: 'display',
+                type: 'text',
+                required: false,
+                // the mockup repeats "e.g. Unreal Engine 5.4" here: replaced with a fitting example
+                placeholder:
+                    'e.g. PC: 1080p, stereo audio. Quest: 72 Hz, controller haptics',
+            },
+            {
+                key: 'VR comfort options',
+                label: '*VR comfort options (if VR is selected above):',
+                group: 'display',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    'Snap turning',
+                    'Smooth turning',
+                    'Teleport',
+                    'Vignette',
+                    'Seated/standing',
+                ],
+            },
+            // -- Performance budgets: each value can be left "TBD" until the prototype
+            {
+                key: 'Target frame rate (budget)',
+                label: 'Target frame rate:',
+                group: 'performance',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. 60 FPS',
+            },
+            {
+                key: 'Target frame rate (budget) · TBD',
+                group: 'performance',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: ['TBD — confirm after prototype'],
+            },
+            {
+                key: 'Frame budget (ms)',
+                label: 'Frame budget (ms):',
+                group: 'performance',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. 16.6 ms',
+            },
+            {
+                key: 'Frame budget (ms) · TBD',
+                group: 'performance',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: ['TBD — confirm after prototype'],
+            },
+            {
+                key: 'Loading time',
+                label: 'Loading time:',
+                group: 'performance',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. under 8 seconds on target SSD',
+            },
+            {
+                key: 'Loading time · TBD',
+                group: 'performance',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: ['TBD — confirm after prototype'],
+            },
+            {
+                key: 'Memory ceiling',
+                label: 'Memory ceiling:',
+                group: 'performance',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. maximum 10 GB RAM on PC minimum spec',
+            },
+            {
+                key: 'Memory ceiling · TBD',
+                group: 'performance',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: ['TBD — confirm after prototype'],
+            },
+            {
+                key: 'Draw calls',
+                label: 'Draw calls:',
+                group: 'performance',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. target under 2,000 per frame on minimum GPU',
+            },
+            {
+                key: 'Draw calls · TBD',
+                group: 'performance',
+                type: 'multi',
+                display: 'checks',
+                required: false,
+                options: ['TBD — confirm after prototype'],
+            },
+            {
+                key: 'Performance budgets · Additional information',
+                label: '*Additional information',
+                group: 'performance',
+                type: 'text',
+                required: false,
+            },
+            // -- Data, save and online
+            {
+                key: 'Save format and location',
+                label: 'Save format and location:',
+                group: 'data',
+                type: 'text',
+                required: false,
+                placeholder: 'e.g. Local JSON, synced to cloud on save',
+            },
+            {
+                key: 'Save features',
+                group: 'data',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: ['Autosave', 'Cloud save', 'Cross-progression'],
+            },
+            {
+                key: 'Multiplayer architecture and offline capability',
+                label: 'Multiplayer architecture and offline capability:',
+                group: 'data',
+                type: 'text',
+                required: false,
+                placeholder:
+                    'e.g. Dedicated server for ranked; core loop playable fully offline',
+            },
+            // -- External SDKs and integrations: one card per SDK
+            {
+                key: 'SDK',
+                group: 'sdks',
+                type: 'list',
+                layout: 'stack',
+                itemLabel: 'SDK',
+                addLabel: 'Add SDK',
+                required: false,
+                itemFields: [
+                    {
+                        key: 'SDK name',
+                        type: 'text',
+                        display: 'input',
+                        half: true,
+                        placeholder: 'SDK name (e.g. Steamworks)',
+                    },
+                    {
+                        key: 'Requirement',
+                        type: 'single',
+                        display: 'select',
+                        half: true,
+                        options: ['Required', 'Optional', 'Fallback needed'],
+                    },
+                    {
+                        key: 'Purpose',
+                        title: 'Purpose',
+                        type: 'multi',
+                        display: 'chips',
+                        other: true,
+                        options: [
+                            'Achievements',
+                            'Cloud save',
+                            'Trophies',
+                            'Analytics',
+                            'Anti-cheat',
+                            'Localization',
+                        ],
+                    },
+                    {
+                        key: 'Owner',
+                        label: 'Owner:',
+                        type: 'text',
+                        display: 'input',
+                        placeholder: 'e.g. Backend engineer',
+                    },
+                ],
+            },
+            // -- Content pipeline
+            {
+                key: 'DCC and texture tools',
+                title: 'DCC and texture tools',
+                group: 'pipeline',
+                type: 'multi',
+                display: 'chips',
+                other: true,
+                required: false,
+                options: [
+                    'Blender',
+                    'Maya',
+                    'Houdini',
+                    'Substance Painter',
+                    'Photoshop',
+                ],
+            },
+            // The mockup shows this drop-down without a label (options FMOD, Wwise, Other)
+            {
+                key: 'Audio middleware',
+                label: 'Audio middleware:',
+                group: 'pipeline',
+                type: 'single',
+                display: 'select',
+                required: false,
+                provisional: true,
+                options: ['FMOD', 'Wwise', 'Other'],
+            },
+            {
+                key: 'Naming, import, and compression conventions',
+                title: 'Naming, import, and compression conventions',
+                group: 'pipeline',
+                type: 'text',
+                display: 'input',
+                required: false,
+                placeholder:
+                    'e.g. PascalCase for assets, 2K texture cap, LOD0–2 required',
+            },
+            // -- Technical risks: one card per risk
+            {
+                key: 'Risk',
+                group: 'risks',
+                type: 'list',
+                layout: 'stack',
+                itemLabel: 'Risk',
+                addLabel: 'Add risk',
+                required: false,
+                itemFields: [
+                    {
+                        key: 'Description',
+                        label: 'Risk:',
+                        type: 'text',
+                        display: 'input',
+                        placeholder:
+                            'e.g. Quest build may not support planned dynamic light count',
+                    },
+                    {
+                        key: 'Owner',
+                        label: 'Owner:',
+                        type: 'text',
+                        display: 'input',
+                        half: true,
+                        placeholder: 'e.g. Rendering programmer',
+                    },
+                    {
+                        key: 'Status',
+                        label: 'Status:',
+                        type: 'single',
+                        display: 'select',
+                        half: true,
+                        options: ['Open', 'Monitoring', 'Resolved'],
+                    },
+                    {
+                        key: 'Impact and validation',
+                        label: 'Impact and validation:',
+                        type: 'text',
+                        display: 'input',
+                        placeholder:
+                            'e.g. Levels must use baked lighting; validate via performance prototype at vertical slice',
+                    },
+                ],
+            },
+        ],
     },
 ];
 
 /* Sections counted in the overall percentage and in "complete" (optional ones excluded). */
 export const REQUIRED_SECTIONS = DESIGN_SECTIONS.filter((s) => !s.optional);
+
+/* Name of a mechanic: the one it was given (see nextItemName), or "<element> <n>". */
+export function mechanicName(element, item, index) {
+    return item?.Name?.trim() || `${element} ${index + 1}`;
+}
+
+/* Name for a new item of a `numbered` list: "<itemLabel> <n>", with n one more than
+   the highest number already used, so names never repeat after a deletion. */
+export function nextItemName(field, items) {
+    const pattern = new RegExp(`^${field.itemLabel} (\\d+)$`);
+    const used = items.map((it) =>
+        Number(it?.Name?.trim().match(pattern)?.[1] || 0),
+    );
+    return `${field.itemLabel} ${Math.max(items.length, ...used) + 1}`;
+}
+
+/* Game mechanics described in Gameful Core (section 4): every block of every
+   "<element> mechanics" list, also of elements not open right now. Used by the
+   'mechanics' picker: "Link to another mechanic" there and the game element in Feedback.
+   A link is saved as the mechanic's name, so renaming a mechanic leaves old links as text. */
+export function gameMechanics(gamefulValues = {}) {
+    return Object.entries(GAME_ELEMENTS).flatMap(([category, elements]) =>
+        elements.flatMap((element) =>
+            (gamefulValues[`${element} mechanics`] || [])
+                // only mechanics with some content: empty ones are not saved
+                .filter((item) =>
+                    isFilled(mechanicField(category, element), [item]),
+                )
+                .map((item, i) => ({
+                    value: mechanicName(element, item, i),
+                    category,
+                    element,
+                })),
+        ),
+    );
+}
 
 /* Number of steps in "STEP n OF N": the sections (the Spark is not counted). */
 export const TOTAL_STEPS = DESIGN_SECTIONS.length;
@@ -1328,12 +1824,24 @@ function itemKey(field, index, sub) {
     return `${field.key} ${index + 1} · ${sub.key}`;
 }
 
+function conditionsOf(field) {
+    if (!field.showIf) return [];
+    return Array.isArray(field.showIf) ? field.showIf : [field.showIf];
+}
+
 /* true if the field is shown with the current values (see `showIf`). */
 export function isFieldVisible(field, values) {
-    if (!field.showIf) return true;
-    const source = values?.[field.showIf.key];
-    if (Array.isArray(source)) return source.includes(field.showIf.includes);
-    return source === field.showIf.includes;
+    return conditionsOf(field).every(({ key, includes }) => {
+        const source = values?.[key];
+        if (Array.isArray(source)) return source.includes(includes);
+        return source === includes;
+    });
+}
+
+/* true if a hidden field still keeps (and sends) its value: tabs, see `showIf.keep`. */
+function keepsWhenHidden(field) {
+    const conditions = conditionsOf(field);
+    return conditions.length > 0 && conditions.every((c) => c.keep);
 }
 
 /* true if the field has a value (non-empty array, non-empty string, list with content). */
@@ -1422,7 +1930,7 @@ export function valuesToContent(section, values) {
     for (const field of section.fields) {
         known.add(field.key);
         if (field.other) known.add(otherKey(field));
-        if (!isFieldVisible(field, values) && !field.showIf?.keep) continue;
+        if (!isFieldVisible(field, values) && !keepsWhenHidden(field)) continue;
         if (field.type === 'list') {
             const items = (values[field.key] || []).filter((item) =>
                 isFilled(field, [item]),

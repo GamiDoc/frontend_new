@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar';
 import SaveDraftButton from '../../components/design/SaveDraftButton';
 import { useDesign } from '../../context/DesignContext';
 import { DESIGN_SECTIONS } from '../../data/designSections';
+import Icon from '../../components/IconDesign';
 
 // Badge text for each card status
 const STATUS_LABEL = {
@@ -13,7 +14,9 @@ const STATUS_LABEL = {
 };
 /*
 COMMENTS FOR STYLING TO BE LATER MOVED TO APPROPRIATE SECTIONS
-   - Barra sezioni: `.ds-dashboard-nav` with buttons `.ds-dashboard-nav-item`
+   - Barra sezioni: `.ds-dashboard-nav` → `.ds-dashboard-nav-main` (progress bar + buttons
+     `.ds-dashboard-nav-item`), then the current-page "Overview" `.ds-dashboard-nav-overview`
+     and the chat icon `.ds-chat-btn`, as in the step bar of the sections
    - Incipit: `.ds-dashboard-header`, big percentage `.ds-dashboard-percent`, <progress class="ds-progress">
    - Card: <button class="ds-dashboard-card ds-dashboard-card--<stato>"> with state
        complete · in_progress · current · not_started
@@ -103,24 +106,32 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
             <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
 
             <nav className="ds-dashboard-nav" aria-label="Sections">
-                <progress
-                    id="overview-nav-progress"
-                    className="ds-progress"
-                    max={100}
-                    value={overall.percent}
-                ></progress>
-                <div id="overview-nav-sections">
-                    {DESIGN_SECTIONS.map((s) => (
-                        <button
-                            key={s.number}
-                            type="button"
-                            className="ds-dashboard-nav-item"
-                            onClick={() => goToSection(s.number)}
-                        >
-                            {s.navLabel}
-                        </button>
-                    ))}
+                <div className="ds-dashboard-nav-main">
+                    <progress
+                        id="overview-nav-progress"
+                        className="ds-progress"
+                        max={100}
+                        value={overall.percent}
+                    ></progress>
+                    <div id="overview-nav-sections">
+                        {DESIGN_SECTIONS.map((s) => (
+                            <button
+                                key={s.number}
+                                type="button"
+                                className="ds-dashboard-nav-item"
+                                onClick={() => goToSection(s.number)}
+                            >
+                                {s.navLabel}
+                            </button>
+                        ))}
+                    </div>
                 </div>
+                <span className="ds-dashboard-nav-overview" aria-current="page">
+                    Overview
+                </span>
+                <span className="ds-chat-btn" title={'Chat Feature'}>
+                    {Icon('chat', '', { fill: '#fff', size: 40 })}
+                </span>
             </nav>
 
             <main className="ds-main">

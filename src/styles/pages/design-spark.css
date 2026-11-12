@@ -24,3 +24,82 @@
     color: var(--gd-blue-hover);
     align-content: center;
 }
+
+/* -- AI prefill progress (shown while the AI drafts the sections) ------------------------ */
+.ds-prefill {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ds-prefill-step {
+    margin: 0;
+    font-weight: 600;
+    color: var(--gd-blue);
+}
+
+.ds-prefill-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--gd-purple-light);
+    overflow: hidden;
+}
+
+.ds-prefill-bar-fill {
+    height: 100%;
+    background: var(--gd-purple-hover);
+    transition: width 0.4s ease;
+}
+
+.ds-prefill-sections {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--gd-grey-text);
+}
+
+.ds-prefill-section--done,
+.ds-prefill-section--skipped {
+    color: var(--gd-success-text);
+}
+
+.ds-prefill-section--current {
+    color: var(--gd-text);
+    font-weight: 600;
+}
+
+.ds-prefill-section--failed {
+    color: var(--gd-error);
+}
+
+.ds-prefill .ds-btn {
+    align-self: flex-end;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ds-prefill-bar-fill {
+        transition: none;
+    }
+}
+
+/* Nothing drafted yet (e.g. everything in one AI call): a moving segment */
+.ds-prefill-bar--indeterminate .ds-prefill-bar-fill {
+    width: 30%;
+    animation: ds-prefill-indeterminate 1.4s ease-in-out infinite;
+}
+
+@keyframes ds-prefill-indeterminate {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(340%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ds-prefill-bar--indeterminate .ds-prefill-bar-fill {
+        animation: none;
+        width: 100%;
+        opacity: 0.4;
+    }
+}

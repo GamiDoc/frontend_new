@@ -7,35 +7,67 @@
 /* Styling for overview section */
 .ds-dashboard-nav {
     display: flex;
-    flex-direction: column;
-    gap: 1.8rem;
-    padding: 34px 200px;
+    align-items: center;
+    gap: 24px 40px;
+    padding: 28px max(16px, calc((100% - 1200px) / 2));
     margin-bottom: 40px;
     width: 100%;
     background-color: #ffffff;
 }
 
+/* Left: overall progress bar with the section names under it, in one line */
+.ds-dashboard-nav-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+}
+
 #overview-nav-progress {
+    width: 100%;
     min-height: 3px;
     max-height: 3px;
-    min-width: 0;
     border-radius: 3px;
 }
 
 #overview-nav-sections {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    width: 100%;
+    gap: 8px 24px;
 }
 
 .ds-dashboard-nav-item {
+    padding: 4px 0;
     background: none;
     border: none;
+    font: inherit;
+    font-size: 15px;
+    white-space: nowrap;
     color: var(--gd-grey-text);
+    cursor: pointer;
 }
 
 .ds-dashboard-nav-item:hover {
+    color: var(--gd-blue-hover);
     text-decoration: underline;
+}
+
+/* Right: "Overview" (the page you are on) and the chat icon, as in the sections' step bar */
+.ds-dashboard-nav-overview {
+    flex-shrink: 0;
+    padding: 4px 24px;
+    border: 1px solid var(--gd-inputs-border);
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 15px;
+    color: var(--gd-text);
+}
+
+.ds-dashboard-nav .ds-chat-btn {
+    flex-shrink: 0;
+    opacity: 0.6;
 }
 
 /* -- Header: title + overall progress --------------------------------------- */
@@ -266,9 +298,63 @@
 }
 
 /* -- Small screens ---------------------------------------------------------- */
+/* Small screens: progress bar + chat on the first row, then "Overview" and the section
+   names in one line that scrolls sideways (fading out on the right) */
 @media (max-width: 900px) {
     .ds-dashboard-nav {
-        width: 80%;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+            'bar bar chat'
+            'overview sections sections';
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        margin-bottom: 24px;
+    }
+
+    .ds-dashboard-nav-main {
+        display: contents;
+    }
+
+    #overview-nav-progress {
+        grid-area: bar;
+    }
+
+    .ds-dashboard-nav .ds-chat-btn {
+        grid-area: chat;
+    }
+
+    .ds-dashboard-nav .ds-chat-btn svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .ds-dashboard-nav-overview {
+        grid-area: overview;
+        padding: 3px 14px;
+        font-size: 14px;
+    }
+
+    #overview-nav-sections {
+        grid-area: sections;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 16px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+        mask-image: linear-gradient(to right, #000 85%, transparent);
+        padding-right: 24px;
+    }
+
+    #overview-nav-sections::-webkit-scrollbar {
+        display: none;
+    }
+
+    .ds-dashboard-nav-item {
+        flex-shrink: 0;
+        font-size: 14px;
     }
 
     .ds-dashboard-cards {
