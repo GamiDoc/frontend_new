@@ -307,3 +307,10 @@
         flex-wrap: wrap;
     }
 }
+
+/* A document whose file is no longer stored: no download */
+.project-doc-missing {
+    font-size: 14px;
+    color: var(--gd-text-muted);
+    font-style: italic;
+}

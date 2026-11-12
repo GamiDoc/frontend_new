@@ -407,3 +407,8 @@
     color: var(--gd-blue);
     font-weight: 600;
 }
+
+/* A previous report whose file is no longer stored: shown without a link */
+.ds-reports-missing {
+    color: var(--gd-blue-text-disabled);
+}

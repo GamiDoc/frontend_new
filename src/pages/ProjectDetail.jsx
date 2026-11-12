@@ -215,7 +215,9 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     const canGenerateDesignPDF =
         Boolean(design?.firstPassDone) && designState.percent > 0;
 
-    // Every PDF of the project, newest first.
+    // Every PDF of the project, newest first. A design report whose file is gone
+    // (backend `missing`, e.g. lost with an earlier deploy) is listed without a download;
+    // a lost evaluation PDF is not listed at all (the backend clears pdfUrl).
     const documents = [
         ...(project.pdfUrl
             ? [
@@ -233,6 +235,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             name: reportLabel(r.version),
             date: r.createdAt,
             url: r.url,
+            missing: Boolean(r.missing),
         })),
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -411,7 +414,14 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                                     </span>
                                                 </div>
                                                 <div className="project-doc-actions">
-                                                    {doc.url ? (
+                                                    {doc.missing ? (
+                                                        <span
+                                                            className="project-doc-missing"
+                                                            title="Generate it again from the Design System card"
+                                                        >
+                                                            No longer available
+                                                        </span>
+                                                    ) : doc.url ? (
                                                         <a
                                                             className="btn btn-secondary"
                                                             href={doc.url}

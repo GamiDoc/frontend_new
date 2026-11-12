@@ -282,14 +282,27 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                         <ul>
                             {history.map((r) => (
                                 <li key={r.reportId}>
-                                    <a
-                                        href={r.url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        {reportLabel(r.version)} ·{' '}
-                                        {new Date(r.createdAt).toLocaleString()}
-                                    </a>
+                                    {r.missing ? (
+                                        // file lost (e.g. with an earlier deploy): no link
+                                        <span className="ds-reports-missing">
+                                            {reportLabel(r.version)} ·{' '}
+                                            {new Date(
+                                                r.createdAt,
+                                            ).toLocaleString()}{' '}
+                                            · no longer available
+                                        </span>
+                                    ) : (
+                                        <a
+                                            href={r.url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            {reportLabel(r.version)} ·{' '}
+                                            {new Date(
+                                                r.createdAt,
+                                            ).toLocaleString()}
+                                        </a>
+                                    )}
                                 </li>
                             ))}
                         </ul>
