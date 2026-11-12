@@ -321,6 +321,12 @@
 
 /* -- Technical requirements · Runtime and controls / Content pipeline: small bold titles,
       a divider under each chip group (mockup) ----------------------------------------- */
+.details-content {
+    /* N.B: This styling is needed to correctly space the elements inside the <details> elements */
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
 #ds-group-runtime .ds-field-title,
 #ds-group-pipeline .ds-field-title,
 .ds-list-item--stack .ds-field-title {
@@ -331,6 +337,29 @@
 #ds-group-runtime .ds-field--chips {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--gd-inputs-border);
+}
+
+/* TBD styling for checkmarks*/
+.ds-section-form--technical .ds-check {
+    font-size: 13px;
+    color: var(--gd-grey-text);
+}
+.ds-section-form--technical .ds-check-input {
+    border-color: var(--gd-grey-text);
+}
+.ds-section-form--technical .ds-check-input:checked {
+    border-color: #000;
+}
+
+.ds-section-form--technical .ds-check:has( .ds-check-input:checked) {
+    color: #000;
+}
+
+/* Smaller text styling */
+
+.ds-field-label[for$='ds-field-vr-comfort-options'] {
+    font-size: 13px;
+    color: var(--gd-text-muted);
 }
 
 /* -- AI prefill banner ------------------------------------------------------------------- */
