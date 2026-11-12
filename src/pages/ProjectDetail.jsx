@@ -1,4 +1,4 @@
-import { reportLabel } from '../data/designReports';
+import { REPORT_FORMATS, reportLabel } from '../data/designReports';
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -36,6 +36,19 @@ async function fetchDesign(projectId) {
     };
 }
 
+// The design documents are written in the background (status.reportJob): wait for the
+// job started for this request to finish. Returns the finished job (state done | failed).
+async function waitForReport(projectId, jobId) {
+    const deadline = Date.now() + 10 * 60 * 1000;
+    while (Date.now() < deadline) {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        const status = await designApi.get({ kind: 'project', id: projectId });
+        const job = status?.reportJob;
+        if (job && job.jobId === jobId && job.state !== 'running') return job;
+    }
+    throw new Error('The document is taking too long. Check again later.');
+}
+
 // Download a Blob as a file (the evaluation PDF needs the auth header, so it is fetched as a blob).
 function saveBlob(blob, filename) {
     const url = URL.createObjectURL(blob);
@@ -52,8 +65,8 @@ function saveBlob(blob, filename) {
    PROJECT DETAIL
    A project holds two independent processes, each started,
    continued and documented from here:
-   - Design System (6 sections, DesignContext) → many PDF reports,
-     two per generation (Standard + AI-Enhanced), all kept
+   - Design System (6 sections, DesignContext) → two kinds of PDF document
+     (design report, Game Design Document), one button each; all kept
    - UX Evaluation (4-step wizard, WizardContext) → the evaluation
      plan PDF (the latest generation)
    "Documents" lists every PDF of the project, newest first.
@@ -69,7 +82,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     const [editingName, setEditingName] = useState(false);
     const [nameInput, setNameInput] = useState('');
     const [deleting, setDeleting] = useState(false);
-    const [busy, setBusy] = useState(null); // 'evaluation-pdf' | 'design-pdf' | null
+    const [busy, setBusy] = useState(null); // 'evaluation-pdf' | 'design-<format>' | null
 
     const designScope = { kind: 'project', id: projectId };
 
@@ -146,15 +159,22 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     }
 
     // ── Design System ────────────────────────────────────
-    // Generates both report versions; the backend keeps every generation.
-    async function handleDesignPDF() {
-        setBusy('design-pdf');
+    // One document per click (format: 'report' | 'gdd'), written in the background:
+    // waits for it, then reloads the documents. The backend keeps every generation.
+    async function handleDesignPDF(format) {
+        setBusy(`design-${format}`);
         setError(null);
         try {
-            await designApi.generatePDF(designScope);
+            const { reportJob } = await designApi.generatePDF(
+                designScope,
+                format,
+            );
+            const job = await waitForReport(projectId, reportJob.jobId);
+            if (job.state === 'failed')
+                setError(job.error || 'Failed to generate the document.');
             await reloadDesign();
         } catch (e) {
-            setError(e.message || 'Failed to generate the design report.');
+            setError(e.message || 'Failed to generate the document.');
         } finally {
             setBusy(null);
         }
@@ -309,10 +329,20 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                         onOpen={() =>
                                             openDesignProject(projectId)
                                         }
-                                        pdfLabel="Generate PDF report"
-                                        canGeneratePDF={canGenerateDesignPDF}
-                                        generating={busy === 'design-pdf'}
-                                        onGeneratePDF={handleDesignPDF}
+                                        pdfActions={REPORT_FORMATS.map(
+                                            (format) => ({
+                                                id: format.id,
+                                                label: format.button,
+                                                onClick: () =>
+                                                    handleDesignPDF(format.id),
+                                                generating:
+                                                    busy ===
+                                                    `design-${format.id}`,
+                                            }),
+                                        )}
+                                        canGeneratePDF={
+                                            canGenerateDesignPDF && !busy
+                                        }
                                         pdfHint="Available after a first pass through all six sections."
                                     />
                                     <ProcessCard
@@ -324,16 +354,20 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                         continueLabel="Continue Evaluation"
                                         completeLabel="Edit Evaluation"
                                         onOpen={openEvaluation}
-                                        pdfLabel={
-                                            project.pdfUrl
-                                                ? 'Regenerate PDF'
-                                                : 'Generate PDF'
-                                        }
+                                        pdfActions={[
+                                            {
+                                                id: 'evaluation',
+                                                label: project.pdfUrl
+                                                    ? 'Regenerate PDF'
+                                                    : 'Generate PDF',
+                                                onClick: handleEvaluationPDF,
+                                                generating:
+                                                    busy === 'evaluation-pdf',
+                                            },
+                                        ]}
                                         canGeneratePDF={
                                             evaluation.state === 'complete'
                                         }
-                                        generating={busy === 'evaluation-pdf'}
-                                        onGeneratePDF={handleEvaluationPDF}
                                         pdfHint="Available once all four wizard steps are complete."
                                     />
                                 </div>
@@ -447,7 +481,7 @@ function InfoRow({ label, value }) {
 }
 
 /* One process of the project (Design System or UX Evaluation): state, progress,
-   the button that opens it and the one that generates its PDF. */
+   the button that opens it and one button per PDF it can generate (`pdfActions`). */
 function ProcessCard({
     id,
     title,
@@ -457,10 +491,8 @@ function ProcessCard({
     continueLabel,
     completeLabel = continueLabel,
     onOpen,
-    pdfLabel,
+    pdfActions,
     canGeneratePDF,
-    generating,
-    onGeneratePDF,
     pdfHint,
 }) {
     const openLabel = {
@@ -489,16 +521,18 @@ function ProcessCard({
                 <button className="btn btn-primary" onClick={onOpen}>
                     {openLabel}
                 </button>
-                {summary.state !== 'not_started' && (
-                    <button
-                        className="btn btn-secondary"
-                        onClick={onGeneratePDF}
-                        disabled={!canGeneratePDF || generating}
-                        title={canGeneratePDF ? undefined : pdfHint}
-                    >
-                        {generating ? 'Generating…' : pdfLabel}
-                    </button>
-                )}
+                {summary.state !== 'not_started' &&
+                    pdfActions.map((action) => (
+                        <button
+                            key={action.id}
+                            className="btn btn-secondary"
+                            onClick={action.onClick}
+                            disabled={!canGeneratePDF || action.generating}
+                            title={canGeneratePDF ? undefined : pdfHint}
+                        >
+                            {action.generating ? 'Generating…' : action.label}
+                        </button>
+                    ))}
             </div>
         </article>
     );
