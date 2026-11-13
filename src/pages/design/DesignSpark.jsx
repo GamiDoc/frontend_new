@@ -190,6 +190,7 @@ function DesignSpark({ onOpenLogin, onOpenSignup }) {
                     <div className="ds-spark-ai-options">
                         <SaveDraftButton
                             onOpenLogin={onOpenLogin}
+                            dirty={changed}
                             beforeSave={
                                 changed
                                     ? () =>

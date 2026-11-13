@@ -238,3 +238,11 @@
     border-color: var(--gd-blue-text-disabled);
 }
 
+
+/* "Saved": logged-in users' designs are saved automatically (SaveDraftButton) */
+.ds-btn--secondary.ds-btn--saved:disabled {
+    color: var(--gd-success-text);
+    border-color: var(--gd-success);
+    background: var(--gd-success-bg);
+    cursor: default;
+}
