@@ -187,6 +187,22 @@
     color: #ffffff;
 }
 
+/* Tab chip that already has content (Gameful Core categories / elements): a dot after the name */
+.ds-option--has-content::after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 8px;
+    border-radius: 50%;
+    background: var(--gd-blue);
+    vertical-align: middle;
+}
+
+.ds-option--selected.ds-option--has-content::after {
+    background: #ffffff;
+}
+
 /* "Other" chip and its text box */
 .ds-option--other {
     gap: 5px;

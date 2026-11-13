@@ -7,6 +7,7 @@ import {
     gameMechanics,
     mechanicName,
     nextItemName,
+    optionHasMechanics,
 } from '../../data/designSections';
 import Icon from '../IconDesign';
 
@@ -26,6 +27,8 @@ FOR FUTURE CSS STYLING (comment to later move to pertinent CSS files):
  * * Slider: <input type="range" class="ds-range"> + <output class="ds-range-value">. Until the user chooses, the range has `data-unset="true"` and the value shows "—"
  * * Text: <textarea class="ds-textarea"> or, for one-line fields, <input class="ds-input">
  * * Select: <select class="ds-select">
+ * * Tabs with content (`optionMarks`): `.ds-option--has-content` on the chips whose tab already
+ *   has mechanics (a dot after the name)
  * * Mechanics (display 'mechanics'): chips `.ds-option` built from the mechanics described in
  *   Gameful Core; with none yet, the hint `.ds-mechanics-empty`; with `collapsed`, first the
  *   button `.ds-mechanics-open` ("Link to another mechanic")
@@ -438,7 +441,7 @@ function DesignField({ field, values, onChange, popupFields = [] }) {
                     <button
                         key={o.value}
                         type="button"
-                        className={`ds-option${isOn(o.value) ? ' ds-option--selected' : ''}${o.other ? ' ds-option--other' : ''}`}
+                        className={`ds-option${isOn(o.value) ? ' ds-option--selected' : ''}${o.other ? ' ds-option--other' : ''}${field.optionMarks && optionHasMechanics(field, o.value, values) ? ' ds-option--has-content' : ''}`}
                         role={multi ? undefined : 'radio'}
                         aria-pressed={multi ? isOn(o.value) : undefined}
                         aria-checked={multi ? undefined : isOn(o.value)}

@@ -24,6 +24,10 @@
                       only if that field contains the value (multi: array includes it · single:
                       equals it). keep: true = hidden only on screen, its value is still saved (tabs)
        layout: 'stack' ('list') every item is a card one under the other, no tabs (SDKs, risks)
+       progress: false  not counted in the section percentage (optional notes, TBD boxes)
+       doneIf         key of another field that also makes this one count as filled
+                      (a performance budget is done with a value or with its "TBD" box)
+       optionMarks    chips mark the options that already have content (tabs of Gameful Core)
        numbered / addLabel   ('list') a new item is named "<itemLabel> <n>" (saved, so links to it
                       stay valid) · text of the add button
        badge / description   ('loop' display) label and explanation of a game loop
@@ -949,6 +953,7 @@ export const DESIGN_SECTIONS = [
             {
                 key: 'Game element categories',
                 group: 'mechanics',
+                optionMarks: true,
                 type: 'single',
                 display: 'chips',
                 required: true,
@@ -981,6 +986,7 @@ export const DESIGN_SECTIONS = [
                 {
                     key: `${category} elements`,
                     title: `${category} game elements`,
+                    optionMarks: true,
                     group: 'mechanics',
                     type: 'single',
                     display: 'chips',
@@ -1481,6 +1487,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Runtime and controls · Additional information',
+                progress: false,
                 label: '*Additional information',
                 group: 'runtime',
                 type: 'text',
@@ -1499,6 +1506,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'VR comfort options',
+                progress: false,
                 label: '*VR comfort options (if VR is selected above):',
                 group: 'display',
                 type: 'multi',
@@ -1516,6 +1524,7 @@ export const DESIGN_SECTIONS = [
             // -- Performance budgets: each value can be left "TBD" until the prototype
             {
                 key: 'Target frame rate (budget)',
+                doneIf: 'Target frame rate (budget) · TBD',
                 label: 'Target frame rate:',
                 group: 'performance',
                 type: 'text',
@@ -1524,6 +1533,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Target frame rate (budget) · TBD',
+                progress: false,
                 group: 'performance',
                 type: 'multi',
                 display: 'checks',
@@ -1532,6 +1542,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Frame budget (ms)',
+                doneIf: 'Frame budget (ms) · TBD',
                 label: 'Frame budget (ms):',
                 group: 'performance',
                 type: 'text',
@@ -1540,6 +1551,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Frame budget (ms) · TBD',
+                progress: false,
                 group: 'performance',
                 type: 'multi',
                 display: 'checks',
@@ -1548,6 +1560,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Loading time',
+                doneIf: 'Loading time · TBD',
                 label: 'Loading time:',
                 group: 'performance',
                 type: 'text',
@@ -1556,6 +1569,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Loading time · TBD',
+                progress: false,
                 group: 'performance',
                 type: 'multi',
                 display: 'checks',
@@ -1564,6 +1578,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Memory ceiling',
+                doneIf: 'Memory ceiling · TBD',
                 label: 'Memory ceiling:',
                 group: 'performance',
                 type: 'text',
@@ -1572,6 +1587,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Memory ceiling · TBD',
+                progress: false,
                 group: 'performance',
                 type: 'multi',
                 display: 'checks',
@@ -1580,6 +1596,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Draw calls',
+                doneIf: 'Draw calls · TBD',
                 label: 'Draw calls:',
                 group: 'performance',
                 type: 'text',
@@ -1588,6 +1605,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Draw calls · TBD',
+                progress: false,
                 group: 'performance',
                 type: 'multi',
                 display: 'checks',
@@ -1596,6 +1614,7 @@ export const DESIGN_SECTIONS = [
             },
             {
                 key: 'Performance budgets · Additional information',
+                progress: false,
                 label: '*Additional information',
                 group: 'performance',
                 type: 'text',
@@ -1764,6 +1783,21 @@ export const DESIGN_SECTIONS = [
 
 /* Sections counted in the overall percentage and in "complete" (optional ones excluded). */
 export const REQUIRED_SECTIONS = DESIGN_SECTIONS.filter((s) => !s.optional);
+
+/* true if an option of a Gameful Core tab already has mechanics: a category when one of its
+   elements has some, an element when its own list has some (`optionMarks`). Lets the user
+   see which tabs are filled, e.g. after the AI prefill. */
+export function optionHasMechanics(field, option, values = {}) {
+    const elementHas = (category, element) =>
+        isFilled(
+            mechanicField(category, element),
+            values[`${element} mechanics`],
+        );
+    if (field.key === 'Game element categories')
+        return (GAME_ELEMENTS[option] || []).some((e) => elementHas(option, e));
+    const category = field.key.replace(/ elements$/, '');
+    return Boolean(GAME_ELEMENTS[category]) && elementHas(category, option);
+}
 
 /* Name of a mechanic: the one it was given (see nextItemName), or "<element> <n>". */
 export function mechanicName(element, item, index) {
@@ -1962,10 +1996,16 @@ export function valuesToContent(section, values) {
 /* Completion computed on the required fields (if a section has none, on all fields).
    Hidden fields (`showIf`) are not counted. */
 export function sectionProgress(section, values) {
-    const visible = section.fields.filter((f) => isFieldVisible(f, values));
+    const visible = section.fields.filter(
+        (f) => isFieldVisible(f, values) && f.progress !== false,
+    );
     const required = visible.filter((f) => f.required);
     const counted = required.length > 0 ? required : visible;
-    const filled = counted.filter((f) => isFilled(f, values[f.key])).length;
+    const filled = counted.filter(
+        (f) =>
+            isFilled(f, values[f.key]) ||
+            (f.doneIf && isFilled({ type: 'multi' }, values[f.doneIf])),
+    ).length;
     const percent =
         counted.length === 0 ? 0 : Math.round((filled / counted.length) * 100);
     return {
