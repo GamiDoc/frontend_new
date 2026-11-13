@@ -12,10 +12,13 @@ import { SPARK_STEP, DESIGN_SECTIONS } from '../../data/designSections';
  * ═══════════════════════════════════════════════════════════════════════════
  *
  * Free optional text:
- * * "Skip this step": go to Context without saving anything
+ * * "Skip this step": go to Context without saving anything; once a Spark is saved the
+ *   button reads "Continue" (the Spark is not used again)
  * * "Let AI analyze & continue": save text; the backend starts the AI prefill of the empty
  *   sections in the background. The page shows its progress (`.ds-prefill`) and goes to
  *   Context when it ends; "Continue without waiting" leaves at once (sections keep filling).
+ *   Coming back while the AI is still drafting, the progress is shown again and the notes
+ *   and the AI button stay locked, so the running job is not restarted.
  *   If nothing is typed (or the AI is not configured), it works like the skip button.
  * * "Save as a draft": save text then the draft
  *
@@ -52,7 +55,7 @@ const STATE_LABEL = {
     pending: '',
 };
 
-function PrefillProgress({ prefill, onContinue }) {
+function PrefillProgress({ prefill, onContinue, continueLabel }) {
     const current = DESIGN_SECTIONS.find(
         (s) => s.number === prefill.currentSection,
     );
@@ -125,7 +128,7 @@ function PrefillProgress({ prefill, onContinue }) {
                 className="ds-btn ds-btn--secondary"
                 onClick={onContinue}
             >
-                Continue without waiting &nbsp;&nbsp; &gt;
+                {continueLabel} &nbsp;&nbsp; &gt;
             </button>
         </section>
     );
@@ -147,7 +150,9 @@ function DesignSpark({ onOpenLogin, onOpenSignup }) {
     const [text, setText] = useState(status?.spark || '');
     const trimmed = text.trim();
     const changed = trimmed !== (status?.spark || '');
-    const busy = saving || awaitingPrefill;
+    // Busy also while a prefill started earlier is still running (e.g. coming back here).
+    const busy = saving || awaitingPrefill || prefillRunning;
+    const showProgress = prefillRunning && prefill;
 
     function handleContinue() {
         // Same Spark: re-run the AI only if some sections it could not draft are still empty.
@@ -180,7 +185,7 @@ function DesignSpark({ onOpenLogin, onOpenSignup }) {
                         className="ds-textarea"
                         value={text}
                         onChange={(e) => setText(e.target.value)}
-                        disabled={awaitingPrefill}
+                        disabled={awaitingPrefill || prefillRunning}
                     />
                     <div className="ds-spark-ai-options">
                         <SaveDraftButton
@@ -198,17 +203,24 @@ function DesignSpark({ onOpenLogin, onOpenSignup }) {
                             onClick={handleContinue}
                             disabled={busy}
                         >
-                            {busy
-                                ? 'Analyzing…'
-                                : 'Let AI analyze & continue    >'}
+                            {prefillRunning && !awaitingPrefill
+                                ? 'AI is drafting…'
+                                : busy
+                                  ? 'Analyzing…'
+                                  : 'Let AI analyze & continue    >'}
                         </button>
                     </div>
                 </section>
 
-                {awaitingPrefill && prefillRunning && prefill && (
+                {showProgress && (
                     <PrefillProgress
                         prefill={prefill}
                         onContinue={continueWithoutWaiting}
+                        continueLabel={
+                            awaitingPrefill
+                                ? 'Continue without waiting'
+                                : 'Continue to the sections'
+                        }
                     />
                 )}
 
@@ -218,16 +230,20 @@ function DesignSpark({ onOpenLogin, onOpenSignup }) {
                     </p>
                 )}
 
-                <div className="ds-actions">
-                    <button
-                        type="button"
-                        className="ds-btn ds-btn--secondary"
-                        onClick={skipSpark}
-                        disabled={busy}
-                    >
-                        Skip this step &nbsp;&nbsp; &gt;&gt;
-                    </button>
-                </div>
+                {/* While the AI drafts, the progress panel has its own "Continue" */}
+                {!showProgress && (
+                    <div className="ds-actions">
+                        <button
+                            type="button"
+                            className="ds-btn ds-btn--secondary"
+                            onClick={skipSpark}
+                            disabled={busy}
+                        >
+                            {status?.spark ? 'Continue' : 'Skip this step'}{' '}
+                            &nbsp;&nbsp; &gt;&gt;
+                        </button>
+                    </div>
+                )}
             </main>
         </div>
     );
