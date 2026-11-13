@@ -403,12 +403,31 @@
     align-self: flex-start;
 }
 
-.ds-report-status {
-    color: var(--gd-blue);
-    font-weight: 600;
-}
-
 /* A previous report whose file is no longer stored: shown without a link */
 .ds-reports-missing {
     color: var(--gd-blue-text-disabled);
+}
+
+/* Progress of a design document being written (ReportProgress: overview and project page) */
+.ds-report-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 16px 20px;
+    border: 1px solid var(--gd-purple-light);
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.ds-report-progress-title {
+    margin: 0;
+    font-weight: 600;
+    color: var(--gd-text);
+}
+
+.ds-report-progress-time {
+    margin: 0;
+    font-size: 14px;
+    color: var(--gd-grey-text);
 }

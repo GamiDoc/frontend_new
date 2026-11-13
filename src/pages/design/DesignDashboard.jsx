@@ -5,6 +5,7 @@ import { useDesign } from '../../context/DesignContext';
 import { DESIGN_SECTIONS } from '../../data/designSections';
 import { REPORT_FORMATS, reportLabel } from '../../data/designReports';
 import Icon from '../../components/IconDesign';
+import ReportProgress from '../../components/design/ReportProgress';
 
 // Badge text for each card status
 const STATUS_LABEL = {
@@ -24,7 +25,7 @@ COMMENTS FOR STYLING TO BE LATER MOVED TO APPROPRIATE SECTIONS
      Inside: `.ds-card-title` (+ `.ds-optional-tag` for optional sections), `.ds-card-status` (badge), <progress class="ds-progress">,
      `.ds-card-summary`, `.ds-card-percent`
    - Documents: `.ds-reports` with one `.ds-report-option` per format (`.ds-report-option-title`,
-     `.ds-report-option-description`, button); status `.ds-report-status` (role status) and
+     `.ds-report-option-description`, button); progress `.ds-report-progress` (ReportProgress) and
      `.ds-reports-latest` (link to the last generated); `.ds-reports-history` (history)
  */
 /**
@@ -250,11 +251,10 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                     </div>
 
                     {reportRunning && (
-                        <p className="ds-report-status" role="status">
-                            The AI is writing your{' '}
-                            {reportLabel(reportJob.format)}… this usually takes
-                            1–3 minutes.
-                        </p>
+                        <ReportProgress
+                            label={reportLabel(reportJob.format)}
+                            startedAt={reportJob.startedAt}
+                        />
                     )}
                     {reportJob?.state === 'done' && reportJob.report && (
                         <p className="ds-reports-latest" aria-live="polite">

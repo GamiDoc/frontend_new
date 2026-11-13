@@ -1,4 +1,5 @@
 import { REPORT_FORMATS, reportLabel } from '../data/designReports';
+import ReportProgress from '../components/design/ReportProgress';
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -83,6 +84,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     const [nameInput, setNameInput] = useState('');
     const [deleting, setDeleting] = useState(false);
     const [busy, setBusy] = useState(null); // 'evaluation-pdf' | 'design-<format>' | null
+    const [designJob, setDesignJob] = useState(null); // running design document: { format, startedAt }
 
     const designScope = { kind: 'project', id: projectId };
 
@@ -169,6 +171,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                 designScope,
                 format,
             );
+            setDesignJob(reportJob);
             const job = await waitForReport(projectId, reportJob.jobId);
             if (job.state === 'failed')
                 setError(job.error || 'Failed to generate the document.');
@@ -177,6 +180,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             setError(e.message || 'Failed to generate the document.');
         } finally {
             setBusy(null);
+            setDesignJob(null);
         }
     }
 
@@ -374,6 +378,12 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                         pdfHint="Available once all four wizard steps are complete."
                                     />
                                 </div>
+                                {designJob && (
+                                    <ReportProgress
+                                        label={reportLabel(designJob.format)}
+                                        startedAt={designJob.startedAt}
+                                    />
+                                )}
                             </section>
 
                             {/* ── Documents ───────────────────────────── */}
