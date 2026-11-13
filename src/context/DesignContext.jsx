@@ -496,6 +496,46 @@ export function DesignProvider({ children }) {
 
     const resumeDesign = useCallback(() => openLanding(), [openLanding]);
 
+    // ── Title of the documents ───────────────────────────────────────────────
+    // Default title: the project name (a guest design has none: "Your project").
+    const [projectNames, setProjectNames] = useState({});
+    const projectName =
+        scope?.kind === 'project' ? projectNames[scope.id] || '' : '';
+    useEffect(() => {
+        if (scope?.kind !== 'project') return undefined;
+        let alive = true;
+        projectApi
+            .get(scope.id)
+            .then(
+                (p) =>
+                    alive &&
+                    setProjectNames((prev) => ({
+                        ...prev,
+                        [scope.id]: p?.name || '',
+                    })),
+            )
+            .catch(() => {});
+        return () => {
+            alive = false;
+        };
+    }, [scope?.kind, scope?.id]);
+
+    const saveTitle = useCallback(
+        async (title) => {
+            setError(null);
+            try {
+                applyStatus(
+                    await designApi.saveTitle(scopeRef.current, title.trim()),
+                );
+                return true;
+            } catch (e) {
+                await handleError(e, 'Unable to save the title.');
+                return false;
+            }
+        },
+        [applyStatus, handleError],
+    );
+
     // ── Step 0: The Spark ────────────────────────────────────────────────────
     // Una Spark non vuota fa precompilare al backend le sezioni vuote (risposta: prefillApplied).
     // `navigate: false` salva senza cambiare pagina (usato da "Save as a draft").
@@ -894,6 +934,9 @@ export function DesignProvider({ children }) {
                 reportJob,
                 reportRunning,
                 awaitingPrefill,
+                // name on the documents: the title set in the overview, else the default
+                documentTitle: status?.title || '',
+                defaultDocumentTitle: projectName.trim() || 'Your project',
                 // helper di navigazione
                 canOpenSection,
                 stepNumberOf,
@@ -920,6 +963,7 @@ export function DesignProvider({ children }) {
                 loadReportHistory,
                 saveAsDraft,
                 uploadImage,
+                saveTitle,
             }}
         >
             {children}

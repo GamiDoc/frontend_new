@@ -6,6 +6,7 @@ import { DESIGN_SECTIONS } from '../../data/designSections';
 import { REPORT_FORMATS, reportLabel } from '../../data/designReports';
 import Icon from '../../components/IconDesign';
 import ReportProgress from '../../components/design/ReportProgress';
+import { fileSlug } from '../../utils/documentName';
 
 // Badge text for each card status
 const STATUS_LABEL = {
@@ -43,6 +44,53 @@ COMMENTS FOR STYLING TO BE LATER MOVED TO APPROPRIATE SECTIONS
  * * "Continue where I left off"
  * * "Previous reports" shows the history of the generated PDFs (FR-27)
  * */
+/* Title printed on the documents and used in their file names ("GreenStep_design-report.pdf").
+   Saved on blur or Enter; empty = the project name ("Your project" for a guest). */
+function DocumentTitleField({ value, placeholder, onSave }) {
+    const [text, setText] = useState(value);
+    const [saved, setSaved] = useState(false);
+    const [prevValue, setPrevValue] = useState(value);
+    if (value !== prevValue) {
+        setPrevValue(value);
+        setText(value);
+    }
+
+    async function commit() {
+        if (text.trim() === value) return;
+        setSaved(false);
+        if (await onSave(text)) setSaved(true);
+    }
+
+    const shown = text.trim() || placeholder;
+    return (
+        <div className="ds-document-title">
+            <label htmlFor="ds-document-title" className="ds-field-label">
+                Document title
+            </label>
+            <input
+                id="ds-document-title"
+                className="ds-input"
+                type="text"
+                maxLength={120}
+                value={text}
+                placeholder={placeholder}
+                onChange={(e) => {
+                    setText(e.target.value);
+                    setSaved(false);
+                }}
+                onBlur={commit}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.currentTarget.blur();
+                }}
+            />
+            <p className="ds-document-title-hint">
+                {saved ? 'Saved. ' : ''}Files are named like{' '}
+                <code>{fileSlug(shown)}_design-report.pdf</code>
+            </p>
+        </div>
+    );
+}
+
 function DesignDashboard({ onOpenLogin, onOpenSignup }) {
     const {
         dashboardUnlocked,
@@ -56,6 +104,9 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
         reportJob,
         reportRunning,
         error,
+        documentTitle,
+        defaultDocumentTitle,
+        saveTitle,
     } = useDesign();
     const [backendLocked, setBackendLocked] = useState(false);
     const [history, setHistory] = useState([]);
@@ -226,6 +277,11 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                         your sections; it usually takes 1–3 minutes, and you can
                         keep working meanwhile.
                     </p>
+                    <DocumentTitleField
+                        value={documentTitle}
+                        placeholder={defaultDocumentTitle}
+                        onSave={saveTitle}
+                    />
                     <div className="ds-report-options">
                         {REPORT_FORMATS.map((format) => (
                             <div key={format.id} className="ds-report-option">

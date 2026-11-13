@@ -7,6 +7,7 @@ import { useWizard } from '../context/WizardContext';
 import { useAuth } from '../context/AuthContext';
 import { sessionApi } from '../api/session';
 import { projectApi } from '../api/project';
+import { documentFileName } from '../utils/documentName';
 
 function EvaluationReview({ onOpenLogin, onOpenSignup }) {
     const {
@@ -188,7 +189,7 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
             const blobUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = blobUrl;
-            a.download = 'evaluation-plan.pdf';
+            a.download = documentFileName(projectName, 'evaluation-plan');
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

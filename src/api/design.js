@@ -11,6 +11,8 @@ const base = ({ kind, id }) =>
 export const designApi = {
     get: (scope) => api.get(base(scope)),
     saveSpark: (scope, spark) => api.put(`${base(scope)}/spark`, { spark }),
+    // Name on the documents and in their file names ('' = project name / "Your project")
+    saveTitle: (scope, title) => api.put(`${base(scope)}/title`, { title }),
     // body: { content?, complete?, skip? }
     saveSection: (scope, sectionNumber, body) =>
         api.put(`${base(scope)}/section/${sectionNumber}`, body),

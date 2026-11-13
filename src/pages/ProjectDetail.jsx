@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
+import { documentFileName } from '../utils/documentName';
 import { designApi } from '../api/design';
 import { useWizard } from '../context/WizardContext';
 import { useDesign } from '../context/DesignContext';
@@ -139,7 +140,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             await projectApi.generatePDF(projectId);
             saveBlob(
                 await projectApi.downloadPDF(projectId),
-                'evaluation-plan.pdf',
+                documentFileName(project?.name, 'evaluation-plan'),
             );
             setProject(await projectApi.get(projectId));
         } catch (e) {
@@ -153,7 +154,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
         try {
             saveBlob(
                 await projectApi.downloadPDF(projectId),
-                'evaluation-plan.pdf',
+                documentFileName(project?.name, 'evaluation-plan'),
             );
         } catch (e) {
             setError(e.message || 'Download failed.');
