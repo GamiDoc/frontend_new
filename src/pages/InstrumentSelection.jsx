@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import AiChoicesPanel from '../components/AiChoicesPanel';
 import Stepper from '../components/Stepper';
 import NavigationButtons from '../components/NavigationButtons';
 import SelectionSummary from '../components/SelectionSummary';
@@ -336,6 +337,7 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
             <Stepper currentStep={3} />
             <EditReturnBar step={3} />
             <WizardAccountNotice onOpenLogin={onOpenLogin} />
+            <AiChoicesPanel step={3} />
 
             <main className="method-selection-page">
                 {/* ── Intro ── */}

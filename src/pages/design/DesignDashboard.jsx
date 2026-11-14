@@ -3,7 +3,11 @@ import Navbar from '../../components/Navbar';
 import SaveDraftButton from '../../components/design/SaveDraftButton';
 import { useDesign } from '../../context/DesignContext';
 import { DESIGN_SECTIONS } from '../../data/designSections';
-import { REPORT_FORMATS, reportLabel } from '../../data/designReports';
+import {
+    REPORT_FORMATS,
+    EVALUATION_REPORT,
+    reportLabel,
+} from '../../data/designReports';
 import Icon from '../../components/IconDesign';
 import ReportProgress from '../../components/design/ReportProgress';
 import { fileSlug } from '../../utils/documentName';
@@ -91,6 +95,10 @@ function DocumentTitleField({ value, placeholder, onSave }) {
     );
 }
 
+// The project's reports include the UX evaluation reports: the overview lists the design ones.
+const designOnly = (reports) =>
+    reports.filter((r) => r.version !== EVALUATION_REPORT.id);
+
 function DesignDashboard({ onOpenLogin, onOpenSignup }) {
     const {
         dashboardUnlocked,
@@ -119,7 +127,7 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
         });
         loadReportHistory()
             .then((h) => {
-                if (!cancelled) setHistory(h);
+                if (!cancelled) setHistory(designOnly(h));
             })
             .catch(() => {});
         return () => {
@@ -133,7 +141,7 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
     useEffect(() => {
         if (!finishedReportId) return;
         loadReportHistory()
-            .then(setHistory)
+            .then((h) => setHistory(designOnly(h)))
             .catch(() => {});
     }, [finishedReportId, loadReportHistory]);
 

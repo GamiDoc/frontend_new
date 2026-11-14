@@ -24,7 +24,8 @@ function formatElapsed(seconds) {
     return `${m}:${s}`;
 }
 
-function ReportProgress({ label, startedAt }) {
+// title / timing replace the default texts (e.g. the AI fill of the evaluation).
+function ReportProgress({ label, startedAt, title, timing }) {
     const start = startedAt ? Date.parse(startedAt) : null;
     const [now, setNow] = useState(() => Date.now());
     useEffect(() => {
@@ -41,7 +42,7 @@ function ReportProgress({ label, startedAt }) {
     return (
         <div className="ds-report-progress" role="status" aria-live="polite">
             <p className="ds-report-progress-title">
-                The AI is writing your {label}…
+                {title || `The AI is writing your ${label}…`}
             </p>
             <div className="ds-prefill-bar" aria-hidden="true">
                 <div
@@ -50,8 +51,9 @@ function ReportProgress({ label, startedAt }) {
                 />
             </div>
             <p className="ds-report-progress-time">
-                {formatElapsed(elapsed)} · usually 2–4 minutes. You can keep
-                working meanwhile.
+                {formatElapsed(elapsed)} ·{' '}
+                {timing ||
+                    'usually 2–4 minutes. You can keep working meanwhile.'}
             </p>
         </div>
     );

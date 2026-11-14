@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import AiChoicesPanel from '../components/AiChoicesPanel';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Stepper from '../components/Stepper';
@@ -100,6 +101,8 @@ function MethodSelection({ onOpenLogin, onOpenSignup }) {
             <Stepper currentStep={2} />
             <EditReturnBar step={2} />
             <WizardAccountNotice onOpenLogin={onOpenLogin} />
+
+            <AiChoicesPanel step={2} />
 
             <main className="method-selection-page">
                 <section className="method-selection-intro">

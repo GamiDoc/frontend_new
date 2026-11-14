@@ -31,10 +31,16 @@ const output = resolve(
 
 const normalize = (text) => String(text || '').toLowerCase().replace(/[^a-z]/g, '');
 
-// Description of an option from the "learn more" items (matched by name).
+// Description of an option from the "learn more" items: matched by name, else by a shared
+// part of the name ("Novelty / Curiosity" ↔ "Stimulation / Novelty").
+const parts = (name) => String(name || '').split('/').map(normalize).filter(Boolean);
 function describe(items, name) {
-    const item = (items || []).find((i) => normalize(i.name) === normalize(name));
-    return item?.desc || '';
+    const list = items || [];
+    const exact = list.find((i) => normalize(i.name) === normalize(name));
+    if (exact) return exact.desc || '';
+    const wanted = parts(name);
+    const shared = list.find((i) => parts(i.name).some((p) => wanted.includes(p)));
+    return shared?.desc || '';
 }
 
 const goals = GOAL_CATEGORIES.flatMap((category) =>

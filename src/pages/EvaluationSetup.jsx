@@ -9,6 +9,8 @@ import ResearchSpecification from '../components/ResearchSpecification';
 import NavigationButtons from '../components/NavigationButtons';
 import EditReturnBar from '../components/EditReturnBar';
 import WizardAccountNotice from '../components/WizardAccountNotice';
+import EvaluationAiFill from '../components/EvaluationAiFill';
+import AiChoicesPanel from '../components/AiChoicesPanel';
 import { useWizard } from '../context/WizardContext';
 
 function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
@@ -64,6 +66,8 @@ function EvaluationSetup({ onOpenLogin, onOpenSignup }) {
             <Stepper currentStep={1} />
             <EditReturnBar step={1} />
             <WizardAccountNotice onOpenLogin={onOpenLogin} />
+            <EvaluationAiFill />
+            <AiChoicesPanel step={1} />
 
             <main>
                 <section className="evaluation-goals-section">

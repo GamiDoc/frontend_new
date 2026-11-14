@@ -1,4 +1,8 @@
-import { REPORT_FORMATS, reportLabel } from '../data/designReports';
+import {
+    REPORT_FORMATS,
+    EVALUATION_REPORT,
+    reportLabel,
+} from '../data/designReports';
 import ReportProgress from '../components/design/ReportProgress';
 import { useState, useEffect, useCallback } from 'react';
 import Navbar from '../components/Navbar';
@@ -209,7 +213,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
         setDocBusy(true);
         setDocError(null);
         try {
-            if (docToDelete.process === 'evaluation')
+            if (docToDelete.id === 'evaluation-plan')
                 await projectApi.deletePDF(projectId);
             else await designApi.deleteReport(projectId, docToDelete.id);
             const [p] = await Promise.all([
@@ -229,7 +233,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
         setDocBusy(true);
         setDocError(null);
         try {
-            if (docToRename.process === 'evaluation') {
+            if (docToRename.id === 'evaluation-plan') {
                 await projectApi.renamePDF(projectId, name);
                 setProject(await projectApi.get(projectId));
             } else {
@@ -296,7 +300,8 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             : []),
         ...designReports.map((r) => ({
             id: r.reportId,
-            process: 'design',
+            process:
+                r.version === EVALUATION_REPORT.id ? 'evaluation' : 'design',
             name: reportLabel(r.version),
             version: r.version,
             fileName: r.fileName || null,
@@ -328,11 +333,13 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                         docToRename.fileName ||
                         documentFileName(
                             project.name,
-                            docToRename.process === 'evaluation'
+                            docToRename.id === 'evaluation-plan'
                                 ? 'evaluation-plan'
                                 : docToRename.version === 'gdd'
                                   ? 'game-design-document'
-                                  : 'design-report',
+                                  : docToRename.version === 'evaluation'
+                                    ? 'evaluation-report'
+                                    : 'design-report',
                         )
                     ).replace(/\.pdf$/, '')}
                     hint="Letters, digits, _ and - are kept; spaces and other characters become -."
@@ -465,11 +472,26 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                             {
                                                 id: 'evaluation',
                                                 label: project.pdfUrl
-                                                    ? 'Regenerate PDF'
-                                                    : 'Generate PDF',
+                                                    ? 'Regenerate the plan'
+                                                    : 'Generate the plan',
                                                 onClick: handleEvaluationPDF,
                                                 generating:
                                                     busy === 'evaluation-pdf',
+                                            },
+                                            {
+                                                id: EVALUATION_REPORT.id,
+                                                label: EVALUATION_REPORT.button,
+                                                onClick: () =>
+                                                    handleDesignPDF(
+                                                        EVALUATION_REPORT.id,
+                                                    ),
+                                                generating:
+                                                    busy ===
+                                                        `design-${EVALUATION_REPORT.id}` ||
+                                                    runningJob?.format ===
+                                                        EVALUATION_REPORT.id,
+                                                // one AI document at a time
+                                                disabled: Boolean(runningJob),
                                             },
                                         ]}
                                         canGeneratePDF={
@@ -687,7 +709,11 @@ function ProcessCard({
                             key={action.id}
                             className="btn btn-secondary"
                             onClick={action.onClick}
-                            disabled={!canGeneratePDF || action.generating}
+                            disabled={
+                                !canGeneratePDF ||
+                                action.generating ||
+                                action.disabled
+                            }
                             title={canGeneratePDF ? undefined : pdfHint}
                         >
                             {action.generating ? 'Generating…' : action.label}

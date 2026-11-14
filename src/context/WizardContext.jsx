@@ -98,6 +98,8 @@ export function WizardProvider({ children }) {
         draft?.step4Data || STEP4_DEFAULTS,
     );
     const [recommendations, setRecommendations] = useState([]);
+    // Last AI fill of the evaluation from the design (project.wizardStatus.aiFill)
+    const [aiFill, setAiFill] = useState(null);
     const [step3Recommendations, setStep3Recommendations] = useState([]);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [currentProjectId, setCurrentProjectId] = useState(null);
@@ -336,6 +338,7 @@ export function WizardProvider({ children }) {
             setStep3Data(s3);
             setStep4Data({ ...STEP4_DEFAULTS, ...(steps['4'] || {}) });
             setPdfUrl(project.pdfUrl || null);
+            setAiFill(project.wizardStatus?.aiFill || null);
             setMaxStep(currentStep);
             setSavedSnapshots({
                 1: currentStep >= 1 ? JSON.parse(JSON.stringify(s1)) : null,
@@ -594,6 +597,8 @@ export function WizardProvider({ children }) {
                 startWizard,
                 createProject,
                 loadProject,
+                aiFill,
+                setAiFill,
                 submitStep1,
                 submitStep2,
                 submitStep3,

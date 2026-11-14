@@ -1,0 +1,89 @@
+/* =====================================================
+   AI FILL OF THE UX EVALUATION
+   components/EvaluationAiFill.jsx (top of step 1) and
+   components/AiChoicesPanel.jsx (why the AI chose, steps 1–3)
+   Same box geometry as the wizard sections (layout/wizard-page.css).
+   ===================================================== */
+.ai-fill,
+.ai-choices {
+    padding: 24px 0 0;
+}
+
+.ai-fill-box,
+.ai-choices-box {
+    max-width: var(--gd-content-width);
+    margin: 0 auto;
+    padding: 20px 24px;
+    border: 1px solid var(--gd-purple-light);
+    border-left: 4px solid var(--gd-purple-accent);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.ai-fill-box h2,
+.ai-choices-box h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.ai-fill-box p {
+    margin: 0 0 12px;
+    color: var(--gd-grey-text);
+    line-height: 1.5;
+}
+
+.ai-fill-box .ai-fill-summary {
+    color: var(--gd-text);
+}
+
+.ai-fill-box .ai-fill-hint {
+    font-size: 14px;
+}
+
+.ai-fill-btn {
+    margin-top: 4px;
+}
+
+/* The progress block (ReportProgress) sits inside the box without its own border */
+.ai-fill-box .ds-report-progress {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.ai-choices-box ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ai-choices-box li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ai-choices-field {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gd-text);
+}
+
+.ai-choices-reason {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--gd-grey-text);
+}
+
+@media (max-width: 768px) {
+    .ai-fill-box,
+    .ai-choices-box {
+        margin-left: 16px;
+        margin-right: 16px;
+        padding: 16px;
+    }
+}

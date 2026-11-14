@@ -40,6 +40,10 @@ export const designApi = {
         api.patch(`/projects/${projectId}/design/reports/${reportId}`, {
             name,
         }),
+    // The AI fills in the UX evaluation from the design (background job: progress in
+    // project.wizardStatus.aiFill) → { wizardStatus }
+    evaluationFill: (projectId) =>
+        api.post(`/projects/${projectId}/design/evaluation/ai-fill`, {}),
     importSession: (projectId, sessionId) =>
         api.post(`/projects/${projectId}/design/import-session`, { sessionId }),
 };

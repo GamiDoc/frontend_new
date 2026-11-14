@@ -17,8 +17,17 @@ export const REPORT_FORMATS = [
     },
 ];
 
+/* Reasoned UX evaluation report: written by the AI from the evaluation wizard (and the
+   design), generated from the project page. Stored with the design documents. */
+export const EVALUATION_REPORT = {
+    id: 'evaluation',
+    title: 'UX evaluation report',
+    button: 'Generate the reasoned report',
+};
+
 /* Name of a stored report (`version`), including the formats of earlier versions. */
 export function reportLabel(version) {
+    if (version === EVALUATION_REPORT.id) return EVALUATION_REPORT.title;
     const format = REPORT_FORMATS.find((f) => f.id === version);
     if (format) return format.title;
     if (version === 'enhanced') return 'AI-Enhanced report';
