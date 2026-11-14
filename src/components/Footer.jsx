@@ -1,46 +1,37 @@
 import ConstructionLink from './ConstructionLink';
 
+/* Site footer (every page, design steps included).
+   Only links with a destination belong here: the legal ones stay as placeholders
+   ("under construction" popup) because a site with accounts needs them; add the
+   Resources / Research links back when their pages exist. */
 function Footer() {
+    const year = new Date().getFullYear();
+
     return (
         <footer className="footer">
             <div className="footer-container">
-                <div className="footer-column">
+                <div className="footer-column footer-column--about">
                     <h4>About GamiDoc</h4>
                     <p>
-                        GamiDoc is a research-driven tool supporting the design,
-                        evaluation, and documentation of gamified systems
+                        A research-driven tool supporting the design,
+                        evaluation and documentation of gamified systems
                         through structured methodologies.
                     </p>
-                    <p>
-                        Project of the Human-computer interaction group at
-                        Fondazione Bruno Kessler
+                    <p className="footer-org">
+                        HCI group, Fondazione Bruno Kessler
                     </p>
                 </div>
 
-                <div className="footer-column">
-                    <h4>Resources</h4>
-                    <ConstructionLink>Documentation</ConstructionLink>
-                    <ConstructionLink>Gamification Frameworks</ConstructionLink>
-                    <ConstructionLink>UX Evaluation Methods</ConstructionLink>
-                    <ConstructionLink>Reviewed Designs</ConstructionLink>
-                </div>
-
-                <div className="footer-column">
-                    <h4>Research & Publications</h4>
-                    <ConstructionLink>Related Publication</ConstructionLink>
-                    <ConstructionLink>How to cite GamiDoc</ConstructionLink>
-                </div>
-
-                <div className="footer-column">
-                    <h4>Privacy policy</h4>
+                <nav className="footer-column" aria-label="Legal">
+                    <h4>Legal</h4>
+                    <ConstructionLink>Privacy policy</ConstructionLink>
                     <ConstructionLink>Terms of use</ConstructionLink>
-                    <ConstructionLink>Contact us</ConstructionLink>
-                </div>
+                    <ConstructionLink>Contact</ConstructionLink>
+                </nav>
             </div>
 
             <div className="footer-bottom">
-                © GamiDoc — Research tool for gamification design & evaluation |
-                [University/Lab Name] | 2024
+                © {year} GamiDoc · Fondazione Bruno Kessler
             </div>
         </footer>
     );

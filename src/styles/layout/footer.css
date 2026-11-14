@@ -1,64 +1,80 @@
 /* =====================================================
    FOOTER — components/Footer.jsx
+   Compact: it is shown on every page, design steps included.
    ===================================================== */
 .footer {
     background: #1f1a1a;
     color: #fff;
-    padding: 48px 24px 20px;
+    padding: 32px 24px 16px;
 }
 
 .footer-container {
-    max-width: 1400px;
-    margin: 0 auto 32px;
+    max-width: 1200px;
+    margin: 0 auto 20px;
     display: flex;
-    gap: 48px;
+    gap: 32px 64px;
     justify-content: space-between;
     flex-wrap: wrap;
 }
 
 .footer-column {
-    flex: 1;
-    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 160px;
+}
+
+.footer-column--about {
+    flex: 1 1 320px;
+    max-width: 520px;
 }
 
 .footer-column h4 {
-    font-size: 22px;
-    margin-bottom: 20px;
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .footer-column p {
-    font-size: 18px;
-    line-height: 1.5;
-    margin-bottom: 18px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #d8d8d8;
+}
+
+.footer-column .footer-org {
     color: #f1f1f1;
 }
 
 .footer-column a {
-    display: block;
-    color: #f1f1f1;
+    color: #d8d8d8;
     text-decoration: none;
-    font-size: 18px;
-    margin-bottom: 12px;
+    font-size: 14px;
 }
 
-.footer-column a:hover {
+.footer-column a:hover,
+.footer-column a:focus-visible {
+    color: #fff;
     text-decoration: underline;
 }
 
 .footer-bottom {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding-top: 20px;
+    padding-top: 14px;
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     text-align: center;
-    font-size: 16px;
-    color: #d8d8d8;
+    font-size: 13px;
+    color: #b8b8b8;
 }
 
 @media (max-width: 640px) {
+    .footer {
+        padding: 24px 16px 14px;
+    }
     .footer-container {
-        flex-direction: column;
-        gap: 24px;
+        gap: 20px;
     }
     .footer-column {
         min-width: 0;
