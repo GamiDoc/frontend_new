@@ -242,6 +242,22 @@
 }
 .project-doc-actions {
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-left: auto;
+}
+/* On narrow cards the buttons wrap under the name */
+.project-doc-card {
+    flex-wrap: wrap;
+}
+.project-doc-info {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+.project-doc-name {
+    overflow-wrap: anywhere;
 }
 .project-doc-empty {
     display: flex;

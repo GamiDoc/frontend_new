@@ -5,7 +5,9 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
-import { documentFileName } from '../utils/documentName';
+import { documentFileName, fileNameFromUrl } from '../utils/documentName';
+import ConfirmDialog from '../components/ConfirmDialog';
+import RenameDialog from '../components/RenameDialog';
 import { designApi } from '../api/design';
 import { useWizard } from '../context/WizardContext';
 import { useDesign } from '../context/DesignContext';
@@ -38,18 +40,9 @@ async function fetchDesign(projectId) {
     };
 }
 
-// The design documents are written in the background (status.reportJob): wait for the
-// job started for this request to finish. Returns the finished job (state done | failed).
-async function waitForReport(projectId, jobId) {
-    const deadline = Date.now() + 10 * 60 * 1000;
-    while (Date.now() < deadline) {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        const status = await designApi.get({ kind: 'project', id: projectId });
-        const job = status?.reportJob;
-        if (job && job.jobId === jobId && job.state !== 'running') return job;
-    }
-    throw new Error('The document is taking too long. Check again later.');
-}
+// While a design document is being written (status.reportJob running), the page reads the
+// design status again at this interval.
+const REPORT_POLL_INTERVAL = 3000;
 
 // Download a Blob as a file (the evaluation PDF needs the auth header, so it is fetched as a blob).
 function saveBlob(blob, filename) {
@@ -85,7 +78,11 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     const [nameInput, setNameInput] = useState('');
     const [deleting, setDeleting] = useState(false);
     const [busy, setBusy] = useState(null); // 'evaluation-pdf' | 'design-<format>' | null
-    const [designJob, setDesignJob] = useState(null); // running design document: { format, startedAt }
+    // PDF being deleted or renamed (popup open): an entry of `documents`
+    const [docToDelete, setDocToDelete] = useState(null);
+    const [docToRename, setDocToRename] = useState(null);
+    const [docBusy, setDocBusy] = useState(false);
+    const [docError, setDocError] = useState(null);
 
     const designScope = { kind: 'project', id: projectId };
 
@@ -154,7 +151,8 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
         try {
             saveBlob(
                 await projectApi.downloadPDF(projectId),
-                documentFileName(project?.name, 'evaluation-plan'),
+                fileNameFromUrl(project?.pdfUrl) ||
+                    documentFileName(project?.name, 'evaluation-plan'),
             );
         } catch (e) {
             setError(e.message || 'Download failed.');
@@ -162,26 +160,87 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     }
 
     // ── Design System ────────────────────────────────────
-    // One document per click (format: 'report' | 'gdd'), written in the background:
-    // waits for it, then reloads the documents. The backend keeps every generation.
+    // One document per click (format: 'report' | 'gdd'), written in the background. The
+    // job lives in the design status (status.reportJob), so its progress is shown also
+    // after leaving the page and coming back, or when it was started from the overview.
     async function handleDesignPDF(format) {
         setBusy(`design-${format}`);
         setError(null);
         try {
-            const { reportJob } = await designApi.generatePDF(
-                designScope,
-                format,
-            );
-            setDesignJob(reportJob);
-            const job = await waitForReport(projectId, reportJob.jobId);
-            if (job.state === 'failed')
-                setError(job.error || 'Failed to generate the document.');
-            await reloadDesign();
+            const result = await designApi.generatePDF(designScope, format);
+            setDesign(result.designStatus);
         } catch (e) {
             setError(e.message || 'Failed to generate the document.');
         } finally {
             setBusy(null);
-            setDesignJob(null);
+        }
+    }
+
+    // While the job runs, read the status again; when it ends, reload the documents.
+    const reportJob = design?.reportJob || null;
+    const runningJob = reportJob?.state === 'running' ? reportJob : null;
+    const runningJobId = runningJob?.jobId;
+    useEffect(() => {
+        if (!runningJobId) return undefined;
+        let cancelled = false;
+        const timer = setTimeout(async () => {
+            const next = await fetchDesign(projectId);
+            if (cancelled || !next.status) return;
+            applyDesign(next);
+            const job = next.status.reportJob;
+            if (job?.jobId === runningJobId && job.state === 'failed')
+                setError(job.error || 'Failed to generate the document.');
+        }, REPORT_POLL_INTERVAL);
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+    }, [runningJobId, design, projectId, applyDesign]);
+
+    // ── Project documents: delete / rename ───────────────
+    function closeDocDialog() {
+        if (docBusy) return;
+        setDocToDelete(null);
+        setDocToRename(null);
+        setDocError(null);
+    }
+
+    async function confirmDeleteDoc() {
+        setDocBusy(true);
+        setDocError(null);
+        try {
+            if (docToDelete.process === 'evaluation')
+                await projectApi.deletePDF(projectId);
+            else await designApi.deleteReport(projectId, docToDelete.id);
+            const [p] = await Promise.all([
+                projectApi.get(projectId),
+                reloadDesign(),
+            ]);
+            setProject(p);
+            setDocToDelete(null);
+        } catch (e) {
+            setDocError(e.message || 'The PDF could not be deleted.');
+        } finally {
+            setDocBusy(false);
+        }
+    }
+
+    async function saveDocName(name) {
+        setDocBusy(true);
+        setDocError(null);
+        try {
+            if (docToRename.process === 'evaluation') {
+                await projectApi.renamePDF(projectId, name);
+                setProject(await projectApi.get(projectId));
+            } else {
+                await designApi.renameReport(projectId, docToRename.id, name);
+                await reloadDesign();
+            }
+            setDocToRename(null);
+        } catch (e) {
+            setDocError(e.message || 'The PDF could not be renamed.');
+        } finally {
+            setDocBusy(false);
         }
     }
 
@@ -230,6 +289,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                       id: 'evaluation-plan',
                       process: 'evaluation',
                       name: 'Evaluation Plan',
+                      fileName: fileNameFromUrl(project.pdfUrl),
                       date: project.updatedAt,
                   },
               ]
@@ -238,6 +298,8 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             id: r.reportId,
             process: 'design',
             name: reportLabel(r.version),
+            version: r.version,
+            fileName: r.fileName || null,
             date: r.createdAt,
             url: r.url,
             missing: Boolean(r.missing),
@@ -247,6 +309,39 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     return (
         <div>
             <Navbar onLogin={onOpenLogin} onSignup={onOpenSignup} />
+
+            {docToDelete && (
+                <ConfirmDialog
+                    title="Delete this PDF?"
+                    message={`"${docToDelete.fileName || docToDelete.name}" (${formatDate(docToDelete.date)}) will be deleted for good. This cannot be undone.`}
+                    busy={docBusy}
+                    error={docError}
+                    onConfirm={confirmDeleteDoc}
+                    onCancel={closeDocDialog}
+                />
+            )}
+            {docToRename && (
+                <RenameDialog
+                    title="Rename PDF"
+                    label="File name"
+                    initialValue={(
+                        docToRename.fileName ||
+                        documentFileName(
+                            project.name,
+                            docToRename.process === 'evaluation'
+                                ? 'evaluation-plan'
+                                : docToRename.version === 'gdd'
+                                  ? 'game-design-document'
+                                  : 'design-report',
+                        )
+                    ).replace(/\.pdf$/, '')}
+                    hint="Letters, digits, _ and - are kept; spaces and other characters become -."
+                    busy={docBusy}
+                    error={docError}
+                    onSave={saveDocName}
+                    onCancel={closeDocDialog}
+                />
+            )}
 
             <main className="project-detail-main">
                 <div className="project-detail-container">
@@ -345,11 +440,15 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                                     handleDesignPDF(format.id),
                                                 generating:
                                                     busy ===
-                                                    `design-${format.id}`,
+                                                        `design-${format.id}` ||
+                                                    runningJob?.format ===
+                                                        format.id,
                                             }),
                                         )}
                                         canGeneratePDF={
-                                            canGenerateDesignPDF && !busy
+                                            canGenerateDesignPDF &&
+                                            !busy &&
+                                            !runningJob
                                         }
                                         pdfHint="Available after a first pass through all six sections."
                                     />
@@ -379,10 +478,10 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                         pdfHint="Available once all four wizard steps are complete."
                                     />
                                 </div>
-                                {designJob && (
+                                {runningJob && (
                                     <ReportProgress
-                                        label={reportLabel(designJob.format)}
-                                        startedAt={designJob.startedAt}
+                                        label={reportLabel(runningJob.format)}
+                                        startedAt={runningJob.startedAt}
                                     />
                                 )}
                             </section>
@@ -418,9 +517,17 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                                 </div>
                                                 <div className="project-doc-info">
                                                     <span className="project-doc-name">
-                                                        {doc.name}
+                                                        {doc.fileName
+                                                            ? doc.fileName.replace(
+                                                                  /\.pdf$/,
+                                                                  '',
+                                                              )
+                                                            : doc.name}
                                                     </span>
                                                     <span className="project-doc-date">
+                                                        {doc.fileName
+                                                            ? `${doc.name} · `
+                                                            : ''}
                                                         {formatDate(doc.date)}
                                                     </span>
                                                 </div>
@@ -451,6 +558,38 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                                             Download PDF
                                                         </button>
                                                     )}
+                                                    {!doc.missing && (
+                                                        <button
+                                                            type="button"
+                                                            className="pdf-delete-btn pdf-rename-btn"
+                                                            title="Rename"
+                                                            aria-label={`Rename ${doc.fileName || doc.name}`}
+                                                            onClick={() =>
+                                                                setDocToRename(
+                                                                    doc,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Icon
+                                                                name="edit"
+                                                                size={17}
+                                                            />
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        className="pdf-delete-btn"
+                                                        title="Delete"
+                                                        aria-label={`Delete ${doc.fileName || doc.name}`}
+                                                        onClick={() =>
+                                                            setDocToDelete(doc)
+                                                        }
+                                                    >
+                                                        <Icon
+                                                            name="trash"
+                                                            size={17}
+                                                        />
+                                                    </button>
                                                 </div>
                                             </li>
                                         ))}

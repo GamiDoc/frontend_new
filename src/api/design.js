@@ -32,6 +32,14 @@ export const designApi = {
 
     // Solo per i progetti
     reports: (projectId) => api.get(`/projects/${projectId}/design/reports`),
+    // Deletes a generated document (record and PDF file)
+    deleteReport: (projectId, reportId) =>
+        api.delete(`/projects/${projectId}/design/reports/${reportId}`),
+    // Renames a generated document (its PDF file) → the report, with fileName
+    renameReport: (projectId, reportId, name) =>
+        api.patch(`/projects/${projectId}/design/reports/${reportId}`, {
+            name,
+        }),
     importSession: (projectId, sessionId) =>
         api.post(`/projects/${projectId}/design/import-session`, { sessionId }),
 };

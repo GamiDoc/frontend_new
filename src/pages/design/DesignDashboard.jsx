@@ -40,7 +40,7 @@ COMMENTS FOR STYLING TO BE LATER MOVED TO APPROPRIATE SECTIONS
  *
  * * Clicking on a card opens the section
  * * "Export your design": two documents to choose from (Design report, Game Design Document),
- *   written by the AI on the backend in 1–3 minutes; the page shows the progress and the link
+ *   written by the AI on the backend in 2–4 minutes; the page shows the progress and the link
  * * "Continue where I left off"
  * * "Previous reports" shows the history of the generated PDFs (FR-27)
  * */
@@ -274,7 +274,7 @@ function DesignDashboard({ onOpenLogin, onOpenSignup }) {
                     <h2 id="ds-reports-title">Export your design</h2>
                     <p className="ds-group-description">
                         Choose the document you prefer. The AI writes it from
-                        your sections; it usually takes 1–3 minutes, and you can
+                        your sections; it usually takes 2–4 minutes, and you can
                         keep working meanwhile.
                     </p>
                     <DocumentTitleField

@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
  * `.ds-report-progress-time`.
  * */
 
-const TYPICAL_SECONDS = 90; // half of the bar after ~1 minute, ~75% after 2
+const TYPICAL_SECONDS = 150; // half of the bar after ~1.7 minutes, ~80% after 4
 
 function formatElapsed(seconds) {
     const m = Math.floor(seconds / 60);
@@ -50,7 +50,7 @@ function ReportProgress({ label, startedAt }) {
                 />
             </div>
             <p className="ds-report-progress-time">
-                {formatElapsed(elapsed)} · usually 1–3 minutes. You can keep
+                {formatElapsed(elapsed)} · usually 2–4 minutes. You can keep
                 working meanwhile.
             </p>
         </div>

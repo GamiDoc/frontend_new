@@ -17,4 +17,9 @@ export const projectApi = {
         api.post(`/projects/${projectId}/generate-pdf`, {}),
     downloadPDF: (projectId) =>
         api.downloadBlob(`/projects/${projectId}/download-pdf`),
+    // Deletes the evaluation plan PDF (file and link)
+    deletePDF: (projectId) => api.delete(`/projects/${projectId}/pdf`),
+    // Renames the evaluation plan PDF → { fileName }
+    renamePDF: (projectId, name) =>
+        api.patch(`/projects/${projectId}/pdf`, { name }),
 };

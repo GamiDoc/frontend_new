@@ -43,6 +43,7 @@
 /* ── Components ───────────────────────────────────── */
 /* step 1 — evaluation setup */
 @import './components/evaluation-goals.css';
+@import './components/confirm-dialog.css';
 @import './components/development-stage.css';
 @import './components/constraints-section.css';
 @import './components/research-specification.css';

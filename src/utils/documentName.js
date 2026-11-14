@@ -16,3 +16,20 @@ export function fileSlug(title) {
 export function documentFileName(title, docType) {
     return `${fileSlug(title)}_${docType}.pdf`;
 }
+
+// Files stored before documents had names: "<uuid>.pdf" or "<timestamp>.pdf".
+const LEGACY_NAME =
+    /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[0-9]+)\.pdf$/;
+
+// File name of a stored PDF from its URL; null for files stored before documents had names.
+export function fileNameFromUrl(url) {
+    if (!url) return null;
+    let base = String(url).split('?')[0].split('/').pop() || '';
+    try {
+        base = decodeURIComponent(base);
+    } catch {
+        // keep it as it is
+    }
+    if (!base.endsWith('.pdf') || LEGACY_NAME.test(base)) return null;
+    return base;
+}
