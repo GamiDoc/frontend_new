@@ -11,10 +11,9 @@
 .footer-container {
     max-width: 1200px;
     margin: 0 auto 20px;
-    display: flex;
-    gap: 32px 64px;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+    gap: 28px 48px;
 }
 
 .footer-column {
@@ -22,12 +21,11 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    min-width: 160px;
+    min-width: 0;
 }
 
 .footer-column--about {
-    flex: 1 1 320px;
-    max-width: 520px;
+    max-width: 440px;
 }
 
 .footer-column h4 {
@@ -69,14 +67,24 @@
     color: #b8b8b8;
 }
 
+/* Tablet: About on its own row, the three link columns under it */
+@media (max-width: 900px) {
+    .footer-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .footer-column--about {
+        grid-column: 1 / -1;
+        max-width: none;
+    }
+}
+
+/* Phone: link columns two by two */
 @media (max-width: 640px) {
     .footer {
         padding: 24px 16px 14px;
     }
     .footer-container {
-        gap: 20px;
-    }
-    .footer-column {
-        min-width: 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 24px;
     }
 }
