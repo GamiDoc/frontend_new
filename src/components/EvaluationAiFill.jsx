@@ -142,7 +142,9 @@ function EvaluationAiFill() {
                                 and change anything before going on.
                             </p>
                         )}
-                        {ready && (
+                        {/* Once the AI has filled in the evaluation the button goes away:
+                            the user reviews and changes the choices in the steps. */}
+                        {ready && aiFill?.state !== 'done' && (
                             <button
                                 type="button"
                                 className="btn btn-primary ai-fill-btn"
@@ -153,9 +155,7 @@ function EvaluationAiFill() {
                             >
                                 {starting
                                     ? 'Starting…'
-                                    : aiFill?.state === 'done'
-                                      ? 'Fill in again with AI'
-                                      : 'Let AI fill in the evaluation'}
+                                    : 'Let AI fill in the evaluation'}
                             </button>
                         )}
                     </>

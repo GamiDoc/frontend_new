@@ -5,7 +5,7 @@ import { useDesign } from '../../context/DesignContext';
 import { DESIGN_SECTIONS } from '../../data/designSections';
 import {
     REPORT_FORMATS,
-    EVALUATION_REPORT,
+    isEvaluationFormat,
     reportLabel,
 } from '../../data/designReports';
 import Icon from '../../components/IconDesign';
@@ -97,7 +97,7 @@ function DocumentTitleField({ value, placeholder, onSave }) {
 
 // The project's reports include the UX evaluation reports: the overview lists the design ones.
 const designOnly = (reports) =>
-    reports.filter((r) => r.version !== EVALUATION_REPORT.id);
+    reports.filter((r) => !isEvaluationFormat(r.version));
 
 function DesignDashboard({ onOpenLogin, onOpenSignup }) {
     const {

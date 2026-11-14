@@ -1,6 +1,8 @@
 import {
     REPORT_FORMATS,
-    EVALUATION_REPORT,
+    EVALUATION_FORMATS,
+    isEvaluationFormat,
+    progressTexts,
     reportLabel,
 } from '../data/designReports';
 import ReportProgress from '../components/design/ReportProgress';
@@ -132,23 +134,6 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
     function openEvaluation() {
         const step = project.wizardStatus?.currentStep;
         loadProject(project, EVALUATION_STEP_TO_PAGE[step] || 'setup');
-    }
-
-    async function handleEvaluationPDF() {
-        setBusy('evaluation-pdf');
-        setError(null);
-        try {
-            await projectApi.generatePDF(projectId);
-            saveBlob(
-                await projectApi.downloadPDF(projectId),
-                documentFileName(project?.name, 'evaluation-plan'),
-            );
-            setProject(await projectApi.get(projectId));
-        } catch (e) {
-            setError(e.message || 'Failed to generate the evaluation PDF.');
-        } finally {
-            setBusy(null);
-        }
     }
 
     async function handleDownloadEvaluationPDF() {
@@ -300,8 +285,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
             : []),
         ...designReports.map((r) => ({
             id: r.reportId,
-            process:
-                r.version === EVALUATION_REPORT.id ? 'evaluation' : 'design',
+            process: isEvaluationFormat(r.version) ? 'evaluation' : 'design',
             name: reportLabel(r.version),
             version: r.version,
             fileName: r.fileName || null,
@@ -339,7 +323,9 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                   ? 'game-design-document'
                                   : docToRename.version === 'evaluation'
                                     ? 'evaluation-report'
-                                    : 'design-report',
+                                    : docToRename.version === 'evaluation-plan'
+                                      ? 'evaluation-plan'
+                                      : 'design-report',
                         )
                     ).replace(/\.pdf$/, '')}
                     hint="Letters, digits, _ and - are kept; spaces and other characters become -."
@@ -468,32 +454,21 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                         continueLabel="Continue Evaluation"
                                         completeLabel="Edit Evaluation"
                                         onOpen={openEvaluation}
-                                        pdfActions={[
-                                            {
-                                                id: 'evaluation',
-                                                label: project.pdfUrl
-                                                    ? 'Regenerate the plan'
-                                                    : 'Generate the plan',
-                                                onClick: handleEvaluationPDF,
-                                                generating:
-                                                    busy === 'evaluation-pdf',
-                                            },
-                                            {
-                                                id: EVALUATION_REPORT.id,
-                                                label: EVALUATION_REPORT.button,
+                                        pdfActions={EVALUATION_FORMATS.map(
+                                            (format) => ({
+                                                id: format.id,
+                                                label: format.button,
                                                 onClick: () =>
-                                                    handleDesignPDF(
-                                                        EVALUATION_REPORT.id,
-                                                    ),
+                                                    handleDesignPDF(format.id),
                                                 generating:
                                                     busy ===
-                                                        `design-${EVALUATION_REPORT.id}` ||
+                                                        `design-${format.id}` ||
                                                     runningJob?.format ===
-                                                        EVALUATION_REPORT.id,
-                                                // one AI document at a time
+                                                        format.id,
+                                                // one document at a time
                                                 disabled: Boolean(runningJob),
-                                            },
-                                        ]}
+                                            }),
+                                        )}
                                         canGeneratePDF={
                                             evaluation.state === 'complete'
                                         }
@@ -504,6 +479,7 @@ function ProjectDetail({ projectId, onOpenLogin, onOpenSignup }) {
                                     <ReportProgress
                                         label={reportLabel(runningJob.format)}
                                         startedAt={runningJob.startedAt}
+                                        {...progressTexts(runningJob.format)}
                                     />
                                 )}
                             </section>

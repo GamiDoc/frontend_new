@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { sessionApi } from '../api/session';
 import { projectApi } from '../api/project';
 import { documentFileName } from '../utils/documentName';
-import EvaluationReportAction from '../components/EvaluationReportAction';
+import EvaluationDocuments from '../components/EvaluationDocuments';
 
 function EvaluationReview({ onOpenLogin, onOpenSignup }) {
     const {
@@ -385,26 +385,30 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                             )}
 
                             <div className="eval-plan-actions">
-                                <button
-                                    className="btn eval-btn-download"
-                                    onClick={handleDownloadPDF}
-                                    disabled={generating}
-                                >
-                                    {generating ? (
-                                        'Generating…'
-                                    ) : (
-                                        <>
-                                            <Icon name="download" size={16} />{' '}
-                                            Download Evaluation Plan (PDF)
-                                        </>
-                                    )}
-                                </button>
-
-                                {/* AI report: projects only (written from the saved evaluation and design) */}
-                                {editingProjectId && (
-                                    <EvaluationReportAction
+                                {/* A project gets the two evaluation documents (plan from the
+                                    data, reasoned report by the AI); a guest the plan PDF. */}
+                                {editingProjectId ? (
+                                    <EvaluationDocuments
                                         projectId={editingProjectId}
                                     />
+                                ) : (
+                                    <button
+                                        className="btn eval-btn-download"
+                                        onClick={handleDownloadPDF}
+                                        disabled={generating}
+                                    >
+                                        {generating ? (
+                                            'Generating…'
+                                        ) : (
+                                            <>
+                                                <Icon
+                                                    name="download"
+                                                    size={16}
+                                                />{' '}
+                                                Download Evaluation Plan (PDF)
+                                            </>
+                                        )}
+                                    </button>
                                 )}
 
                                 {editingProjectId ? (

@@ -123,7 +123,7 @@
     gap: 12px;
     flex-wrap: wrap;
 }
-/* Reasoned report (EvaluationReportAction): progress and link on a row of their own,
+/* Evaluation documents (EvaluationDocuments): progress and link on a row of their own,
    after all the buttons */
 .eval-report-below {
     flex-basis: 100%;

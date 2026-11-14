@@ -17,17 +17,46 @@ export const REPORT_FORMATS = [
     },
 ];
 
-/* Reasoned UX evaluation report: written by the AI from the evaluation wizard (and the
-   design), generated from the project page. Stored with the design documents. */
-export const EVALUATION_REPORT = {
-    id: 'evaluation',
-    title: 'UX evaluation report',
-    button: 'Generate the reasoned report',
-};
+/* The two documents of the UX evaluation (backend: internal/design/evaluation_report.go),
+   generated from the project page and from the Evaluation step; stored with the design
+   documents. `ai`: written by the AI (minutes) or built from the data (seconds). */
+export const EVALUATION_FORMATS = [
+    {
+        id: 'evaluation-plan',
+        title: 'UX evaluation plan',
+        description:
+            'Your choices in one document: every goal, method and instrument with its description. Ready in a few seconds.',
+        button: 'Generate the plan',
+        ai: false,
+    },
+    {
+        id: 'evaluation',
+        title: 'UX evaluation report',
+        description:
+            'Written by the AI: why each choice fits your project, what it measures, how to read the results, limits and sources.',
+        button: 'Generate the reasoned report',
+        ai: true,
+    },
+];
+
+export const isEvaluationFormat = (version) =>
+    EVALUATION_FORMATS.some((f) => f.id === version);
+
+/* Texts of the progress bar of a document being generated. */
+export function progressTexts(version) {
+    const format = EVALUATION_FORMATS.find((f) => f.id === version);
+    if (format && !format.ai)
+        return {
+            title: `Preparing your ${format.title}…`,
+            timing: 'a few seconds.',
+        };
+    return {};
+}
 
 /* Name of a stored report (`version`), including the formats of earlier versions. */
 export function reportLabel(version) {
-    if (version === EVALUATION_REPORT.id) return EVALUATION_REPORT.title;
+    const evaluation = EVALUATION_FORMATS.find((f) => f.id === version);
+    if (evaluation) return evaluation.title;
     const format = REPORT_FORMATS.find((f) => f.id === version);
     if (format) return format.title;
     if (version === 'enhanced') return 'AI-Enhanced report';
