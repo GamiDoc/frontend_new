@@ -1,16 +1,14 @@
 /* =====================================================
    AI FILL OF THE UX EVALUATION
    components/EvaluationAiFill.jsx (top of step 1) and
-   components/AiChoicesPanel.jsx (why the AI chose, steps 1–3)
+   components/AiFieldNotes.jsx (why the AI chose, next to each choice)
    Same box geometry as the wizard sections (layout/wizard-page.css).
    ===================================================== */
-.ai-fill,
-.ai-choices {
+.ai-fill {
     padding: 24px 0 0;
 }
 
-.ai-fill-box,
-.ai-choices-box {
+.ai-fill-box {
     max-width: var(--gd-content-width);
     margin: 0 auto;
     padding: 20px 24px;
@@ -20,8 +18,7 @@
     background: #ffffff;
 }
 
-.ai-fill-box h2,
-.ai-choices-box h2 {
+.ai-fill-box h2 {
     margin: 0 0 6px;
     font-size: 20px;
     font-weight: 600;
@@ -52,36 +49,21 @@
     border: none;
 }
 
-.ai-choices-box ul {
+/* AI notes next to the choices (components/AiFieldNotes.jsx; look from .ds-ai-note) */
+.ai-field-notes {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin: 10px 0 0;
-    padding: 0;
-    list-style: none;
+    gap: 6px;
+    margin: 8px 0 12px;
 }
 
-.ai-choices-box li {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.ai-choices-field {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--gd-text);
-}
-
-.ai-choices-reason {
-    font-size: 14px;
+.ai-field-notes .ds-ai-note {
+    margin: 0;
     line-height: 1.5;
-    color: var(--gd-grey-text);
 }
 
 @media (max-width: 768px) {
-    .ai-fill-box,
-    .ai-choices-box {
+    .ai-fill-box {
         margin-left: 16px;
         margin-right: 16px;
         padding: 16px;

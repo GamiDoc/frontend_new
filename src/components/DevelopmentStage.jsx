@@ -1,4 +1,5 @@
 import InfoTooltip from './InfoTooltip';
+import AiFieldNotes from './AiFieldNotes';
 import { STAGES, DEVELOPMENT_STAGE_INFO } from '../data/evaluationOptions';
 
 function DevelopmentStage({ value = '', onChange, hasError }) {
@@ -17,6 +18,7 @@ function DevelopmentStage({ value = '', onChange, hasError }) {
                 <p className="section-description">
                     What is the current stage of the system?
                 </p>
+                <AiFieldNotes step={1} field="developmentStage" />
 
                 <div className="development-stage-grid">
                     {STAGES.map((stage, index) => (

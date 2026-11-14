@@ -1,4 +1,5 @@
 import GoalCard from '../components/GoalCard';
+import AiFieldNotes from './AiFieldNotes';
 import { GOAL_CATEGORIES } from '../data/evaluationOptions';
 
 function EvaluationGoals({ value = [], onChange, hasError }) {
@@ -19,6 +20,7 @@ function EvaluationGoals({ value = [], onChange, hasError }) {
                 <p className="section-description">
                     Define your evaluation goals.
                 </p>
+                <AiFieldNotes step={1} field="evaluationGoals" />
 
                 <div className="goals-grid">
                     {GOAL_CATEGORIES.map((category, index) => (

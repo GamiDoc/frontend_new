@@ -1,4 +1,5 @@
 import InfoTooltip from './InfoTooltip';
+import AiFieldNotes from './AiFieldNotes';
 
 const RESEARCH_INFO = {
     title: 'Research Specification',
@@ -99,6 +100,7 @@ function ResearchSpecification({
                         <span className="slider"></span>
                     </label>
                 </div>
+                <AiFieldNotes step={1} field="research" />
 
                 {enabled && (
                     <>

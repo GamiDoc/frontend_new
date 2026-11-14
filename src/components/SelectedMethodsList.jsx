@@ -1,4 +1,5 @@
 import ALL_METHODS from '../data/methods';
+import AiFieldNotes from './AiFieldNotes';
 import Icon from './Icon';
 
 function resolveMethod(name, recommendations) {
@@ -41,6 +42,11 @@ function SelectedMethodsList({ selectedMethods, recommendations, onRemove }) {
                                         {m.description && (
                                             <p>{m.description}</p>
                                         )}
+                                        <AiFieldNotes
+                                            step={2}
+                                            field="selectedMethods"
+                                            value={name}
+                                        />
                                         <div className="method-card-tags">
                                             {m.priority && (
                                                 <span className="method-tag">

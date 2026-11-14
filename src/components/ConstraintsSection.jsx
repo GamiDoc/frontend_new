@@ -1,4 +1,5 @@
 import InfoTooltip from './InfoTooltip';
+import AiFieldNotes from './AiFieldNotes';
 import {
     ACCESSIBILITY_OPTIONS,
     PARTICIPANT_OPTIONS,
@@ -42,6 +43,7 @@ function ConstraintsSection({
 
                 <div className="constraint-group">
                     <h3>How accessible are the end users?</h3>
+                    <AiFieldNotes step={1} field="accessibility" />
                     <div className="constraint-options-row">
                         {ACCESSIBILITY_OPTIONS.map((option, index) => (
                             <label key={index} className="constraint-option">
@@ -73,6 +75,7 @@ function ConstraintsSection({
                     }
                 >
                     <h3>How many participants can you recruit?</h3>
+                    <AiFieldNotes step={1} field="participants" />
                     <div className="constraint-options-row">
                         {PARTICIPANT_OPTIONS.map((option, index) => (
                             <label key={index} className="constraint-option">
@@ -98,6 +101,7 @@ function ConstraintsSection({
 
                 <div className="constraint-group">
                     <h3>How much time do you have?</h3>
+                    <AiFieldNotes step={1} field="time" />
                     <div className="constraint-options-row">
                         {TIME_OPTIONS.map((option, index) => (
                             <label key={index} className="constraint-option">
@@ -117,6 +121,7 @@ function ConstraintsSection({
 
                 <div className="constraint-group">
                     <h3>Technical and ethical constraints</h3>
+                    <AiFieldNotes step={1} field="extraConstraints" />
                     <div className="constraint-options-column">
                         {EXTRA_CONSTRAINTS.map((option, index) => (
                             <label key={index} className="constraint-option">

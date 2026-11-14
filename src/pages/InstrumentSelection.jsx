@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import AiChoicesPanel from '../components/AiChoicesPanel';
+import AiFieldNotes from '../components/AiFieldNotes';
 import Stepper from '../components/Stepper';
 import NavigationButtons from '../components/NavigationButtons';
 import SelectionSummary from '../components/SelectionSummary';
@@ -337,7 +337,6 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
             <Stepper currentStep={3} />
             <EditReturnBar step={3} />
             <WizardAccountNotice onOpenLogin={onOpenLogin} />
-            <AiChoicesPanel step={3} />
 
             <main className="method-selection-page">
                 {/* ── Intro ── */}
@@ -447,6 +446,10 @@ function InstrumentSelection({ onOpenLogin, onOpenSignup }) {
                     <section className="selected-methods-section">
                         <div className="selected-methods-container">
                             <h3>Your selected instruments</h3>
+                            <AiFieldNotes
+                                step={3}
+                                field="selectedInstruments"
+                            />
                             <div className="selected-methods-tags">
                                 {step3Data.selectedInstruments.map(
                                     (instName) => {

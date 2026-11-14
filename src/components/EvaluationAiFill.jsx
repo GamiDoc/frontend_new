@@ -13,7 +13,7 @@ import ConfirmDialog from './ConfirmDialog';
    project.wizardStatus.aiFill, read again every few seconds, so it is shown also after
    leaving the page and coming back. When it is done the project is loaded again into the
    wizard: the user reviews step by step, with the AI's reasons next to the choices
-   (AiChoicesPanel). */
+   (AiFieldNotes, next to each choice). */
 
 const POLL_INTERVAL = 3000;
 const STALE_AFTER_MS = 12 * 60 * 1000; // a job still "running" after this is lost
