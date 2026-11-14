@@ -30,7 +30,7 @@ function AiFieldNotes({ step, field, value }) {
     return (
         <div className="ai-field-notes">
             {notes.map((note) => {
-                const assumed = note.reason.startsWith('Default choice');
+                const assumed = Boolean(note.assumed);
                 return (
                     <p
                         key={`${note.field}|${note.value}`}
