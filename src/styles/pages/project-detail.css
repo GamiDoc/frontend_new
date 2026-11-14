@@ -330,3 +330,20 @@
     color: var(--gd-text-muted);
     font-style: italic;
 }
+
+/* Light blue buttons (Generate…, Download PDF, Cancel): same look as "Browse methods" /
+   "View Designs" on the home page (landing.css .feature-card-btn--secondary) */
+.project-detail-main .btn-secondary:not(.project-delete-btn) {
+    --bs-btn-color: var(--gd-text);
+    --bs-btn-bg: #e8eef8;
+    --bs-btn-border-color: var(--gd-blue);
+    --bs-btn-hover-color: var(--gd-text);
+    --bs-btn-hover-bg: #d6e1f2;
+    --bs-btn-hover-border-color: var(--gd-blue);
+    --bs-btn-active-color: var(--gd-text);
+    --bs-btn-active-bg: #d6e1f2;
+    --bs-btn-active-border-color: var(--gd-blue-hover);
+    --bs-btn-disabled-color: var(--gd-text);
+    --bs-btn-disabled-bg: #e8eef8;
+    --bs-btn-disabled-border-color: var(--gd-blue);
+}

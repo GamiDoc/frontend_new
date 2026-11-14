@@ -139,6 +139,8 @@ function App() {
             {page === 'ds-spark' && <DesignSpark {...wizardProps} />}
             {page === 'ds-section' && <DesignSection {...wizardProps} />}
             {page === 'ds-dashboard' && <DesignDashboard {...wizardProps} />}
+            {/* The design pages share the footer, on every step */}
+            {page?.startsWith('ds-') && <Footer />}
         </div>
     );
 }
