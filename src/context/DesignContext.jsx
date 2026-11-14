@@ -915,16 +915,16 @@ export function DesignProvider({ children }) {
                 overall,
                 isGuest: scope?.kind === 'session',
                 hasDesign: Boolean(scope && status),
-                // true when the loaded design has been started (spark, a visited
-                // section or any value): drives the "unfinished design" banner
+                // true when the loaded design has been started (spark or any value) and is
+                // not complete yet: drives the "unfinished design" banner
                 designInProgress: Boolean(
                     scope &&
                     status &&
                     (status.spark ||
-                        status.cursor > 0 ||
                         DESIGN_SECTIONS.some((s) =>
                             hasAnyValue(s, drafts[s.number]),
-                        )),
+                        )) &&
+                    overall.completeCount < overall.sectionCount,
                 ),
                 pendingDraftSave,
                 draftSavedAt,
