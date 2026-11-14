@@ -9,6 +9,7 @@
         "postinstall": "chmod +x node_modules/.bin/* 2>/dev/null || true",
         "lint": "eslint .",
         "export-schema": "node scripts/export-design-schema.mjs",
+        "export-evaluation-catalog": "node scripts/export-evaluation-catalog.mjs",
         "preview": "vite preview"
     },
     "dependencies": {

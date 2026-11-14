@@ -1,34 +1,5 @@
 import InfoTooltip from './InfoTooltip';
-
-const STAGES = [
-    'Concept / idea',
-    'Low-fidelity prototype',
-    'High-fidelity prototype',
-    'Deployed system',
-];
-
-const DEVELOPMENT_STAGE_INFO = {
-    title: 'Development Stage',
-    intro: 'The development stage defines how mature your gamified system is. It directly shapes which evaluation methods are meaningful and feasible — different stages call for different approaches.',
-    items: [
-        {
-            name: 'Concept / Idea',
-            desc: 'Early exploration phase. Expert reviews, personas, and interviews are ideal for validating assumptions before any resource is committed to building.',
-        },
-        {
-            name: 'Low-fidelity prototype',
-            desc: 'Paper sketches or simple wireframes. Think-aloud sessions and focus groups can surface usability issues at very low cost.',
-        },
-        {
-            name: 'High-fidelity prototype',
-            desc: 'Interactive, near-final interfaces. Structured usability tests and validated questionnaires become applicable for the first time.',
-        },
-        {
-            name: 'Deployed system',
-            desc: 'Live product with real users. Longitudinal methods like diary studies, surveys, and behavioral analytics capture actual usage patterns and satisfaction over time.',
-        },
-    ],
-};
+import { STAGES, DEVELOPMENT_STAGE_INFO } from '../data/evaluationOptions';
 
 function DevelopmentStage({ value = '', onChange, hasError }) {
     return (
