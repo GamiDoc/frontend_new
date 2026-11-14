@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { sessionApi } from '../api/session';
 import { projectApi } from '../api/project';
 import { documentFileName } from '../utils/documentName';
+import EvaluationReportAction from '../components/EvaluationReportAction';
 
 function EvaluationReview({ onOpenLogin, onOpenSignup }) {
     const {
@@ -398,6 +399,13 @@ function EvaluationReview({ onOpenLogin, onOpenSignup }) {
                                         </>
                                     )}
                                 </button>
+
+                                {/* AI report: projects only (written from the saved evaluation and design) */}
+                                {editingProjectId && (
+                                    <EvaluationReportAction
+                                        projectId={editingProjectId}
+                                    />
+                                )}
 
                                 {editingProjectId ? (
                                     /* Editing existing project — rename + go back */

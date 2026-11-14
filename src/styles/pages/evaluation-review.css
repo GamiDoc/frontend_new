@@ -123,6 +123,22 @@
     gap: 12px;
     flex-wrap: wrap;
 }
+/* Reasoned report (EvaluationReportAction): progress and link on a row of their own,
+   after all the buttons */
+.eval-report-below {
+    flex-basis: 100%;
+    order: 99;
+}
+.eval-report-below:empty {
+    display: none;
+}
+.eval-report-ready {
+    margin: 4px 0 0;
+    font-size: 15px;
+}
+.eval-report-ready a {
+    color: var(--gd-blue);
+}
 .eval-btn-download {
     background: var(--gd-text);
     color: #fff;
