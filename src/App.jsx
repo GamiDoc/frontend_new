@@ -71,9 +71,38 @@ function ProjectDetailWrapper({ onOpenLogin, onOpenSignup }) {
     );
 }
 
+// Links of the account emails: /?verify=TOKEN (confirm the address) and
+// /?reset=TOKEN (choose a new password). Read once, then removed from the address bar.
+function readEmailLink() {
+    const params = new URLSearchParams(window.location.search);
+    const verify = params.get('verify');
+    const reset = params.get('reset');
+    if (!verify && !reset) return null;
+    params.delete('verify');
+    params.delete('reset');
+    const query = params.toString();
+    window.history.replaceState(
+        null,
+        '',
+        window.location.pathname +
+            (query ? `?${query}` : '') +
+            window.location.hash,
+    );
+    return verify
+        ? { mode: 'verify', token: verify }
+        : { mode: 'reset', token: reset };
+}
+
+let initialEmailLink;
+function emailLinkOnce() {
+    if (initialEmailLink === undefined) initialEmailLink = readEmailLink();
+    return initialEmailLink;
+}
+
 function App() {
     const { page, setPage } = useWizard();
-    const [authModal, setAuthModal] = useState(null);
+    const [emailLink] = useState(emailLinkOnce);
+    const [authModal, setAuthModal] = useState(emailLink?.mode ?? null);
     const [currentProjectId, setCurrentProjectId] = useState(null);
     const stayOnPageRef = useRef(false);
 
@@ -114,7 +143,13 @@ function App() {
         <div className="page">
             {authModal && (
                 <AuthModal
+                    key={authModal}
                     mode={authModal}
+                    token={
+                        authModal === emailLink?.mode
+                            ? emailLink.token
+                            : undefined
+                    }
                     onClose={closeModal}
                     onSuccess={loginSuccess}
                 />

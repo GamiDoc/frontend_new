@@ -15,6 +15,7 @@ const AuthContext = createContext(null);
 // One bootstrap refresh per page load. StrictMode mounts effects twice; a second
 // refresh would send the already-rotated cookie and get a 401, logging the user out.
 let bootstrapPromise = null;
+const verifyRequests = new Map();
 function bootstrapSession() {
     if (!bootstrapPromise) bootstrapPromise = authApi.refresh();
     return bootstrapPromise;
@@ -83,8 +84,36 @@ export function AuthProvider({ children }) {
     const register = useCallback(
         async (email, password) => {
             const result = await authApi.register(email, password);
-            applyAuthResult(result);
             activityApi.record('frontend.auth.register', { page: 'auth' });
+            // The account must be confirmed by email before the first login
+            if (!result?.verification_required) applyAuthResult(result);
+            return result;
+        },
+        [applyAuthResult],
+    );
+
+    // The link of the verification email logs the user in. The same link can be
+    // opened twice (StrictMode effects), but works once: share one request per token.
+    const verifyEmail = useCallback(
+        async (token) => {
+            if (!verifyRequests.has(token)) {
+                verifyRequests.set(token, authApi.verifyEmail(token));
+            }
+            const result = await verifyRequests.get(token);
+            applyAuthResult(result);
+            activityApi.record('frontend.auth.verify_email', { page: 'auth' });
+            return result;
+        },
+        [applyAuthResult],
+    );
+
+    const resetPassword = useCallback(
+        async (token, password) => {
+            const result = await authApi.resetPassword(token, password);
+            applyAuthResult(result);
+            activityApi.record('frontend.auth.reset_password', {
+                page: 'auth',
+            });
             return result;
         },
         [applyAuthResult],
@@ -139,7 +168,15 @@ export function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider
-            value={{ user, loading, login, register, logout }}
+            value={{
+                user,
+                loading,
+                login,
+                register,
+                logout,
+                verifyEmail,
+                resetPassword,
+            }}
         >
             {children}
         </AuthContext.Provider>

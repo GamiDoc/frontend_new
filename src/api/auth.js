@@ -1,6 +1,8 @@
 import { api, refreshAccessToken } from './client';
 
 export const authApi = {
+    // Returns { verification_required, email } when the account must be confirmed
+    // by email before logging in, else { access_token, user }.
     register: (email, password) =>
         api.post('/auth/register', { email, password }),
     login: (email, password) => api.post('/auth/login', { email, password }),
@@ -11,4 +13,14 @@ export const authApi = {
     refresh: () => refreshAccessToken(),
 
     logout: () => api.post('/auth/logout'),
+
+    // Email verification and password reset (links sent by email: /?verify=… and /?reset=…)
+    verifyEmail: (token) => api.post('/auth/verify-email', { token }),
+    resendVerification: (email) =>
+        api.post('/auth/resend-verification', { email }),
+    forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+    checkResetToken: (token) =>
+        api.post('/auth/reset-password/check', { token }),
+    resetPassword: (token, password) =>
+        api.post('/auth/reset-password', { token, password }),
 };
