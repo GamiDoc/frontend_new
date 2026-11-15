@@ -41,6 +41,24 @@
     color: #b42318;
 }
 
+/* Password field of DeleteAccountDialog */
+.delete-account-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gd-text);
+}
+.delete-account-label input {
+    padding: 8px 10px;
+    border: 1.5px solid var(--gd-inputs-border);
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 400;
+}
+
 .confirm-dialog-actions {
     display: flex;
     justify-content: flex-end;

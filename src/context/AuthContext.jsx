@@ -131,6 +131,17 @@ export function AuthProvider({ children }) {
         activityApi.record('frontend.auth.logout', { page: 'auth' });
     }, [clearLogoutTimer]);
 
+    // The server closes the session too; here only the local state is cleared
+    const deleteAccount = useCallback(
+        async (password) => {
+            await authApi.deleteAccount(password);
+            clearLogoutTimer();
+            setAccessToken(null);
+            setUser(null);
+        },
+        [clearLogoutTimer],
+    );
+
     // Listen for 401 events from the API client
     useEffect(() => {
         function handleUnauthorized() {
@@ -176,6 +187,7 @@ export function AuthProvider({ children }) {
                 logout,
                 verifyEmail,
                 resetPassword,
+                deleteAccount,
             }}
         >
             {children}

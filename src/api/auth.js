@@ -14,6 +14,9 @@ export const authApi = {
 
     logout: () => api.post('/auth/logout'),
 
+    // Deletes the logged-in user's account and all its projects (password required)
+    deleteAccount: (password) => api.delete('/auth/me', { password }),
+
     // Email verification and password reset (links sent by email: /?verify=… and /?reset=…)
     verifyEmail: (token) => api.post('/auth/verify-email', { token }),
     resendVerification: (email) =>

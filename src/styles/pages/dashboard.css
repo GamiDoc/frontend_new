@@ -32,9 +32,13 @@
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    /* minmax(0, …): a long badge or date must not widen the column past the screen */
+    grid-template-columns: minmax(0, 1fr) 340px;
     gap: 24px;
     align-items: flex-start;
+}
+.dashboard-grid > * {
+    min-width: 0;
 }
 
 .dashboard-card {
@@ -276,6 +280,34 @@
     padding: 8px 16px;
 }
 
+/* Account card: email and "Delete account" (opens DeleteAccountDialog) */
+.dashboard-card--account h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.dashboard-account-email {
+    font-size: 14px;
+    color: var(--gd-text-muted);
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+}
+.dashboard-account-delete {
+    background: #fff;
+    border: 1px solid #b42318;
+    color: #b42318;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.dashboard-account-delete:hover,
+.dashboard-account-delete:focus-visible {
+    background: #fef3f2;
+}
+
 .dashboard-unauthenticated {
     text-align: center;
     padding: 80px 24px;
@@ -293,7 +325,10 @@
         padding: 0 16px;
     }
     .dashboard-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .dashboard-card {
+        padding: 16px;
     }
     .dashboard-welcome {
         font-size: 22px;
@@ -301,6 +336,18 @@
 }
 
 @media (max-width: 600px) {
+    /* Narrow screens: the date goes under the project name, badges may wrap */
+    .dashboard-project-card {
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+    .dashboard-project-date {
+        flex-basis: 100%;
+        white-space: normal;
+    }
+    .dashboard-process-badge {
+        white-space: normal;
+    }
     .dashboard-project-name {
         white-space: normal;
         display: -webkit-box;

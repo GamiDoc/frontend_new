@@ -5,6 +5,7 @@ import Icon from '../components/Icon';
 import { projectApi } from '../api/project';
 import { designApi } from '../api/design';
 import ConstructionButton from '../components/ConstructionButton';
+import DeleteAccountDialog from '../components/DeleteAccountDialog';
 import { useWizard } from '../context/WizardContext';
 import { useAuth } from '../context/AuthContext';
 import { evaluationSummary, designSummary } from '../data/projectProcesses';
@@ -35,6 +36,7 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
     const [creating, setCreating] = useState(false);
     const [newName, setNewName] = useState('');
     const [createBusy, setCreateBusy] = useState(false);
+    const [deletingAccount, setDeletingAccount] = useState(false);
 
     useEffect(() => {
         if (!user) return;
@@ -395,12 +397,36 @@ function Dashboard({ onOpenLogin, onOpenSignup }) {
                                     </ConstructionButton>
                                 </div>
                             </div>
+
+                            <div className="dashboard-card dashboard-card--account">
+                                <h3>Your account</h3>
+                                <p className="dashboard-account-email">
+                                    {user.email}
+                                </p>
+                                <button
+                                    type="button"
+                                    className="dashboard-account-delete"
+                                    onClick={() => setDeletingAccount(true)}
+                                >
+                                    Delete account
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </main>
 
             <Footer />
+
+            {deletingAccount && (
+                <DeleteAccountDialog
+                    onCancel={() => setDeletingAccount(false)}
+                    onDeleted={() => {
+                        setDeletingAccount(false);
+                        setPage('landing');
+                    }}
+                />
+            )}
         </div>
     );
 }
